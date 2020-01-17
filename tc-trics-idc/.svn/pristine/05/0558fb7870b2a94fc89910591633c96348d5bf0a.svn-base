@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.system.mapper.SysOrgMapper">
+    <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.SysOrg">
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="is_valid" jdbcType="INTEGER" property="isValid"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="region_id" jdbcType="VARCHAR" property="regionId"/>
+        <result column="full_code" jdbcType="VARCHAR" property="fullCode"/>
+        <result column="is_del" jdbcType="INTEGER" property="isDel"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        so.id, so.is_valid, so.`name`,so.parent_id, so.region_id, so.full_code,so.is_del,so.`level`, so.create_time, so.update_time
+    </sql>
+
+    <insert id="insert" parameterType="com.manage.idc.system.domain.SysOrg">
+    insert into sys_org (id, is_valid, `name`,
+      parent_id, region_id, full_code,
+      ,is_del,`level`, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{isValid,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=BIGINT}, #{regionId,jdbcType=VARCHAR}, #{fullCode,jdbcType=VARCHAR}, #{isDel,jdbcType=INTEGER},
+      #{level,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.manage.idc.system.domain.SysOrg">
+        insert into sys_org
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="isValid != null">
+                is_valid,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="regionId != null">
+                region_id,
+            </if>
+            <if test="fullCode != null">
+                full_code,
+            </if>
+            <if test="isDel != null">
+                `is_del`,
+            </if>
+            <if test="level != null">
+                `level`,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="isValid != null">
+                #{isValid,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="regionId != null">
+                #{regionId,jdbcType=VARCHAR},
+            </if>
+            <if test="fullCode != null">
+                #{fullCode,jdbcType=VARCHAR},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=INTEGER},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        update sys_org
+        <set>
+            is_valid= '0'
+        </set>
+        where id =#{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteOrg">
+        update sys_org
+        <set>
+            <if test="isValid != null">
+                is_valid= #{isValid,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                name= #{name,jdbcType=VARCHAR},
+            </if>
+
+            <if test="regionId != null">
+                region_id= #{regionId,jdbcType=VARCHAR},
+            </if>
+            <if test="fullCode != null">
+                full_code= #{fullCode,jdbcType=VARCHAR},
+            </if>
+            <if test="isDel != null">
+                is_del= #{isDel,jdbcType=INTEGER},
+            </if>
+            <if test="level != null">
+                level= #{level,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time= #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time= #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER} or parent_id=#{id}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.manage.idc.system.domain.SysOrg">
+        update sys_org
+        <set>
+            <if test="isValid != null">
+                is_valid= #{isValid,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                name= #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null">
+                parent_id= #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="regionId != null">
+                region_id= #{regionId,jdbcType=VARCHAR},
+            </if>
+            <if test="fullCode != null">
+                full_code= #{fullCode,jdbcType=VARCHAR},
+            </if>
+            <if test="isDel != null">
+                is_del= #{isDel,jdbcType=INTEGER},
+            </if>
+            <if test="level != null">
+                level= #{level,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time= #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time= #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <select id="selectByRegionList" resultMap="BaseResultMap">
+            SELECT
+                <include refid="Base_Column_List"/>,
+                sr.`name` regionName
+            FROM
+                sys_org so
+             JOIN sys_region sr on so.region_id=sr.id where so.is_del='0'
+    </select>
+
+
+    <select id="selectOne" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/> FROM
+        sys_org so
+        <where>
+            <if test="id != null">
+                AND so.id= #{id,jdbcType=INTEGER}
+            </if>
+            <if test="isValid != null">
+                AND so.is_valid= #{isValid,jdbcType=INTEGER}
+            </if>
+            <if test="name != null">
+                AND so.name= #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="parentId != null">
+                AND so.parent_id= #{parentId,jdbcType=BIGINT}
+            </if>
+            <if test="regionId != null">
+                AND so.region_id= #{regionId,jdbcType=VARCHAR}
+            </if>
+            <if test="fullCode != null">
+                AND so.full_code= #{fullCode,jdbcType=VARCHAR}
+            </if>
+            <if test="isDel != null">
+                AND so.is_del= #{isDel,jdbcType=INTEGER}
+            </if>
+            <if test="level != null">
+                AND so.level= #{level,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                AND so.create_time= #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateTime != null">
+                AND so.update_time= #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            AND so.is_del=0
+        </where>
+    </select>
+
+
+
+    <resultMap id="treeMap" type="com.manage.idc.common.entiy.Tree">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="title"/>
+        <result column="name" jdbcType="VARCHAR" property="text"/>
+        <result column="parent_id" jdbcType="VARCHAR" property="parentId"/>
+        <collection property="children" ofType="com.manage.idc.common.entiy.Tree" column="id" select="selectByParentId"/>
+        <collection property="nodes" ofType="com.manage.idc.common.entiy.Tree" column="id" select="selectByParentId"/>
+    </resultMap>
+
+
+    <select id="getOrgSelectTree" resultMap="treeMap">
+        select * from sys_org so
+        <where>
+            AND so.is_del= 0
+            <if test="data.parentId != null">
+                AND (so.id= #{data.parentId})
+            </if>
+            <if test="fullCode != null">
+                and so.full_code like concat('',#{fullCode},'%')
+            </if>
+            <if test="data.regioneId != null and data.regioneId != ''">
+                AND so.region_id = #{data.regioneId}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectByParentId" resultMap="treeMap">
+        select * from sys_org so where so.parent_id = #{id}
+    </select>
+
+
+    <select id="getOrgAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/> FROM
+        sys_org so
+        <where>
+            <if test="id != null">
+                AND so.id= #{id,jdbcType=INTEGER}
+            </if>
+            <if test="isValid != null">
+                AND so.is_valid= #{isValid,jdbcType=INTEGER}
+            </if>
+            <if test="name != null">
+                AND so.name= #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="parentId != null">
+                AND so.parent_id= #{parentId,jdbcType=BIGINT}
+            </if>
+            <if test="regionId != null">
+                AND so.region_id= #{regionId,jdbcType=VARCHAR}
+            </if>
+            <if test="fullCode != null">
+                AND so.full_code like concat('',#{fullCode},'%')
+            </if>
+            <if test="isDel != null">
+                AND so.is_del= #{isDel,jdbcType=INTEGER}
+            </if>
+            <if test="level != null">
+                AND so.level= #{level,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                AND so.create_time= #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateTime != null">
+                AND so.update_time= #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+    <select id="getList" resultMap="BaseResultMap">
+        SELECT
+        so.*,
+        sr.name regionName
+         FROM
+        sys_org so left join sys_region sr on sr.id=so.region_id
+        <where>
+            <if test="id != null">
+                AND so.id= #{id,jdbcType=INTEGER}
+            </if>
+            <if test="isValid != null">
+                AND so.is_valid= #{isValid,jdbcType=INTEGER}
+            </if>
+            <if test="name != null">
+                AND so.name= #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="parentId != null">
+                AND so.parent_id= #{parentId,jdbcType=BIGINT}
+            </if>
+            <if test="regionId != null">
+                AND so.region_id= #{regionId,jdbcType=VARCHAR}
+            </if>
+            <if test="fullCode != null">
+                and (so.full_code like concat('',#{fullCode},'%') or so.full_code=(SELECT full_code from sys_org where parent_id=0))
+            </if>
+            <if test="isDel != null">
+                AND so.is_del= #{isDel,jdbcType=INTEGER}
+            </if>
+            <if test="level != null">
+                AND so.level= #{level,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                AND so.create_time= #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateTime != null">
+                AND so.update_time= #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            AND so.is_del=0
+        </where>
+
+    </select>
+
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        select so.*,sr.name regionName from sys_org so
+        left join  sys_region sr  on  so.region_id=sr.id
+        <where>
+        <if test="fullCode != null">
+            and so.full_code like concat('',#{fullCode},'%')
+        </if>
+        <if test="data.name!=null and data.name!=''">
+            and so.`name` like concat('%',#{data.name},'%')
+        </if>
+        <if test="data.regionId!=null and data.regionId!=''">
+
+
+
+            and so.`region_id`= #{data.regionId}
+        </if>
+        </where>
+    </select>
+</mapper>

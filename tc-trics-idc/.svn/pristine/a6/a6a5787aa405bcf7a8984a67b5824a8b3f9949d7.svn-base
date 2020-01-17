@@ -1,0 +1,154 @@
+package com.manage.idc.system.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.system.domain.Room;
+import com.manage.idc.system.service.RoomService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
+
+/**
+ * @Author: WangZiFan
+ * @Date: 2019/10/17 16:48
+ * @Description:
+ */
+@Controller
+@RequestMapping("room")
+@Api(tags = "机房管理")
+public class RoomController {
+    @Autowired
+    private RoomService roomService;
+
+
+    /*
+     * @Description: 去添加机房页面
+     * @Author: WangZiFan
+     * @Date: 2019/10/29 16:25
+     * @param model
+     * @return org.springframework.web.servlet.ModelAndView
+     */
+    @GetMapping("toAddRoom")
+    @ApiOperation(value = "添加机房页面", httpMethod = "GET", response = ResultResponse.class)
+    public ModelAndView toAddRoom(ModelAndView model){
+        model.setViewName("system/roomAdd");
+        return model;
+    }
+    /*
+     * @Description: 机房列表页面
+     * @Author: WangZiFan
+     * @Date: 2019/10/29 15:57
+     * @param model
+     * @return org.springframework.web.servlet.ModelAndView
+     */
+    @GetMapping("toRoom")
+    @ApiOperation(value = "机房列表页面", httpMethod = "GET", response = ResultResponse.class)
+    public ModelAndView toRoom(ModelAndView model){
+        model.setViewName("system/room");
+        return model;
+    }
+
+    /*
+     * @Description: 修改页面
+     * @Author: WangZiFan
+     * @Date: 2019/11/3 10:03
+     * @param model
+     * @return org.springframework.web.servlet.ModelAndView
+     */
+    @GetMapping("toEdit/{id}")
+    @ApiOperation(value = "修改页面", httpMethod = "GET", response = ResultResponse.class)
+    public ModelAndView toEdit(ModelAndView model,@PathVariable("id") Long id){
+        Room room = new Room();
+        room.setId(id);
+        room = roomService.getRoom(room);
+        model.setViewName("system/roomEdit");
+        model.addObject("bean",room);
+        return model;
+    }
+
+    /*
+     * @Description: 获取机房分页列表
+     * @Author: WangZiFan
+     * @Date: 2019/10/21 9:29
+     * @param room
+     * @param pageRequest
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @GetMapping("getPage")
+    @ResponseBody
+    @ApiOperation(value = "获取机房分页列表", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getPage(Room room, PageRequest pageRequest){
+        PageInfo pageInfo = roomService.getPage(room,pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+    /*
+     * @Description: 添加机房
+     * @Author: WangZiFan
+     * @Date: 2019/10/21 9:26
+     * @param room
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("addRoom")
+    @RequiresPermissions("room:addRoom")
+    @ResponseBody
+    @ApiOperation(value = "添加机房", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse addRoom(Room room){
+        room.setId(IdGen.getUUId());
+        roomService.addRoom(room);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    /*
+     * @Description: 删除机房
+     * @Author: WangZiFan
+     * @Date: 2019/10/21 10:21
+     * @param id
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("delRoom/{id}")
+    @RequiresPermissions("room:delRoom")
+    @ResponseBody
+    @ApiOperation(value = "删除机房", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse delRoom(@PathVariable("id") Long id){
+        roomService.delRoom(id);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+
+    /*
+     * @Description: 修改机房
+     * @Author: WangZiFan
+     * @Date: 2019/10/21 10:21
+     * @param id
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("updateRoom")
+    @RequiresPermissions("room:updateRoom")
+    @ResponseBody
+    @ApiOperation(value = "修改机房", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse updateRoom(Room room){
+        roomService.updateRoom(room);
+        return DataSetUtile.setSuccessResult(null);
+    }
+    /**
+     * 根据部门获取所有机房 默认是当前用户所在部门的所有的机房
+     */
+    @GetMapping(value = "/getRoomByOrgId")
+    @ResponseBody
+    public ResultResponse getUserByOrgId(Room room) {
+        List<Room> list =roomService.getRoomByOrgId(room);
+        return new ResultResponse().success().data(list);
+    }
+
+
+}

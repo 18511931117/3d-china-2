@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+
+    <title>登录吧</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        html,body{
+            height: 100%;
+            width: 100%;
+            background: url("/img/bg1.jpg") no-repeat;
+            background-size: 100% 100%;
+            position: relative;
+        }
+        .login-warp{
+            width: 1250px;
+            height: 860px;
+            background: url("/img/bg.jpg") no-repeat;
+            background-size: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -625px;
+            margin-top: -440px;
+
+        }
+        .logo{
+            float: left;
+            position: absolute;
+            top: 380px;
+            left: 220px;
+        }
+        .input-warp{
+            position: absolute;
+            top: 98px;
+            right: 96px;
+            float: left;
+            width: 530px;
+            height: 660px;
+            border-radius: 10px;
+        }
+        .input-material{
+            width: 200px;
+            height: 40px;
+            border-radius: 40px;
+            border: none;
+            outline: none;
+            border: 1px solid #e6e6e6;
+            padding-left: 30px;
+        }
+        .input-material:focus{
+            box-shadow:-2px 10px 30px #61A0A8;
+        }
+        .user{
+            display: inline-block;
+            width: 13px;
+            height: 15px;
+            background:url("/img/user.png") no-repeat;
+            background-size: 100% 100%;
+            position: absolute;
+            left: 160px;
+            top: 12px;
+        }
+        .pass{
+            display: inline-block;
+            width: 10px;
+            height: 15px;
+            background:url("/img/pass.png") no-repeat;
+            background-size: 100% 100%;
+            position: absolute;
+            left: 160px;
+            top: 12px;
+        }
+        .btn{
+            border-radius: 40px;
+            font-size: 18px;
+            background: #61A0A8;
+            border: none;
+            outline: none;
+            color: #fff;
+        }
+        .btn:active{
+            color: white;
+            background: #489ea8;
+            opacity: 0.5;
+        }
+    </style>
+
+</head>
+
+<div class="login-warp">
+    <div class="logo">
+        <img src="/img/logo.png" style="width: 260px">
+    </div>
+    <div class="input-warp">
+       <div style="margin-top: 220px;text-align: center">
+           <div style="position: relative;margin-bottom: 40px">
+               <i class="user"></i>
+               <input id="login-username" type="text" name="username"  placeholder="用户名" class="input-material">
+           </div>
+           <div style="position: relative">
+               <i class="pass"></i>
+               <input id="login-password" type="password" name="password"  placeholder="密码" class="input-material">
+           </div>
+           <div style="margin-right: 140px;margin-top: 20px">
+               <input type="checkbox" name="" id="记住密码">
+               <label for="记住密码"></label><span style="color: #c5c5c5"> 记住密码</span>
+           </div>
+           <div style="margin-top: 20px">
+               <button class="btn" id="loginBtn" style="width: 232px;height: 42px">登 录</button>
+           </div>
+       </div>
+
+
+    </div>
+</div>
+
+<script src="./js/jquery-1.8.3.min.js"></script>
+<script>
+    $(function () {
+        if(window !=top){
+            top.location.href = location.href;
+        }
+        $("#loginBtn").on('click',function () {
+
+            var username = $("input[name=username]").val()
+            var password = $("input[name=password]").val()
+            var input = $("input[type='checkbox']").is(':checked')
+            console.log(input)
+            if(username==""){
+
+                $("#username").focus();
+                return
+            }
+            if (password==""){
+
+                $("#password").focus()
+                return;
+            }
+
+            $.ajax({
+                url:'/login',
+                type:'post',
+                data:{
+                    username:username,
+                    password:password,
+                    rememberMe:input
+
+                },
+                success:function (res) {
+                    window.location.href = "/index";
+                },
+                error:function (error) {
+                    console.log(error)
+                }
+            })
+
+        })
+    })
+</script>
+</html>

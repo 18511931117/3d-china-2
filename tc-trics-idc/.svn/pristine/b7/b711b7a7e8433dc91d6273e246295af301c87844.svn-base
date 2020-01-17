@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.system.mapper.SysRoleMenuMapper">
+    <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.SysRoleMenu">
+        <id column="menu_id" jdbcType="BIGINT" property="menuId"/>
+        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+        <result column="is_del" jdbcType="INTEGER" property="isDel"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    menu_id, role_id,is_del
+  </sql>
+
+    <insert id="createRoleMenu" keyColumn="menu_id" keyProperty="menuId"
+            parameterType="com.manage.idc.system.domain.SysRoleMenu" useGeneratedKeys="true">
+    insert into sys_role_menu (menu_id, role_id,is_del)
+    values (#{menuId,jdbcType=BIGINT},#{roleId,jdbcType=BIGINT},#{isDel,jdbcType=INTEGER})
+  </insert>
+
+    <delete id="updateRoleMenusByRoleId" parameterType="sysRoleMenu">
+        update sys_role_menu
+        <set>
+            <if test="isDel != null">
+                `is_del` = #{isDel,jdbcType=INTEGER},
+            </if>
+            <if test="roleId != null">
+                `role_id` = #{roleId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where
+        menu_id =#{menuId,jdbcType=BIGINT}
+    </delete>
+    <select id="getMenusId" resultType="java.lang.Long">
+    select menu_id from sys_role_menu
+    where role_id = #{id}
+    </select>
+
+
+</mapper>

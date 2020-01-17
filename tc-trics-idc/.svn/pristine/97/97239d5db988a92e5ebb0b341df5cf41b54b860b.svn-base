@@ -1,0 +1,125 @@
+package com.manage.idc.system.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.system.domain.Label;
+import com.manage.idc.system.domain.Rack;
+import com.manage.idc.system.service.LabelService;
+import com.manage.idc.system.service.RackService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * @Author: WangZiFan
+ * @Date: 2019/10/17 16:48
+ * @Description:
+ */
+@Controller
+@RequestMapping("rack")
+@Api(tags = "机架管理")
+public class RackController {
+    @Autowired
+    private RackService rackService;
+
+    /*
+     * @Description: 添加机架页面
+     * @Author: WangZiFan
+     * @Date: 2019/10/29 20:14
+     * @param model
+     * @return org.springframework.web.servlet.ModelAndView
+     */
+    @GetMapping("toAddRack")
+    @ApiOperation(value = "添加机架页面", httpMethod = "GET", response = ResultResponse.class)
+    public ModelAndView toAddRack(ModelAndView model){
+        model.setViewName("system/addRack");
+        return model;
+    }
+
+    /*
+     * @Description: 机架管理页面
+     * @Author: WangZiFan
+     * @Date: 2019/10/29 19:33
+     * @param model
+     * @return org.springframework.web.servlet.ModelAndView
+     */
+    @GetMapping("toRack")
+    @ApiOperation(value = "机架管理页面", httpMethod = "GET", response = ResultResponse.class)
+    public ModelAndView toRack(ModelAndView model){
+        model.setViewName("system/rack");
+        return model;
+    }
+
+    /*
+     * @Description: 获取分页列表
+     * @Author: WangZiFan
+     * @Date: 2019/10/20 11:51
+     * @param rack
+     * @param pageRequest
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @GetMapping("getPage")
+    @ResponseBody
+    @ApiOperation(value = "获取机架分页列表", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getPage(Rack rack, PageRequest pageRequest){
+        PageInfo<Rack> pageInfo = rackService.getPage(rack,pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+
+    /*
+     * @Description: 修改机架
+     * @Author: WangZiFan
+     * @Date: 2019/10/20 11:51
+     * @param rack
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("updateRack")
+    @RequiresPermissions("rack:updateRack")
+    @ResponseBody
+    @ApiOperation(value = "修改机架", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse updateRack(Rack rack){
+        rackService.updateRack(rack);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    /*
+     * @Description: 添加机架
+     * @Author: WangZiFan
+     * @Date: 2019/10/20 11:52
+     * @param rack
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("addRack")
+    @RequiresPermissions("rack:addRack")
+    @ResponseBody
+    @ApiOperation(value = "添加机架", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse addRack(Rack rack){
+        rackService.addRack(rack);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    /*
+     * @Description: 删除机架
+     * @Author: WangZiFan
+     * @Date: 2019/10/20 11:53
+     * @param id
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("delRack/{id}")
+    @RequiresPermissions("rack:delRack")
+    @ResponseBody
+    @ApiOperation(value = "删除机架", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse delRack(@PathVariable("id")  Long id){
+        rackService.delRack(id);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+}

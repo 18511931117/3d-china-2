@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.log.mapper.AlarmsLogMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.log.domain.AlarmsTaskLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="res_id" property="resId" jdbcType="BIGINT" />
+    <result column="room_id" property="roomId" jdbcType="BIGINT" />
+    <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <result column="resOrgId" property="resOrgId" jdbcType="BIGINT" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="resOrgName" property="resOrgName" jdbcType="VARCHAR" />
+    <result column="resRoomName" property="resRoomName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from alarms_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.manage.idc.log.domain.AlarmsTaskLog" >
+    insert into alarms_log (
+        id,
+        res_id,
+        room_id,
+        org_id,
+        state,
+        remark,
+        create_time
+        )
+    values (
+        #{id,jdbcType=BIGINT},
+        #{resId,jdbcType=BIGINT},
+        #{roomId,jdbcType=BIGINT},
+        #{orgId,jdbcType=BIGINT},
+        #{state,jdbcType=INTEGER},
+        #{remark,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}
+        )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.log.domain.AlarmsTaskLog" >
+    update alarms_log
+    set
+        res_id = #{resId,jdbcType=BIGINT},
+        room_id = #{roomId,jdbcType=BIGINT},
+        org_id = #{orgId,jdbcType=BIGINT},
+        state = #{state,jdbcType=INTEGER},
+        action = #{action,jdbcType=INTEGER},
+        create_time = #{createTime,jdbcType=TIMESTAMP}
+
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, res_id, room_id, org_id,  state, create_time
+    from alarms_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, res_id, room_id, org_id, state, create_time
+    from alarms_log
+  </select>
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.log.domain.AlarmsTaskLog" useGeneratedKeys="true">
+    insert into alarms_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="id != null">
+        id,
+        </if>
+        <if test="resId != null">
+        res_id,
+        </if>
+        <if test="roomId != null">
+        room_id,
+        </if>
+        <if test="orgId != null">
+        org_id,
+        </if>
+        <if test="state != null">
+        `state`,
+        </if>
+        <if test="createTime != null">
+        create_time,
+        </if>
+        <if test="remark != null">
+            remark,
+        </if>
+        <if test="action != null">
+            action,
+        </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="id != null">
+        #{id,jdbcType=BIGINT},
+        </if>
+        <if test="resId != null">
+        #{resId,jdbcType=BIGINT},
+        </if>
+        <if test="roomId != null">
+        #{roomId,jdbcType=BIGINT},
+        </if>
+        <if test="orgId != null">
+        #{orgId,jdbcType=BIGINT},
+        </if>
+        <if test="state != null">
+        #{state,jdbcType=INTEGER},
+        </if>
+        <if test="createTime != null">
+        #{createTime},
+        </if>
+        <if test="remark != null">
+            #{remark},
+        </if>
+        <if test="action != null">
+            #{action},
+        </if>
+    </trim>
+  </insert>
+
+
+
+  <select id="selectByCondition" parameterType="map" resultMap="BaseResultMap">
+      SELECT
+      al.*, so. NAME orgName,
+      re. NAME resName,
+      r. NAME roomName,
+      re.org_id resOrgId,
+      resso. NAME resOrgName,
+      resr. NAME resRoomName
+      FROM
+      alarms_log al
+      LEFT JOIN sys_org so ON al.org_id = so.id
+      LEFT JOIN room r ON al.room_id = r.id
+      LEFT JOIN res re ON al.res_id = re.id
+      LEFT JOIN sys_org resso ON re.org_id = resso.id
+      LEFT JOIN room resr ON re.room_id = resr.id
+
+
+
+      <where>
+        <if test="data.state != null">
+            AND al.state = #{data.state}
+        </if>
+        <if test="data.action != null">
+            AND al.action = #{data.action}
+        </if>
+        <if test="data.orgId != null">
+            <if test="data.action == 0">
+                AND re.org_id = #{data.orgId}
+            </if>
+            <if test="data.action != 0">
+                AND (so.full_code like concat('%',#{fullCode},'%') OR re.org_id = #{data.orgId})
+            </if>
+        </if>
+        <!--<if test="data.res != null">
+          AND al.org_id = #{data.orgId}
+        </if>-->
+    </where>
+  GROUP BY res_id,org_id,room_id,action
+  </select>
+
+
+  <select id="selectWarningCountByUserId" resultType="int" parameterType="string">
+      SELECT
+          count(1)
+
+      FROM
+      alarms_log al
+      LEFT JOIN sys_org so ON al.org_id = so.id
+      LEFT JOIN room r ON al.room_id = r.id
+      LEFT JOIN res re ON al.res_id = re.id
+      LEFT JOIN sys_org resso ON re.org_id = resso.id
+      LEFT JOIN room resr ON re.room_id = resr.id
+
+      <where>
+              AND (al.org_id = #{value} OR re.org_id = #{value})
+          <!--<if test="data.res != null">
+            AND al.org_id = #{data.orgId}
+          </if>-->
+      </where>
+  </select>
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT
+      al.*, so. NAME orgName,
+      re. NAME resName,
+      r. NAME roomName,
+      re.org_id resOrgId,
+      resso. NAME resOrgName,
+      resr. NAME resRoomName
+      FROM
+      alarms_log al
+      LEFT JOIN sys_org so ON al.org_id = so.id
+      LEFT JOIN room r ON al.room_id = r.id
+      LEFT JOIN res re ON al.res_id = re.id
+      LEFT JOIN sys_org resso ON re.org_id = resso.id
+      LEFT JOIN room resr ON re.room_id = resr.id
+        <where>
+            <if test="data.resId != null">
+                AND al.res_id = #{data.resId}
+            </if>
+        </where>
+        order by create_time asc
+    </select>
+</mapper>

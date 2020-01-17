@@ -1,0 +1,137 @@
+package com.manage.idc.task.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.annotation.Operation;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.task.domain.*;
+import com.manage.idc.task.domain.export.AllocationTaskDescExportBase;
+import com.manage.idc.task.service.AllocationTaskService;
+import com.wuwenze.poi.ExcelKit;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/22 20:22
+ **/
+@Api(tags = "调拨任务")
+@RequestMapping("allocationTask")
+@RestController
+public class AllocationTaskController {
+    @Autowired
+    private AllocationTaskService allocationTaskService;
+    @RequestMapping("")
+    public ModelAndView allocationTaskIndex(ModelAndView modelAndView){
+        modelAndView.setViewName("task/allocationTask");
+        modelAndView.addObject("orgId", SessionUtil.getUser().getOrgId().toString());
+        return modelAndView;
+    }
+
+    @RequestMapping("toDesc")
+    public ModelAndView toDesc(ModelAndView modelAndView,String id){
+        modelAndView.setViewName("task/allocationTaskDesc");
+        modelAndView.addObject("id",id);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequiresPermissions("allocationTask:add")
+    @Operation(operation = "调拨任务添加")
+    @ApiOperation(value = "调拨任务添加", httpMethod = "POST")
+    public ResultResponse add(AllocationTask allocationTask) {
+        allocationTaskService.add(allocationTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequiresPermissions("allocationTask:delete")
+    @Operation(operation = "调拨任务删除")
+    @ApiOperation(value = "调拨任务删除", httpMethod = "POST")
+    public ResultResponse del(AllocationTask allocationTask) {
+        allocationTaskService.delete(allocationTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+    @RequestMapping(value = "/updateState", method = RequestMethod.POST)
+    @ApiOperation(value = "调拨任务状态变更", httpMethod = "POST")
+    @Operation(operation = "调拨任务状态变更")
+    public ResultResponse updateState(AllocationTask allocationTask) {
+        allocationTaskService.updateState(allocationTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    @RequestMapping(value = "/desc", method = RequestMethod.GET)
+    @ApiOperation(value = "调拨任务查看详情", httpMethod = "POST")
+    public ResultResponse desc(AllocationTask allocationTask, PageRequest pageRequest) {
+        PageInfo<AllocationTaskDesc> pageInfo =allocationTaskService.desc(allocationTask,pageRequest);
+         return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+    @GetMapping("/export")
+    @Operation(operation = "调拨任务详情导出")
+    @RequiresPermissions("allocationTask:export")
+    @ApiOperation(value = "调拨任务详情导出", httpMethod = "GET", response = ResultResponse.class)
+    public void export(AllocationTask allocationTask, HttpServletResponse response) {
+        List<AllocationTaskDesc> list = allocationTaskService.export(allocationTask);
+        ExcelKit.$Export(AllocationTaskDescExportBase.class, response).downXlsx(list, false);
+    }
+
+    @RequestMapping("getPage")
+    @ResponseBody
+    @ApiOperation(value = "盘点任务分页列表", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse getPage(AllocationTask allocationTask, PageRequest pageRequest) {
+        PageInfo<AllocationTask> pageInfo = allocationTaskService.getPage(allocationTask, pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+    //***********************************手持机盘点任务接口**************************************//
+    @PostMapping( value = "/app/addAllocationTask")
+    @ApiOperation(value = "app端新建借用任务")
+    public ResultResponse addBorrowTask(AllocationTask allocationTask) {
+        allocationTaskService.add(allocationTask);
+        return new ResultResponse().success();
+    }
+
+    @GetMapping(value = "/app/getAllocationTaskPage")
+    @ApiOperation(value = "app端获取调拨分页列表")
+    public ResultResponse getAllocationTaskPage(AllocationTask allocationTask, PageRequest pageRequest) {
+        PageInfo<AllocationTask> pageInfo = allocationTaskService.getAllocationTaskPage(allocationTask, pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+
+
+    @GetMapping(value = "/app/getAllocationTaskDesc")
+    @ApiOperation(value = "app端获取调拨任务详情")
+    public ResultResponse getAllocationTaskDesc(AllocationTaskDesc allocationTaskDesc) {
+        AllocationTask allocationTask = new AllocationTask();
+        allocationTask.setId(allocationTaskDesc.getTaskId());
+        AllocationTask allocationTask1 = allocationTaskService.getByTask(allocationTask);
+        List<AllocationTaskDesc> list =allocationTaskService.getAllocationTaskDesc(allocationTaskDesc);
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("orgDesc",allocationTask1);
+        objectObjectHashMap.put("taskDesc",list);
+        return new ResultResponse().success().data(objectObjectHashMap);
+    }
+
+    @RequestMapping(value = "/app/updateAllocationTaskState", method = RequestMethod.POST)
+    @ApiOperation(value = "调拨任务状态变更", httpMethod = "POST")
+    @Operation(operation = "调拨任务状态变更")
+    public ResultResponse updateAllocationTaskState(AllocationTask allocationTask) {
+        allocationTaskService.updateState(allocationTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+    //***********************************手持机盘点任务接口**************************************//
+
+}

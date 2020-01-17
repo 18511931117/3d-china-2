@@ -1,0 +1,394 @@
+// layui.use('table', function(){
+//     var table = layui.table;
+//
+//     table.render({
+//         elem: '#test'
+//         ,url:'/param/getPage'
+//         ,title: '用户数据表'
+//         ,cols: [[
+//             {type: 'checkbox'},
+//             {field: 'id', title: 'ID',}
+//             , {field: 'sysName', title: '参数名称'}
+//             , {field: 'sysKey', title: '参数编码',}
+//             , {field: 'sysValue', title: '参数值'}
+//             , {field: 'type', title: '参数类型'}
+//             , {field: 'isDel', title: '参数状态',templet: function(d){
+//                     var isQ=d.isDel;
+//                     if(isQ==0){
+//                         return "可用";
+//                     }else if(isQ==1){
+//                         return "不可用"
+//                     }
+//                 }}
+//             , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+//         ]]
+//         ,page: true
+//     });
+//
+//     //监听行工具事件
+//     table.on('tool(test)', function(obj){
+//         var data = obj.data;
+//         //console.log(obj)
+//         if(obj.event === 'del'){
+//             layer.confirm('真的删除行么', function(index){
+//                 $.ajax({
+//                     url:  "/param/delete",
+//                     type: "POST",
+//                     data:{
+//                         id:data.id
+//                     },
+//                     cache:false,
+//                     dataType: "json",
+//                     success: function(data){
+//                         layer.msg(data.message);
+//                         if(data.code=="0"){
+//                             setTimeout("javascript:location.href='/param'", 1500);
+//                         }
+//                     },
+//                     error:function(err){
+//                         layer.msg("服务器内部错误！")
+//                     }
+//                 });
+//             });
+//         } else if(obj.event === 'edit'){
+//             layer.open({
+//                 //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+//                 type:2,
+//                 title:"系统参数信息添加",
+//                 area: ['70%','70%'],
+//                 content:'/param/toParamEdit?id='+data.id,
+//             });
+//             setFormValue(data);//动态向表单赋值
+//         }
+//     });
+//     /**
+//      * 表单回显
+//      * @param data
+//      */
+//     function setFormValue(data){
+//         $("input[name=id]").attr("value",data.id);
+//         $("input[name=sysName]").val(data.sysName);
+//         $("input[name=sysKey]").val(data.sysKey);
+//         $("input[name=sysValue]").val(data.sysValue);
+//         $("input[name=type]").val(data.type);
+//     }
+//
+//     /**
+//      * 修改表单数据
+//      */
+    function editParam(){
+        var id =$("input[name=id]").val();
+        var sysName =$("input[name=sysName]").val();
+        if(sysName==""){
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请输入参数名称！！",
+            };
+            method.msg_layer(obj);
+            $("input[name=sysName]").focus()
+            return
+        }
+
+        var sysKey =$("input[name=sysKey]").val();
+
+        if(sysKey==""){
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请输入参数编码！！",
+            };
+            method.msg_layer(obj);
+            $("input[name=sysKey]").focus()
+            return
+        }
+
+        var sysValue=$("input[name=sysValue]").val();
+        if(sysValue==""){
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请输入参数值！！",
+            };
+            method.msg_layer(obj);
+            $("input[name=sysValue]").focus()
+            return
+        }
+        var type= $("input[name=type]").val();
+        if(type==""){
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请输入参数类型！！",
+            };
+            method.msg_layer(obj);
+            $("input[name=type]").focus()
+            return
+        }
+
+        $.ajax({
+            url:  ctxPath+"param/update",
+            type: "POST",
+            data:{
+                id:id,
+                sysName:sysName,
+                sysKey:sysKey,
+                sysValue:sysValue,
+                type:type
+            },
+            cache:false,
+            dataType: "json",
+            success: function(data){
+                var obj={
+                    type:"showSweetAlert",
+                    title:"提示",
+                    content:data.message,
+                };
+                $('.msg-layer-bg').css('display','none')
+                $('.msg-layer').css('display','none')
+                method.msg_layer(obj);
+                if(data.code=="0"){
+                    setTimeout(window.location.href=ctxPath+'param', 1500);
+                }
+            },
+            error:function(err){
+                layer.msg("服务器内部错误！")
+            }
+        });
+    }
+
+/**
+ * 添加
+ */
+function addParam(){
+    var sysName =$("input[name=sysName]").val();
+    if(sysName==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入参数名称！！",
+        };
+        method.msg_layer(obj);
+        $("input[name=sysName]").focus()
+        return
+    }
+
+    var sysKey =$("input[name=sysKey]").val();
+
+    if(sysKey==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入参数编码！！",
+        };
+        method.msg_layer(obj);
+        $("input[name=sysKey]").focus()
+        return
+    }
+
+    var sysValue=$("input[name=sysValue]").val();
+    if(sysValue==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入参数值！！",
+        };
+        method.msg_layer(obj);
+        $("input[name=sysValue]").focus()
+        return
+    }
+    var type= $("input[name=type]").val();
+    if(type==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入参数类型！！",
+        };
+        method.msg_layer(obj);
+        $("input[name=type]").focus()
+        return
+    }
+
+    $.ajax({
+        url:  ctxPath+"param/add",
+        type: "POST",
+        data:{
+            sysName:sysName,
+            sysKey:sysKey,
+            sysValue:sysValue,
+            type:type
+        },
+        cache:false,
+        dataType: "json",
+        success: function(data){
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:data.message,
+            };
+            if(data.code=="0"){
+                setTimeout(window.location.href=ctxPath+'param', 1500);
+            }
+        },
+        error:function(err){
+            layer.msg("服务器内部错误！")
+        }
+    });
+}
+//
+//     /**
+//      * 添加系统参数
+//      */
+//
+//    $("#addParam").on("click",function () {
+//        layer.open({
+//            //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+//            type:2,
+//            title:"系统参数信息添加",
+//            area: ['70%','70%'],
+//            content:'/param/toParamAdd',
+//        });
+//    })
+//
+//
+//
+// });
+/**
+ //      * 表单回显
+ //      * @param data
+ //      */
+    function setFormValue(data){
+        $('#formParam')[0].reset();
+        $("input[name=id]").attr("value",data.id);
+        $("input[name=sysName]").val(data.sysName);
+        $("input[name=sysKey]").val(data.sysKey);
+        $("input[name=sysValue]").val(data.sysValue);
+        $("input[name=type]").val(data.type);
+        $("#paramBtn").text("确认修改")
+        $("#paramBtn").val("edit")
+    }
+
+   $("#addParam").on("click",function () {
+       $('#formParam')[0].reset();
+       $("#myModal2").modal("show")
+       $("#paramBtn").text("确认添加")
+       $("#paramBtn").val("add")
+   })
+//确认添加
+$("#paramBtn").click(function () {
+    var flag =$("#paramBtn").val();
+    if (flag=='edit'){
+        editParam()
+    }else if(flag=='add'){
+        addParam()
+    }
+})
+
+$(function () {
+    function addFunctionAlty(value, row, index) {
+        var html=[]
+        $("#operateDiv").find("button").each(function(){
+            console.log(this.outerHTML)
+            html.push(this.outerHTML)
+        });
+        return html.join('')
+    }
+    window.operateEvents = {
+        // 编辑
+        'click #bind': function (e, value, row, index) {
+            setFormValue(row)
+            $("#myModal2").modal("show")
+        },
+        // 删除
+        'click #unbind': function (e, value, row, index) {
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"是否确认删除此数据?",
+                btn:["关闭","确定"],
+                callBack1:function () {
+                    console.log("取消")
+                },
+                callBack2:function () {
+                    $.ajax({
+                        url:  ctxPath+"param/delete",
+                        type: "POST",
+                        data:{
+                            id:row.id
+                        },
+                        cache:false,
+                        dataType: "json",
+                        success: function(data){
+                            //  alert(data.message);
+                            var obj={
+                                type:"showSweetAlert",
+                                title:"提示",
+                                content:data.message,
+                            };
+                            method.msg_layer(obj);
+                            if(data.code=="0"){
+                                setTimeout(window.location.href=ctxPath+'param', 1500);
+                            }
+                        },
+                        error:function(err){
+                            var obj={
+                                type:"showSweetAlert",
+                                title:"提示",
+                                content:'内部服务器错误',
+                            };
+                            method.msg_layer(obj);
+                        }
+                    });
+
+                },
+            };
+            method.msg_layer(obj);
+        }
+    };
+    $('#demo1').bootstrapTable({
+        url: ctxPath+'param/getPage',
+        method: 'GET',
+        uniqueId: 'id',                        // 绑定ID，不显示
+        striped: false,                         //是否显示行间隔色
+        cache: false,                          //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+        sortable: true,                        //是否启用排序
+        sidePagination: "server",              //分页方式：client客户端分页，server服务端分页（*）
+        undefinedText: '--',
+        strictSearch: true,
+        clickToSelect: true,                   // 点击选中行
+        pagination: true,                      //是否显示分页
+        pageNumber:1,                          //初始化加载第一页，默认第一页,并记录
+        pageSize:10,//每页显示的数量
+        pageList: [10, 20, 50, 100],//设置每页显示的数量
+        paginationPreText:"上一页",
+        paginationNextText:"下一页",
+        paginationLoop:false,
+        //得到查询的参数
+        queryParams : function (params) {
+            //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+            var temp = {
+                limit: params.limit,                         //页面大小
+                page: (params.offset / params.limit) + 1,   //页码
+                sort: params.sort,      //排序列名
+                sortOrder: params.order, //排位命令（desc，asc）
+                taskName: $("#queryTaskName").val(),
+                state:$("#state option:selected").val()
+            };
+            return temp;
+        },
+        columns:
+            [{checkbox: true,width: 50}
+                ,{field:'sysName', title: '参数名称'}
+                ,{field:'sysKey',title: '参数编码', }
+                ,{field:'sysValue', title: '参数值', }
+                ,{field:'type', title: '参数类型'}
+                ,{field:'createTime', title: '创建时间',formatter:function (value, row, index) {
+                    return date(value)
+                }}
+                ,{field:'updateTime', title: '更新时间',formatter:function (value, row, index) {
+                    return date(value)
+                }}
+                ,{field:'id', title: '操作',events: operateEvents,formatter: addFunctionAlty,width: 145}
+            ]
+    });
+})

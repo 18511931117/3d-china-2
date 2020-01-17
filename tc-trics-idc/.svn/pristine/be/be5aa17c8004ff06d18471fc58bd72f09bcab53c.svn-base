@@ -1,0 +1,112 @@
+/*
+layui.use('table', function(){
+    var table = layui.table;
+
+    table.render({
+        elem: '#test'
+        ,url:'/room/getPage'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'orgName', title: '机构'}
+            , {field: 'name', title: '机房名称',}
+            , {field: 'domain', title: '绑定域名'}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+
+        ]]
+        ,page: true
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+            });
+        } else if(obj.event === 'edit'){
+           location.href = ctxPath+'room/toEdit/'+data.id
+        }
+    });
+
+    $("button[name='search_btn']").on("click",function(){
+        refreshTable()
+    });
+
+    function refreshTable() {
+        table.reload("test",{
+            page: {
+                curr: 1 //重新从第 1 页开始
+            },
+            where: {
+                name: $(":input[name='name_search']").val(),
+            }
+        })
+    }
+});*/
+
+function getQuery(){
+    return null;
+}
+
+
+
+function updateModel(val) {
+    $.ajax({
+        url: ctxPath +"room/getPage?id="+val,
+        type:'get',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                feedBackVal($("#updateForm"),data.rows[0]);
+                $("#updateModeButton").click();
+            }
+        }
+    })
+}
+
+
+function del(val) {
+    if(confirm("是否确认删除该数据")){
+        $.ajax({
+            url: ctxPath +"room/delRoom/"+val,
+            type:'post',
+            //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+            success: function(data){
+                if(data.code = '0'){
+                    alert("删除成功");
+                    refreshfTable($("#test"),'1');
+                }else{
+                    alert("删除失败!")
+                }
+            }
+        })
+    }
+}
+
+
+
+$(function () {
+
+    loadRegione("regionId");
+
+    function addFunctionAlty(value, row, index) {
+        return [
+            '<button id="unbind" type="button" class="btn bg-yellow table-btn" onclick="updateModel(&apos;'+value+'&apos;)">编辑</button>',
+            '<button id="unbind" type="button" class="btn bg-bold table-btn" onclick="del(&apos;'+value+'&apos;)">删除</button>',
+        ].join('');
+    }
+
+
+    var columns =  [
+        {checkbox: true,width: 50}
+        , {field: 'orgName', title: '机构'}
+        , {field: 'name', title: '机房名称',}
+        , {field: 'domain', title: '绑定域名'}
+        ,{field:'id', title: '操作',formatter: addFunctionAlty}
+    ];
+    loadTable($('#test'),columns,ctxPath+'room/getPage', getQuery);
+})
+
+

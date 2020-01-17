@@ -1,0 +1,44 @@
+package com.manage.idc.log.domain;
+
+import com.manage.idc.common.entiy.BaseEntity;
+import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+* Created by Mybatis Generator on 2019/11/07
+*/
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class AlarmsTaskLog extends BaseEntity {
+    private Long id;
+
+    private Long resId;
+
+    private Long roomId;
+
+    private Long orgId;
+
+    private Long userId;
+
+    private Integer state;
+
+    private String realmName;
+
+    private Date createTime;
+
+    private Long person;
+
+    private String remark;
+
+    private String feedback;
+
+    private  String orgName;
+    private  String userName;
+    private  String resName;
+    private  String roomName;
+}

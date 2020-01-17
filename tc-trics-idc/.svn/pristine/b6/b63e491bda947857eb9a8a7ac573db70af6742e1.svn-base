@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" href="../img/favicon.html">
+
+    <title>机架管理</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-reset.css" rel="stylesheet">
+    <!--external css-->
+    <link href="../assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/style-responsive.css" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" th:href="@{/3rd/layui/css/layui.css}"/>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    机架管理
+                </header>
+            </section>
+        </div>
+    </div>
+<div class="row">
+    <div class="col-sm-2">
+        <button type="button" class="btn btn-info"><a th:href="@{/rack/toAddRack}" style="color: #fff">添加机架</a></button>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            <label class="control-label col-sm-3" style="display: inline-block;height: 34px;line-height: 34px">所属机房</label>
+            <div class="col-sm-7">
+                <select class="form-control" name="roomSelect_search">
+                   <!-- <option>Guc01</option>
+                    <option>M2机房</option>
+                    <option>南京广电</option>
+                    <option>机房</option>
+                    <option>测试机房</option>-->
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            <label class="control-label col-sm-3" style="display: inline-block;height: 34px;line-height: 34px">机架名称</label>
+            <div class=" col-sm-8">
+                <input type="text" class="form-control" placeholder="请输入" name="name_search">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <button type="button" class="btn btn-info " name="search_btn"><a style="color: #fff" >搜索</a></button>
+    </div>
+
+</div>
+
+<!-- invoice end-->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel">
+            <table class="layui-hide" id="test" lay-filter="test"></table>
+            <script type="text/html" id="barDemo">
+                <a class="layui-btn layui-btn-xs" lay-event="edit" href="editjjia.html">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    ctxPath = /*[[@{/}]]*/ '';
+</script>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="../js/jquery.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/jquery.scrollTo.min.js"></script>
+<script src="../js/jquery.nicescroll.js" type="text/javascript"></script>
+
+
+<!--common script for all pages-->
+<script src="../js/common-scripts.js"></script>
+
+<script th:src="@{/3rd/layui/layui.js}"></script>
+<script th:inline="javascript" th:src="@{/pagejs/common/selectNode.js}"></script>
+<script th:inline="javascript" th:src="@{/pagejs/system/rack.js}"></script>
+
+<script>
+
+</script>
+</body>
+</html>

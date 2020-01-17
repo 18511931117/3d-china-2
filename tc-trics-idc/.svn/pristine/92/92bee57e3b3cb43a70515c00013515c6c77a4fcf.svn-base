@@ -1,0 +1,57 @@
+package com.manage.idc.common.exception;
+
+import com.manage.idc.common.entiy.ResultResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/15 19:57
+ **/
+@Slf4j
+@ControllerAdvice
+public class GlobalDefaultExceptionHandler {
+
+//    @ExceptionHandler(UnauthorizedException.class)
+//    @ResponseBody
+//    public ResultResponse defaultExceptionHandler(HttpServletRequest req, Exception e) {
+//        return new ResultResponse().code(HttpStatus.INTERNAL_SERVER_ERROR).message("对不起，你没有访问权限！");
+//    }
+    @ExceptionHandler(value = Exception.class)
+    public ModelAndView handleException(Exception e) {
+        log.error("系统错误", e);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("500");
+        return modelAndView;
+    }
+
+
+    @ExceptionHandler(value = IdcException.class)
+    @ResponseBody
+    public ResultResponse handleFebsException(IdcException e) {
+        log.error("系统错误", e);
+        return new ResultResponse().code(HttpStatus.INTERNAL_SERVER_ERROR).message(e.getMessage());
+    }
+
+    /**
+     * 登录异常
+      * @param e
+     * @return
+     */
+    @ExceptionHandler(value = LoginException.class)
+    @ResponseBody
+    public ResultResponse handleFebsException(LoginException e) {
+        log.error("登录错误", e);
+        return new ResultResponse().code(HttpStatus.INTERNAL_SERVER_ERROR).message(e.getMessage());
+    }
+
+
+}

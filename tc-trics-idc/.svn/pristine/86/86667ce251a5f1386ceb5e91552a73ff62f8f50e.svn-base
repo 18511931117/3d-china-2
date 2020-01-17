@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" style="border: none;background: none">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" th:href="@{/img/favicon.html}">
+
+    <title>机房管理</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-reset.css}" rel="stylesheet">
+
+    <link th:href="@{/css/layer-animate.css}" rel="stylesheet">
+
+    <!--external css-->
+    <link th:href="@{/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+<!--    <script th:src="@{/js/html5shiv.js}"></script>
+    <script th:src="@{/js/respond.min.js}"></script>-->
+  </head>
+
+  <body style="border: none;background: none" class="gdt">
+  <div id="operateDiv" style="display: none;">
+      <shiro:hasPermission name="room:updateRoom">
+          <!-- <button id="unbind" type="button" class="btn bg-yellow table-btn" onclick="updateModel('+value+')">编辑</button>-->
+          <p id="editFlag">1</p>
+      </shiro:hasPermission>
+      <shiro:hasPermission name="room:delRoom">
+          <!-- <button id="unbind1" type="button" class="btn bg-bold table-btn del" onclick="del('+value+')">删除</button>-->
+          <p id="delFlag">1</p>
+      </shiro:hasPermission>
+  </div>
+    <div class="row row-top">
+            <div class="col-lg-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        <span class="tab-o">系统管理</span><b style="color: #00C6FF"> > </b><span class="tab-er">机房管理</span>
+                    </header>
+                </section>
+            </div>
+    </div>
+    <div class="table-warp">
+        <div class="row row-pading">
+            <div class="col-sm-6">
+                <button type="button" class="btn bg-yellow" data-toggle="modal" data-target="#addModel">添加机房</button>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group col-sm-8" style="margin-bottom: 0">
+                    <label class="control-label col-sm-5" style="display: inline-block;height: 34px;line-height: 34px;text-align: center">机房名称</label>
+                    <div class=" col-sm-7">
+                        <input type="text" name="name_search" class="form-control verification" placeholder="请输入">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <button type="button" name="search_btn" class="btn bg-yellow"><a style="color: #fff">搜索</a></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <section class="panel1">
+                    <table id="test" lay-filter="test"></table>
+                    <!--<script type="text/html" id="barDemo">
+                        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                    </script>-->
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+<section>
+    <button type="button" class="btn bg-yellow" id="updateModeButton" style="display: none" data-toggle="modal" data-target="#content3814"></button>
+    <div class="modal fade" id="content3814" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 90%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        编辑机房
+                    </h4>
+                </div>
+                <form id="updateForm" form class="modal-body">
+                    <div class="row">
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">机房名称</label>
+                            <input type="text" class="form-control verification" name="name" placeholder="请输入机房名称">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">告警地址</label>
+                            <input type="text" class="form-control verification" name="domain" placeholder="请输入告警地址">
+                        </div>
+                       <!-- <div class="form-group">
+                            <label class="col-sm-2 control-label">所属行政区域</label>
+                            <select class="selectpicker show-tick form-control verification" data-live-search="true"  name="regionId"  placeholder="请选择所属行政区域">
+                            </select>
+                        </div>-->
+                        <div class="form-group">
+                            <label class="col-sm-12 control-label">请选择机构</label>
+                            <input type="hidden" name="orgId"  placeholder="请选择机构" class="verification">
+                            <div name="orgSelectTree" class=""></div>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" name="close">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" name="commit_btn">
+                        确认编辑
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+
+
+    <div class="modal fade" id="addModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 90%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        添加机房
+                    </h4>
+                </div>
+                <form id="addForm" form class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">机房名称</label>
+                            <input type="text" class="form-control verification" name="name" placeholder="请输入机房名称">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">告警地址</label>
+                            <input type="text" class="form-control verification" name="domain" placeholder="请输入告警地址">
+                        </div>
+                        <!--<div class="form-group">
+                            <label class="col-sm-2 control-label">所属行政区域</label>
+                            <select class="selectpicker show-tick form-control verification" data-live-search="true"  name="regionId" placeholder="请选择所属行政区域">
+                            </select>
+                        </div>-->
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">请选择机构</label>
+                            <div class="form-group">
+                                <input type="hidden" name="orgId" placeholder="请选择机构" class="verification">
+                                <div name="orgSelectTree"></div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" name="close">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" name="add_btn">
+                        确认添加
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</section>
+
+
+        <script type="text/javascript" th:inline="javascript">
+      ctxPath = /*[[@{/}]]*/ '';
+    </script>
+    <script th:src="@{/js/method.js}"></script>
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+<!--    <script th:src="@{/js/jquery.scrollTo.min.js}"></script>-->
+<!--    <script th:src="@{/js/jquery.nicescroll.js}" type="text/javascript"></script>-->
+    <!--common script for all pages-->
+<!--    <script th:src="@{/js/common-scripts.js}"></script>-->
+    <link rel="stylesheet" th:href="@{/3rd/bootstrap-table/bootstrap-table.css}" >
+    <script th:src="@{/3rd/bootstrap-table/bootstrap-table.js}"></script>
+    <script th:src="@{/3rd/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+    <script th:src="@{/3rd/bootstrap-treeview.js}"></script>
+
+
+
+    <link rel="stylesheet" th:href="@{/3rd/bootstrap-table/select/bootstrap-select.min.css}">
+    <script th:src="@{/3rd/bootstrap-table/select/bootstrap-select.min.js}"></script>
+
+
+<!--    <script th:src="@{/3rd/bootstrap-treeview.js}"></script>-->
+
+    <script th:inline="javascript" th:src="@{/pagejs/common/tableLoad.js}"></script>
+    <script th:inline="javascript" th:src="@{/pagejs/common/selectNode.js}"></script>
+    <script th:inline="javascript" th:src="@{/pagejs/common/util.js}"></script>
+    <script th:inline="javascript" th:src="@{/pagejs/system/room.js}"></script>
+  </body>
+</html>

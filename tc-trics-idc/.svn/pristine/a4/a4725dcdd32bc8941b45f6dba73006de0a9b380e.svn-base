@@ -1,0 +1,83 @@
+package com.manage.idc.system.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.system.domain.SysMenu;
+import com.manage.idc.system.domain.SysRole;
+import com.manage.idc.system.domain.SysUser;
+import com.manage.idc.system.service.SysRoleService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+
+/**
+ * @Description 角色管理
+ * @Author lyq_j
+ * @DATE 2019/10/16 9:53
+ **/
+@RequestMapping("/role")
+@Controller
+@Api(tags = "角色管理")
+public class SysRoleController {
+
+    @Autowired
+    private SysRoleService sysRoleService;
+
+    @RequestMapping("")
+    public ModelAndView roleIdex(ModelAndView model){
+        model.setViewName("system/role");
+        return model;
+    }
+    @RequestMapping("getPage")
+    @ResponseBody
+    @ApiOperation(value = "获取用户分页列表", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getPage(SysRole sysRole, PageRequest pageRequest){
+        PageInfo<SysRole> pageInfo = sysRoleService.getPage(sysRole,pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequiresPermissions("role:add")
+    @ApiOperation(value = "角色添加", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse add(SysRole sysRole) {
+        sysRoleService.createRole(sysRole);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequiresPermissions("role:delete")
+    @ApiOperation(value = "角色删除", httpMethod = "GET")
+    @ResponseBody
+    public ResultResponse deleteRole(SysRole sysRole) {
+        sysRoleService.deleteRole(sysRole);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequiresPermissions("role:update")
+    @ApiOperation(value = "角色修改", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse update(SysRole sysRole) {
+        sysRoleService.updateRole(sysRole);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    @GetMapping(value = "/getRole")
+    @ApiOperation(value = "获取角色下拉框")
+    @ResponseBody
+    public ResultResponse getRole(SysRole sysRole) {
+        List<SysRole> list= sysRoleService.getRole(sysRole);
+        return DataSetUtile.setSuccessResult(list);
+    }
+
+}

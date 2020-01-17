@@ -1,0 +1,75 @@
+package com.manage.idc.task.domain;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.manage.idc.common.converter.TaskStateConverter;
+import com.manage.idc.task.domain.export.AllocationTaskDescExportBase;
+import com.wuwenze.poi.annotation.Excel;
+import com.wuwenze.poi.annotation.ExcelField;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.Date;
+import lombok.Data;
+
+/**
+ * allocation_task_desc
+ * @author 
+ */
+@Data
+@ApiModel("调拨任务详情")
+public class AllocationTaskDesc extends AllocationTaskDescExportBase implements Serializable {
+    @JsonSerialize(using= ToStringSerializer.class)
+    private Long id;
+
+    /**
+     * 设备id
+     */
+    @ApiModelProperty("设备id")
+    private Long resId;
+
+    /**
+     * 机房id
+     */
+    @ApiModelProperty("机房id")
+    private Long roomId;
+
+    @ApiModelProperty("标签id")
+    private Long labelId;
+    /**
+     * 0-待执行,2-执行中,8-执行完毕
+     */
+    @ApiModelProperty("0-待执行,2-执行中,8-执行完毕")
+    @ExcelField(value = "状态",writeConverter = TaskStateConverter.class)
+    private Integer state;
+
+    /**
+     * 创建时间
+     */
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+
+    /**
+     * 调拨任务ID
+     */
+    @ApiModelProperty("调拨任务ID")
+    private Long taskId;
+
+    private Integer isDel;
+    /**
+     * app端搜索
+     */
+    private String queryName;
+
+    private static final long serialVersionUID = 1L;
+
+
+    private Long startRoom;
+    private Long endRoom;
+
+    private Long startOrgId;
+    private Long endOrgId;
+
+
+    private String taskName;
+}

@@ -1,0 +1,27 @@
+package com.manage.idc.task.service;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.task.domain.RepairTask;
+import com.manage.idc.task.domain.RepairTaskDesc;
+import com.manage.idc.task.domain.ScrapTask;
+
+import java.util.List;
+
+public interface RepairTaskService {
+    void add(RepairTask repairTask);
+
+    void delete(RepairTask repairTask);
+
+    PageInfo<RepairTaskDesc> desc(RepairTask repairTask,PageRequest pageRequest);
+
+    List<RepairTaskDesc> export(RepairTask repairTask);
+
+    PageInfo<RepairTask> getPage(RepairTask repairTask, PageRequest pageRequest);
+
+    void updateState(RepairTask repairTask);
+
+    PageInfo<RepairTask> getRepairTaskPage(RepairTask repairTask, PageRequest pageRequest);
+
+    List<RepairTaskDesc> getRepairTaskDesc(RepairTaskDesc repairTask);
+}

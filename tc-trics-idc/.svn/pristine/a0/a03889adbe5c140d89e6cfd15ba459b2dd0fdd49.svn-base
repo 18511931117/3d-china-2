@@ -1,0 +1,251 @@
+/*
+var editObj=null,ptable=null,treeGrid=null,tableId='treeTable',layer=null;
+layui.config({
+    base: '../js/design/extend/'
+}).extend({
+    treeGrid:'treeGrid'
+}).use(['jquery','treeGrid','layer'], function(){
+    var $=layui.jquery;
+    treeGrid = layui.treeGrid;//很重要
+    layer=layui.layer;
+    ptable=treeGrid.render({
+        id:tableId
+        ,elem: '#'+tableId
+        ,url: ctxPath+'resType/getList'
+        ,cellMinWidth: 100
+        ,idField:'id'//必須字段
+        ,treeId:'id'//树形id字段名称
+        ,treeUpId:'pid'//树形父id字段名称
+        ,treeShowName:'resTypeName'//以树形式显示的字段
+        ,heightRemove:[".dHead",10]//不计算的高度,表格设定的是固定高度，此项不生效
+        ,height:'400px'
+        ,isFilter:false
+        ,iconOpen:false//是否显示图标【默认显示】
+        ,isOpenDefault:true//节点默认是展开还是折叠【默认展开】
+        ,loading:true
+        ,method:'get'
+        ,isPage:false
+        ,cols: [[
+             {type:'checkbox',sort:true}
+            ,{field:'level', title: '级别'}
+            ,{field:'resTypeName', title: '分类名称'}
+            ,{field:'fullCode', title: '编号'}
+            ,{field:'pid', title: 'pid',edit:'text'}
+            ,{width:100,title: '操作', align:'center'
+                ,templet: function(d){
+                    var html='';
+                    var addBtn='<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add">添加</a>';
+                    var delBtn='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+                    var editBtn='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="edit">编辑</a>';
+                    return editBtn+addBtn+delBtn;
+                }
+            }
+        ]]
+    });
+
+    treeGrid.on('tool('+tableId+')',function (obj) {
+        if(obj.event === 'del'){//删除行
+            del(obj);
+        }else if(obj.event==="add"){//添加行
+            layer.open({
+                //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                type:2,
+                title:"添加设备分类",
+                area: ['80%','80%'],
+                content: ctxPath+'resType/toAddResType?id='+obj.data.id+'&fullCode='+obj.data.fullCode+'&resTypeName='+obj.data.resTypeName+'&level='+obj.data.level
+                ,btn: ['保存','关闭']
+                ,yes: function(index, layero){
+                    var body = layui.layer.getChildFrame('body', index);
+                    body.find("#add").find(":input[name='fullCode']").val(body.find("#add").find(":input[name='fullCode']").val() + "_" + body.find("#add").find(":input[name='resTypeCode']").val())
+                    $.ajax({
+                        url: ctxPath +"resType/addResType",
+                        type:'post',
+                        data:body.find("#add").serialize(),
+                        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+                        success: function(data){
+                            if(data.code = '0'){
+                                layui.layer.msg("添加成功");
+                                layui.layer.close(index);
+                            }else{
+                                layui.layer.error("添加失败!")
+                            }
+                        }
+                    })
+                }
+                ,btn2: function(index, layero){
+                    layui.layer.close(index);
+                }
+            });
+        }else if(obj.event==="edit"){//编辑行
+            layer.open({
+                //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                type:2,
+                title:"修改设备分类",
+                area: ['80%','80%'],
+                content: ctxPath+'resType/toEdit/'+obj.data.id
+                ,btn: ['保存','关闭']
+                ,yes: function(index, layero){
+                    var body = layui.layer.getChildFrame('body', index);
+                    body.find("#add").find(":input[name='fullCode']").val(body.find("#add").find(":input[name='fullCode']").val() + "_" + body.find("#add").find(":input[name='resTypeCode']").val())
+                    $.ajax({
+                        url: ctxPath +"resType/updateResType",
+                        type:'post',
+                        data:body.find("#add").serialize(),
+                        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+                        success: function(data){
+                            if(data.code = '0'){
+                                layui.layer.msg("编辑成功");
+                                layui.layer.close(index);
+                            }else{
+                                layui.layer.error("编辑失败!")
+                            }
+                        }
+                    })
+                }
+                ,btn2: function(index, layero){
+                    layui.layer.close(index);
+                }
+            });
+        }
+    });
+});
+
+function del(obj) {
+    layer.confirm("你确定删除数据吗？如果存在下级节点则一并删除，此操作不能撤销！", {icon: 3, title:'提示'},
+        function(index){//确定回调
+            $.ajax({
+                url: ctxPath +"resType/delResType/"+obj.data.id,
+                type:'post',
+                //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+                success: function(data){
+                    if(data.code = '0'){
+                        layui.layer.msg("删除成功");
+                    }else{
+                        layui.layer.error("删除失败!")
+                    }
+                }
+            })
+            layer.close(index);
+        },function (index) {//取消回调
+            layer.close(index);
+        }
+    );
+}
+
+
+
+*/
+
+
+$(function () {
+    var $table = $('#table');
+    var data = JSON.parse(
+        '[{"id":"yonghu","pid":"0","name":"用户管理"},' +
+        '{"id":"xitong","pid":"0","name":"系统管理"},' +
+        '{"id":"yonghu1","pid":"yonghu","name":"新增用户"},' +
+        '{"id":"yonghu2","pid":"yonghu","name":"修改用户"},' +
+        '{"id":"yonghu3","pid":"yonghu","name":"删除用户"}]');
+
+    $(function() {
+        $table.bootstrapTable({
+            data:data,
+            idField: 'id',
+            dataType:'jsonp',
+            columns: [
+                { field: 'name',  title: '名称' },
+            ],
+
+
+            //在哪一列展开树形
+            treeShowField: 'name',
+            //指定父id列
+            parentIdField: 'pid',
+
+            onResetView: function(data) {
+                //console.log('load');
+                $table.treegrid({
+                    initialState: 'collapsed',// 所有节点都折叠
+                    // initialState: 'expanded',// 所有节点都展开，默认展开
+                    treeColumn: 0,
+                    // expanderExpandedClass: 'glyphicon glyphicon-minus',  //图标样式
+                    // expanderCollapsedClass: 'glyphicon glyphicon-plus',
+                    onChange: function() {
+                        $table.bootstrapTable('resetWidth');
+                    }
+                });
+
+                //只展开树形的第一级节点
+                $table.treegrid('getRootNodes').treegrid('expand');
+
+            },
+        });
+    });
+   /* $.ajax({
+        url: ctxPath +"resType/getList",
+        type:'get',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                var data = data.rows;
+                var $table = $('#table');
+                $table.bootstrapTable({
+                    data:data,
+                    idField: 'id',
+                    columns: [
+                        {checkbox: true,width: 50}
+                        ,{field:'id', title: 'id'}
+                        ,{field:'level', title: '级别'}
+                        ,{field:'resTypeName', title: '分类名称'}
+                        ,{field:'fullCode', title: '编号'}
+                        ,{field:'pid', title: 'pid'}
+                    ],
+
+                    // bootstrap-table-treegrid.js 插件配置 -- start
+
+                    //在哪一列展开树形
+                    treeShowField: 'name',
+                    //指定父id列
+                    parentIdField: 'pid',
+                    onResetView: function(data) {
+                        //console.log('load');
+                        $("#treeTable").treegrid({
+                            initialState: 'collapsed',// 所有节点都折叠
+                            // initialState: 'expanded',// 所有节点都展开，默认展开
+                            treeColumn: 1,
+                            // expanderExpandedClass: 'glyphicon glyphicon-minus',  //图标样式
+                            // expanderCollapsedClass: 'glyphicon glyphicon-plus',
+                            onChange: function() {
+                                $table.bootstrapTable('resetWidth');
+                            }
+                        });
+
+                        //只展开树形的第一级节点
+                        $table.treegrid('getRootNodes').treegrid('expand');
+
+                    },
+                    onCheck:function(row){
+                        var datas = $("#treeTable").bootstrapTable('getData');
+                        // 勾选子类
+                        selectChilds(datas,row,"id","pid",true);
+
+                        // 勾选父类
+                        selectParentChecked(datas,row,"id","pid")
+
+                        // 刷新数据
+                        $table.bootstrapTable('load', datas);
+                    },
+
+                    onUncheck:function(row){
+                        var datas = $table.bootstrapTable('getData');
+                        selectChilds(datas,row,"id","pid",false);
+                        $table.bootstrapTable('load', datas);
+                    },
+                    // bootstrap-table-treetreegrid.js 插件配置 -- end
+                });
+            }
+        }
+    })*/
+
+
+
+})

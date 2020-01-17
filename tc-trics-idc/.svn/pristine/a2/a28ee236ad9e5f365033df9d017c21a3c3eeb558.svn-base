@@ -1,0 +1,271 @@
+$(function () {
+    function addFunctionAlty(value, row, index) {
+        return [
+            '<button id="bind" type="button" class="btn bg-yellow table-btn">详情</button>',
+            '<button id="unbind" type="button" class="btn bg-yellow table-btn">编辑</button>',
+            '<button id="unbind" type="button" class="btn bg-bold table-btn">删除</button>',
+            '<button id="unbind" type="button" class="btn bg-bold table-btn">解绑</button>',
+        ].join('');
+    }
+
+    function getQuery () {
+        var data = $("#formTestFilter").serializeObject();
+        var index = 0;
+        $("#formTestFilter").find(".ext").each(function () {
+            data['resExts[' + index +'].itemCode'] = $(this).attr("name");
+            data['resExts[' + index +'].itemValue'] = $(this).val();
+            index++;
+        });
+        data['isBind'] = '1';
+        console.log(data);
+        return data;
+    };
+
+
+    var columns = [
+        {checkbox: true,width: 50}
+        , {field: 'assetId', title: '资产编号'}
+        , {field: 'name', title: '设备名称',}
+        , {field: 'resTypeName', title: '设备分类'}
+        , {field: 'roomName', title: '机房'}
+        , {field: 'barcode', title: '标签编号'}
+        , {field: 'isPrinted', title: '状态',
+            formatter: function (value, row, index) {
+                if (value == '0') {
+                    return "未打印";
+                } else if('1') {
+                    return "已打印";
+                }else{
+                    return "";
+                }
+            }
+        }
+        ,{field:'id', title: '操作',formatter: addFunctionAlty}
+    ];
+
+
+    loadTable($('#pcTable'),columns,ctxPath+'device/getDevicePage', getQuery());
+
+    loadTable($('#phoneTable'),columns,ctxPath+'device/getDevicePage', getQuery());
+
+
+    $("button[name='query_button']").click(function () {
+        if($("li[class='active']").find("a").attr("href") == '#home'){
+            refreshfTable($("#pcTable"),'1',getQuery());
+            $("#openFilter").find("[name='close']").click();
+        }else{
+            refreshfTable($("#phoneTable"),'1',getQuery());
+            $("#openFilter").find("[name='close']").click();
+        }
+    })
+
+
+
+    $.get(
+        ctxPath +"resExtCfg/getList",
+        {'resTypeCode':'DEV'},
+        function(data){
+            var ele = $("#queryRow");
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    var str = "<div class='form-group col-sm-2'>" +
+                        "  <label class=''>"+obj.itemName+"</label>" +
+                        "  <input type='text'  name='"+obj.itemCode+"' class='form-control' lay-verify='title' placeholder="+obj.itemName+">" +
+                        "</div>";
+                    ele.append(str);
+                }
+            }
+        })
+
+
+    loadRoomSelect("roomId");
+    loadDevTypeSelect("resTypeCode");
+    loadDevStatus("status");
+    //loadOrgTree("orgSelectTree");
+    $("#myModal").find("select[name='roomId']").change(function () {
+        loadRackSelect("rackId",$(this).val(),"myModal");
+    })
+    $("#formTestFilter").find("select[name='roomId']").change(function () {
+        loadRackSelect("rackId",$(this).val(),"formTestFilter");
+    })
+})
+
+
+//knob
+$(".knob").knob();
+/*layui.use('table', function(){
+    var table = layui.table;
+    table.render({
+        elem: '#pcTable'
+        ,url: ctxPath+'device/getDevicePage'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'assetId', title: '资产编号'}
+            , {field: 'name', title: '设备名称',}
+            , {field: 'resTypeName', title: '设备分类'}
+            , {field: 'roomName', title: '机房'}
+            , {field: 'barcode', title: '标签编号'}
+            , {field: 'isPrinted', title: '状态', templet: function (d) {
+                    if(d.isPrinted == '0' ){
+                        return "未打印"
+                    }else if(d.isPrinted == '1'){
+                        return "已打印"
+                    }else{
+                        return ""
+                    }}}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#button'}
+        ]]
+        ,page: true
+        ,where:{
+            'isBind':'1'
+        }
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'print'){
+            Print('#wrap', {
+                onStart: function () {
+                    console.log('onStart', new Date())
+                },
+                onEnd: function () {
+                    console.log('onEnd', new Date())
+                }
+            })
+        }else if(obj.event === 'confirm'){
+            $.post(
+                ctxPath +"label/updateByTid",
+                {'tid':data.tid,'isPasted':'1'},
+                function(data){
+                    if(data.code == '0') {
+                        layer.msg("操作成功!");
+                        refreshTable();
+                    }else{
+                        layer.error("操作失败!");
+                    }
+                }
+            )
+        }
+    });
+
+    table.render({
+        elem: '#phoneTable'
+        ,url: ctxPath+'device/getDevicePage'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'assetId', title: '资产编号'}
+            , {field: 'name', title: '设备名称',}
+            , {field: 'resTypeName', title: '设备分类'}
+            , {field: 'roomName', title: '机房'}
+            , {field: 'barcode', title: '标签编号'}
+            , {field: 'isPrinted', title: '状态', templet: function (d) {
+                    if(d.isPrinted == '0' ){
+                        return "未打印"
+                    }else if(d.isPrinted == '1'){
+                        return "已打印"
+                    }else{
+                        return ""
+                    }}}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#button'}
+        ]]
+        ,page: true
+        ,where:{
+            'isBind':'1'
+        }
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'print'){
+            Print('#wrap', {
+                onStart: function () {
+                    console.log('onStart', new Date())
+                },
+                onEnd: function () {
+                    console.log('onEnd', new Date())
+                }
+            })
+        } else if(obj.event === 'confirm'){
+            $.post(
+                ctxPath +"label/updateByTid",
+                {'tid':data.tid,'isPasted':'1'},
+                function(data){
+                    if(data.code == '0') {
+                        layer.msg("操作成功!");
+                        refreshTable();
+                    }else{
+                        layer.error("操作失败!");
+                    }
+                }
+            )
+        }
+    });
+
+
+
+
+
+    function refreshTablePc() {
+        var data = $("#formTestFilter").serializeObject();
+        var index = 0;
+        $("#formTestFilter").find(".ext").each(function () {
+            data['resExts[' + index +'].itemCode'] = $(this).attr("name");
+            data['resExts[' + index +'].itemValue'] = $(this).val();
+            index++;
+        });
+        table.reload("pcTable",{
+            page: {
+                curr: 1 //重新从第 1 页开始
+            },
+            where: data
+        });
+        $("#openFilter").find("#close").click();
+    }
+
+
+    $("button[name='query_button']").click(function () {
+        if($("li[class='active']").find("a").attr("href") == '#home'){
+            refreshTablePc();
+        }else{
+            refreshTablePhone();
+        }
+    })
+
+
+    $("button[name='pc_export_button']").click(function () {
+        var checkStatus = table.checkStatus('pcTable');
+        if(checkStatus.data.length == 0){
+            layui.layer.msg("至少选择一条信息!");
+            return false
+        }
+        for (var i = 0; i< checkStatus.data.length;i++){
+            $("#exportForm").append("<input type='hidden' name='ids' value='"+checkStatus.data[i].id+"'>");
+        }
+        $("#exportForm").submit();
+        $("#exportForm").html("");
+    })
+
+    $("button[name='phone_export_button']").click(function () {
+        var checkStatus = table.checkStatus('phoneTable');
+        if(checkStatus.data.length == 0){
+            layui.layer.msg("至少选择一条信息!");
+            return false
+        }
+        for (var i = 0; i< checkStatus.data.length;i++){
+            $("#exportForm").append("<input type='hidden' name='ids' value='"+checkStatus.data[i].id+"'>");
+        }
+        $("#exportForm").submit();
+        $("#exportForm").html("");
+    })
+});
+
+
+layui.use('table', function(){
+    var table = layui.table;
+
+});*/

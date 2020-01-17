@@ -1,0 +1,181 @@
+package com.manage.idc.task.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.enums.TaskState;
+import com.manage.idc.common.enums.TaskType;
+import com.manage.idc.common.exception.IdcException;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.device.domain.Res;
+import com.manage.idc.device.mapper.ResMapper;
+import com.manage.idc.log.domain.ScrapTaskLog;
+import com.manage.idc.log.mapper.ScrapTaskLogMapper;
+import com.manage.idc.system.domain.Label;
+import com.manage.idc.system.mapper.LabelMapper;
+import com.manage.idc.task.domain.RepairTaskDesc;
+import com.manage.idc.task.domain.ScrapTask;
+import com.manage.idc.task.domain.ScrapTaskDesc;
+import com.manage.idc.task.mapper.ScrapTaskDescMapper;
+import com.manage.idc.task.mapper.ScrapTaskMapper;
+import com.manage.idc.task.service.ScrapTaskService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.sound.midi.Soundbank;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/24 14:42
+ **/
+@Service
+@Transactional
+public class ScrapTaskServiceImpl extends BaseTaskServiceImpl implements ScrapTaskService {
+    @Autowired
+    private ScrapTaskMapper scrapTaskMapper;
+    @Autowired
+    private ResMapper resMapper;
+    @Autowired
+    private ScrapTaskDescMapper scrapTaskDescMapper;
+    @Autowired
+    private LabelMapper labelMapper;
+    @Autowired
+    private ScrapTaskLogMapper scrapTaskLogMapper;
+
+    @Override
+    public void updateState(ScrapTask scrapTask) {
+        //更新任务状态
+        scrapTask.setState(TaskState.SUCCESS_TASK.getState());
+        scrapTaskMapper.updateByPrimaryKeySelective(scrapTask);
+        //更新任务详情状态
+        ScrapTaskDesc scrapTaskDesc = new ScrapTaskDesc();
+        scrapTaskDesc.setTaskId(scrapTask.getId());
+        scrapTaskDesc.setState(scrapTask.getState());
+        scrapTaskDescMapper.updateByTaskId(scrapTaskDesc);
+        //任务完成后保存到 盘点任务日志表中
+        if(scrapTask.getState()==TaskState.SUCCESS_TASK.getState()){
+            ScrapTask scrapTasks = scrapTaskMapper.selectByPrimaryKey(scrapTask.getId());
+            ScrapTaskLog scrapTaskLog = new ScrapTaskLog();
+            scrapTaskLog.setId(IdGen.getUUId());
+            scrapTaskLog.setTaskName(scrapTasks.getTaskName());
+            scrapTaskLog.setTaskType(scrapTasks.getTaskType());
+            scrapTaskLog.setOrgId(scrapTasks.getOrgId());
+            scrapTaskLog.setStartTime(scrapTasks.getCreateTime());
+            scrapTaskLog.setEndTime(new Date());
+            scrapTaskLog.setState(scrapTasks.getState());
+            scrapTaskLog.setTaskId(scrapTasks.getId());
+            scrapTaskLog.setRemark(scrapTasks.getRemark());
+            scrapTaskLog.setPersonName("");
+            scrapTaskLogMapper.insertSelective(scrapTaskLog);
+////            //更新设备为报废状态
+//            List<Long> byTaskIdResIdList = scrapTaskDescMapper.getByTaskIdResIdList(scrapTaskDesc.getTaskId()); //查询任务中的所有设备
+//            //更新设备信息 报废是机房变更与设备状态变更
+//            byTaskIdResIdList.stream().forEach(resId-> super.updateResStatus(resId,"6"));
+        }
+    }
+
+    @Override
+    public void add(ScrapTask scrapTask) {
+        long allocationTaskId = IdGen.getUUId();
+        scrapTask.setId(allocationTaskId);
+        scrapTask.setCreateTime(new Date());
+        scrapTask.setTaskType(TaskType.RES_SCRAP.getType());
+        scrapTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        scrapTask.setState(TaskState.CONDUCT_TASK.getState());
+        scrapTaskMapper.insertSelective(scrapTask);
+
+        String resId = scrapTask.getResIds();
+        List<String> resIds = Arrays.asList(resId.split(","));
+        for (String resid : resIds) {
+            Res res = resMapper.selectByPrimaryKey(Long.parseLong(resid));
+            //添加设备维修详情记录
+            String tid = res.getTid();
+            //根据Tid查询标签
+            Label label = labelMapper.selectByTid(tid);
+            if(label==null){
+                throw  new IdcException("设备："+res.getName()+"  没有绑定标签！");
+            }
+            ScrapTaskDesc scrapTaskDesc = new ScrapTaskDesc();
+            scrapTaskDesc.setCreateTime(new Date());
+            scrapTaskDesc.setId(IdGen.getUUId());
+            scrapTaskDesc.setLabelId(label.getId());
+            scrapTaskDesc.setResId(res.getId());
+            scrapTaskDesc.setRoomId(res.getRoomId());
+            scrapTaskDesc.setState(TaskState.CONDUCT_TASK.getState());
+            scrapTaskDesc.setTaskId(allocationTaskId);
+            scrapTaskDesc.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+            scrapTaskDescMapper.insertSelective(scrapTaskDesc);
+            //更新设备状态为报废任务中
+            super.updateResStatus(Long.parseLong(resid),"6");
+        }
+    }
+
+    @Override
+    public void delete(ScrapTask scrapTask) {
+        scrapTask.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        scrapTaskMapper.updateByPrimaryKeySelective(scrapTask); //更新调拨任务
+        ScrapTaskDesc scrapTaskDesc = new ScrapTaskDesc();
+        scrapTaskDesc.setTaskId(scrapTask.getId());
+        scrapTaskDesc.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        scrapTaskDescMapper.updateByTaskId(scrapTaskDesc);
+
+        //撤销设备状态
+        List<Long> byTaskIdResIdList = scrapTaskDescMapper.getByTaskIdResIdList(scrapTaskDesc.getTaskId());
+        byTaskIdResIdList.stream().forEach(resId->super.updateResStatus(resId,"1"));
+
+    }
+
+    @Override
+    public PageInfo<ScrapTaskDesc> desc(ScrapTask scrapTask,PageRequest pageRequest) {
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        scrapTask.setOrgId(SessionUtil.getUser().getOrgId());
+        Long taskId = scrapTask.getId();
+        List<ScrapTaskDesc> checkTaskDescs = scrapTaskDescMapper.selectByCheckTaskId(taskId);
+        return new PageInfo<>(checkTaskDescs);
+    }
+
+    @Override
+    public List<ScrapTaskDesc> export(ScrapTask scrapTask) {
+        ArrayList<Long> ids = new ArrayList<>();
+        Arrays.stream(scrapTask.getIds().split(",")).forEach(id->
+                ids.add(Long.parseLong(id)));
+        return  scrapTaskDescMapper.selectByExport(ids);
+    }
+
+    @Override
+    public PageInfo<ScrapTask> getPage(ScrapTask scrapTask, PageRequest pageRequest) {
+        scrapTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);  //前段传入 过滤条件 默认是全部
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        scrapTask.setOrgId(SessionUtil.getUser().getOrgId());
+        List<ScrapTask> list = scrapTaskMapper.selectByCondition(DataSetUtile.setQueryMap(scrapTask,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<ScrapTask>(list);
+    }
+
+    @Override
+    public PageInfo<ScrapTask> getScrapTaskPage(ScrapTask scrapTask, PageRequest pageRequest) {
+        scrapTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<ScrapTask> list = scrapTaskMapper.getScrapTaskPage(DataSetUtile.setQueryMap(scrapTask,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<>(list);
+    }
+
+    @Override
+    public List<ScrapTaskDesc> getScrapTaskDesc(ScrapTaskDesc scrapTask) {
+        return scrapTaskDescMapper.getScrapTaskDesc(scrapTask);
+    }
+}

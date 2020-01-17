@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.cable.mapper.CableMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.cable.domain.Cable" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="is_printed" property="isPrinted" jdbcType="INTEGER" />
+    <result column="cable_type" property="cableType" jdbcType="VARCHAR" />
+    <result column="asset_id" property="assetId" jdbcType="VARCHAR" />
+    <result column="intf1_type" property="intf1Type" jdbcType="VARCHAR" />
+    <result column="org1_id" property="org1Id" jdbcType="BIGINT" />
+    <result column="floor1" property="floor1" jdbcType="VARCHAR" />
+    <result column="room1_id" property="room1Id" jdbcType="BIGINT" />
+    <result column="rack1_id" property="rack1Id" jdbcType="BIGINT" />
+    <result column="rack_u1" property="rackU1" jdbcType="VARCHAR" />
+    <result column="res1_id" property="res1Id" jdbcType="BIGINT" />
+    <result column="port1_id" property="port1Id" jdbcType="VARCHAR" />
+    <result column="floor2" property="floor2" jdbcType="VARCHAR" />
+    <result column="room2_id" property="room2Id" jdbcType="BIGINT" />
+    <result column="rack2_id" property="rack2Id" jdbcType="BIGINT" />
+    <result column="rack_u2" property="rackU2" jdbcType="VARCHAR" />
+    <result column="intf2_type" property="intf2Type" jdbcType="VARCHAR" />
+    <result column="org2_id" property="org2Id" jdbcType="BIGINT" />
+    <result column="res2_id" property="res2Id" jdbcType="BIGINT" />
+    <result column="port2_id" property="port2Id" jdbcType="VARCHAR" />
+    <result column="tid" property="tid" jdbcType="VARCHAR" />
+    <result column="serve_info" property="serveInfo" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="is_pasted" property="isPasted" jdbcType="INTEGER" />
+    <result column="tid2" property="tid2" jdbcType="VARCHAR" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="is_del" property="isDel" jdbcType="INTEGER" />
+  </resultMap>
+
+
+
+
+    <resultMap id="extResultMap" type="com.manage.idc.cable.domain.ext.CableExt" extends="BaseResultMap" >
+        <result column="room1Name" property="room1Name" jdbcType="VARCHAR" />
+        <result column="res1Name" property="res1Name" jdbcType="VARCHAR" />
+        <result column="room2Name" property="room2Name" jdbcType="VARCHAR" />
+        <result column="res2Name" property="res2Name" jdbcType="VARCHAR" />
+        <result column="res1Code" property="res1Code" jdbcType="VARCHAR" />
+        <result column="res2Code" property="res2Code" jdbcType="VARCHAR" />
+        <result column="barcode1" property="barcode1" jdbcType="VARCHAR" />
+        <result column="barcode2" property="barcode2" jdbcType="VARCHAR" />
+    </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from cable
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.manage.idc.cable.domain.Cable" >
+    insert into cable (
+        id,
+        cable_type,
+        asset_id,
+        intf1_type,
+        org1_id,
+        floor1,
+        room1_id,
+        rack1_id,
+        rack_u1,
+        res1_id,
+        port1_id,
+        floor2,
+        room2_id,
+        rack2_id,
+        rack_u2,
+        intf2_type,
+        org2_id,
+        res2_id,
+        port2_id,
+        <if test="tid != null and tid != ''">
+            tid,
+        </if>
+        serve_info
+        <if test="tid2 != null and tid2 != ''">
+          ,tid2
+        </if>
+
+        )
+    values (
+        #{id,jdbcType=INTEGER},
+        #{cableType,jdbcType=VARCHAR},
+        #{assetId,jdbcType=VARCHAR},
+        #{intf1Type,jdbcType=VARCHAR},
+        #{org1Id,jdbcType=BIGINT},
+        #{floor1,jdbcType=VARCHAR},
+        #{room1Id,jdbcType=BIGINT},
+        #{rack1Id,jdbcType=BIGINT},
+        #{rackU1,jdbcType=VARCHAR},
+        #{res1Id,jdbcType=BIGINT},
+        #{port1Id,jdbcType=VARCHAR},
+        #{floor2,jdbcType=VARCHAR},
+        #{room2Id,jdbcType=BIGINT},
+        #{rack2Id,jdbcType=BIGINT},
+        #{rackU2,jdbcType=VARCHAR},
+        #{intf2Type,jdbcType=VARCHAR},
+        #{org2Id,jdbcType=BIGINT},
+        #{res2Id,jdbcType=BIGINT},
+        #{port2Id,jdbcType=VARCHAR},
+        <if test="tid != null and tid != ''">
+            #{tid,jdbcType=VARCHAR},
+        </if>
+        #{serveInfo,jdbcType=VARCHAR}
+        <if test="tid2 != null and tid2 != ''">
+          ,#{tid2,jdbcType=VARCHAR}
+        </if>
+      )
+  </insert>
+
+
+  <insert id="batchInsert" parameterType="list" >
+    insert into cable (
+        id,
+        cable_type,
+        asset_id,
+        intf1_type,
+        org1_id,
+        floor1,
+        room1_id,
+        rack1_id,
+        rack_u1,
+        res1_id,
+        port1_id,
+        floor2,
+        room2_id,
+        rack2_id,
+        rack_u2,
+        intf2_type,
+        org2_id,
+        res2_id,
+        port2_id,
+        tid,
+        serve_info,
+        tid2
+        )
+    values
+    <foreach collection="list" item="item" separator=",">
+    (
+        #{item.id,jdbcType=INTEGER},
+        #{item.cableType,jdbcType=VARCHAR},
+        #{item.assetId,jdbcType=VARCHAR},
+        #{item.intf1Type,jdbcType=VARCHAR},
+        #{item.org1Id,jdbcType=BIGINT},
+        #{item.floor1,jdbcType=VARCHAR},
+        #{item.room1Id,jdbcType=BIGINT},
+        #{item.rack1Id,jdbcType=BIGINT},
+        #{item.rackU1,jdbcType=VARCHAR},
+        #{item.res1Id,jdbcType=BIGINT},
+        #{item.port1Id,jdbcType=VARCHAR},
+        #{item.floor2,jdbcType=VARCHAR},
+        #{item.room2Id,jdbcType=BIGINT},
+        #{item.rack2Id,jdbcType=BIGINT},
+        #{item.rackU2,jdbcType=VARCHAR},
+        #{item.intf2Type,jdbcType=VARCHAR},
+        #{item.org2Id,jdbcType=BIGINT},
+        #{item.res2Id,jdbcType=BIGINT},
+        #{item.port2Id,jdbcType=VARCHAR},
+        #{item.tid,jdbcType=VARCHAR},
+        #{item.serveInfo,jdbcType=VARCHAR},
+        #{item.tid2,jdbcType=VARCHAR}
+      )
+    </foreach>
+  </insert>
+
+
+
+
+
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.cable.domain.Cable" >
+    update cable
+    set
+        <if test="isValid != null and isValid != ''">
+        is_valid = #{isValid,jdbcType=INTEGER},
+        </if>
+        <if test="cableType != null and cableType != ''">
+        cable_type = #{cableType,jdbcType=VARCHAR},
+        </if>
+        <if test="assetId != null and assetId != ''">
+        asset_id = #{assetId,jdbcType=VARCHAR},
+        </if>
+        <if test="intf1Type != null and intf1Type != ''">
+        intf1_type = #{intf1Type,jdbcType=VARCHAR},
+        </if>
+        <if test="org1Id != null and org1Id != ''">
+        org1_id = #{org1Id,jdbcType=BIGINT},
+        </if>
+        <if test="floor1 != null and floor1 != ''">
+        floor1 = #{floor1,jdbcType=VARCHAR},
+        </if>
+        <if test="room1Id != null and room1Id != ''">
+        room1_id = #{room1Id,jdbcType=BIGINT},
+        </if>
+        <if test="rack1Id != null and rack1Id != ''">
+        rack1_id = #{rack1Id,jdbcType=BIGINT},
+        </if>
+        <if test="rack1Id != null and rack1Id != ''">
+        rack1_id = #{rack1Id,jdbcType=BIGINT},
+        </if>
+        <if test="room1Id != null and room1Id != ''">
+        rack_u1 = #{rackU1,jdbcType=VARCHAR},
+        </if>
+        <if test="res1Id != null and res1Id != ''">
+        res1_id = #{res1Id,jdbcType=BIGINT},
+        </if>
+        <if test="port1Id != null and port1Id != ''">
+        port1_id = #{port1Id,jdbcType=VARCHAR},
+        </if>
+        <if test="floor2 != null and floor2 != ''">
+        floor2 = #{floor2,jdbcType=VARCHAR},
+        </if>
+        <if test="room2Id != null and room2Id != ''">
+        room2_id = #{room2Id,jdbcType=BIGINT},
+        </if>
+        <if test="rack2Id != null and rack2Id != ''">
+        rack2_id = #{rack2Id,jdbcType=BIGINT},
+        </if>
+        <if test="rackU2 != null and rackU2 != ''">
+        rack_u2 = #{rackU2,jdbcType=VARCHAR},
+        </if>
+        <if test="intf2Type != null and intf2Type != ''">
+        intf2_type = #{intf2Type,jdbcType=VARCHAR},
+        </if>
+        <if test="org2Id != null and org2Id != ''">
+        org2_id = #{org2Id,jdbcType=BIGINT},
+        </if>
+        <if test="res2Id != null and res2Id != ''">
+        res2_id = #{res2Id,jdbcType=BIGINT},
+        </if>
+        <if test="port2Id != null and port2Id != ''">
+        port2_id = #{port2Id,jdbcType=VARCHAR},
+        </if>
+        <if test="tid != null and tid != ''">
+        tid = #{tid,jdbcType=VARCHAR},
+        </if>
+        <if test="serveInfo != null and serveInfo != ''">
+        serve_info = #{serveInfo,jdbcType=VARCHAR},
+        </if>
+        <if test="status != null and status != ''">
+        status = #{status,jdbcType=INTEGER},
+        </if>
+        <if test="isPasted != null and isPasted != ''">
+        is_pasted = #{isPasted,jdbcType=INTEGER},
+        </if>
+        <if test="tid2 != null and tid2 != ''">
+        tid2 = #{tid2,jdbcType=VARCHAR},
+        </if>
+        <if test="isDel != null and isDel != ''">
+        is_del = #{isDel,jdbcType=INTEGER},
+        </if>
+        <if test="isPrinted != null and isPrinted != ''">
+          is_printed = #{isPrinted,jdbcType=INTEGER},
+        </if>
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+    <sql id="allColumn">
+        c.id,
+        c.is_valid,
+        c.cable_type,
+        c.asset_id,
+        c.intf1_type,
+        c.org1_id,
+        c.floor1,
+        c.room1_id,
+        c.rack1_id,
+        c.rack_u1,
+        c.res1_id,
+        c.port1_id,
+        c.floor2,
+        c.room2_id,
+        c.rack2_id,
+        c.rack_u2,
+        c.intf2_type,
+        c.org2_id,
+        c.res2_id,
+        c.port2_id,
+        c.tid,
+        c.serve_info,
+        c.status,
+        c.is_pasted,
+        c.tid2,
+        c.created_time,
+        c.updated_time,
+        c.is_del,
+        c.is_printed
+    </sql>
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+        <include refid="allColumn"/>
+    from cable c
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+      <include refid="allColumn"/>
+    from cable
+  </select>
+
+    <select id="selectOne" resultMap="BaseResultMap">
+        select
+        <include refid="allColumn"/>
+        from cable c
+        <where>
+            <if test="id != null and id != ''">
+                AND c.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="isValid != null and isValid != ''">
+                AND c.is_valid = #{isValid,jdbcType=INTEGER}
+            </if>
+            <if test="cableType != null and cableType != ''">
+                AND c.cable_type like concat('%',#{cableType,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="assetId != null and assetId != ''">
+                AND c.asset_id = #{assetId,jdbcType=VARCHAR}
+            </if>
+            <if test="intf1Type != null and intf1Type != ''">
+                AND c.intf1_type = #{intf1Type,jdbcType=VARCHAR}
+            </if>
+            <if test="org1Id != null and org1Id != ''">
+                AND c.org1_id = #{org1Id,jdbcType=BIGINT}
+            </if>
+            <if test="floor1 != null and floor1 != ''">
+                AND c.floor1 = #{floor1,jdbcType=VARCHAR}
+            </if>
+            <if test="room1Id != null and room1Id != ''">
+                AND c.room1_id = #{room1Id,jdbcType=BIGINT}
+            </if>
+            <!--<if test="room1Id != null and room1Id != ''">
+                AND c.room1_id = #{room1Id,jdbcType=BIGINT}
+            </if>-->
+            <if test="rack1Id != null and rack1Id != ''">
+                AND c.rack1_id = #{rack1Id,jdbcType=BIGINT}
+            </if>
+            <if test="rackU1 != null and rackU1 != ''">
+                AND c.rack_u1 = #{rackU1,jdbcType=VARCHAR}
+            </if>
+            <if test="res1Id != null and res1Id != ''">
+                AND c.res1_id = #{res1Id,jdbcType=BIGINT}
+            </if>
+            <if test="port1Id != null and port1Id != ''">
+                AND c.port1_id = #{port1Id,jdbcType=VARCHAR}
+            </if>
+            <if test="floor2 != null and floor2 != ''">
+                AND c.floor2 = #{floor2,jdbcType=VARCHAR}
+            </if>
+            <if test="room2Id != null and room2Id != ''">
+                AND c.room2_id = #{room2Id,jdbcType=BIGINT}
+            </if>
+            <if test="rack2Id != null and rack2Id != ''">
+                AND c.rack2_id = #{rack2Id,jdbcType=BIGINT}
+            </if>
+            <if test="rackU2 != null and rackU2 != ''">
+                AND c.rack_u2 = #{rackU2,jdbcType=VARCHAR}
+            </if>
+            <if test="intf2Type != null and intf2Type != ''">
+                AND c.intf2_type = #{intf2Type,jdbcType=VARCHAR}
+            </if>
+            <if test="org2Id != null and org2Id != ''">
+                AND c.org2_id = #{org2Id,jdbcType=BIGINT}
+            </if>
+            <if test="res2Id != null and res2Id != ''">
+                AND c.res2_id = #{res2Id,jdbcType=BIGINT}
+            </if>
+            <if test="port2Id != null and port2Id != ''">
+                AND c.port2_id = #{port2Id,jdbcType=VARCHAR}
+            </if>
+            <if test="tid != null and tid != ''">
+                AND c.tid = #{tid,jdbcType=VARCHAR}
+            </if>
+            <if test="serveInfo != null and serveInfo != ''">
+                AND c.serve_info = #{serveInfo,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status != ''">
+                AND c.status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="isPasted != null and isPasted != ''">
+                AND c.is_pasted = #{isPasted,jdbcType=INTEGER}
+            </if>
+            <if test="tid2 != null and tid2 != ''">
+                AND c.tid2 = #{tid2,jdbcType=VARCHAR}
+            </if>
+            AND c.is_del = '0'
+        </where>
+        limit 1
+    </select>
+
+
+
+    <select id="selectByCondition" resultMap="extResultMap" >
+    select
+            <include refid="allColumn"/>,r1.name room1Name,r2.name room2Name,rs1.name res1Name,rs1.asset_id res1Code,rs2.asset_id res2Code,rs2.name res2Name,l1.barcode barcode1,l2.barcode barcode2
+    from cable c
+    LEFT JOIN
+    sys_org o1 on c.org1_id = o1.id
+    LEFT JOIN
+    sys_org o2 on c.org2_id = o2.id
+    LEFT JOIN
+    res rs1 on c.res1_id = rs1.id
+    LEFT JOIN
+    res rs2 on c.res2_id = rs2.id
+    LEFT JOIN
+    room r1 on c.room1_id = r1.id
+    LEFT JOIN
+    room r2 on c.room2_id = r2.id
+    LEFT JOIN
+    label l1 on c.tid = l1.tid
+    LEFT JOIN
+    label l2 on c.tid = l2.tid
+    <where>
+        <if test="data.id != null and data.id != ''">
+            AND c.id = #{data.id,jdbcType=INTEGER}
+        </if>
+        <if test="data.isValid != null and data.isValid != ''">
+            AND c.is_valid = #{data.isValid,jdbcType=INTEGER}
+        </if>
+        <if test="data.cableType != null and data.cableType != ''">
+            AND c.cable_type like concat('%',#{data.cableType,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="data.assetId != null and data.assetId != ''">
+            AND c.asset_id = #{data.assetId,jdbcType=VARCHAR}
+        </if>
+        <if test="data.intf1Type != null and data.intf1Type != ''">
+            AND c.intf1_type = #{data.intf1Type,jdbcType=VARCHAR}
+        </if>
+        <if test="data.org1Id != null and data.org1Id != ''">
+            AND c.org1_id = #{data.org1Id,jdbcType=BIGINT}
+        </if>
+        <if test="data.floor1 != null and data.floor1 != ''">
+            AND c.floor1 = #{data.floor1,jdbcType=VARCHAR}
+        </if>
+        <if test="data.room1Id != null and data.room1Id != ''">
+            AND c.room1_id = #{data.room1Id,jdbcType=BIGINT}
+        </if>
+        <!--<if test="data.room1Id != null and data.room1Id != ''">
+            AND c.room1_id = #{data.room1Id,jdbcType=BIGINT}
+        </if>-->
+        <if test="data.rack1Id != null and data.rack1Id != ''">
+            AND c.rack1_id = #{data.rack1Id,jdbcType=BIGINT}
+        </if>
+        <if test="data.rackU1 != null and data.rackU1 != ''">
+            AND c.rack_u1 = #{data.rackU1,jdbcType=VARCHAR}
+        </if>
+        <if test="data.isPrinted != null and data.isPrinted != ''">
+            AND c.is_printed = #{data.isPrinted,jdbcType=VARCHAR}
+        </if>
+        <if test="data.res1Id != null and data.res1Id != ''">
+            AND c.res1_id = #{data.res1Id,jdbcType=BIGINT}
+        </if>
+        <if test="data.port1Id != null and data.port1Id != ''">
+            AND c.port1_id = #{data.port1Id,jdbcType=VARCHAR}
+        </if>
+        <if test="data.floor2 != null and data.floor2 != ''">
+            AND c.floor2 = #{data.floor2,jdbcType=VARCHAR}
+        </if>
+        <if test="data.room2Id != null and data.room2Id != ''">
+            AND c.room2_id = #{data.room2Id,jdbcType=BIGINT}
+        </if>
+        <if test="data.rack2Id != null and data.rack2Id != ''">
+            AND c.rack2_id = #{data.rack2Id,jdbcType=BIGINT}
+        </if>
+        <if test="data.rackU2 != null and data.rackU2 != ''">
+            AND c.rack_u2 = #{data.rackU2,jdbcType=VARCHAR}
+        </if>
+        <if test="data.intf2Type != null and data.intf2Type != ''">
+            AND c.intf2_type = #{data.intf2Type,jdbcType=VARCHAR}
+        </if>
+        <if test="data.org2Id != null and data.org2Id != ''">
+            AND c.org2_id = #{data.org2Id,jdbcType=BIGINT}
+        </if>
+        <if test="data.res2Id != null and data.res2Id != ''">
+            AND c.res2_id = #{data.res2Id,jdbcType=BIGINT}
+        </if>
+        <if test="data.port2Id != null and data.port2Id != ''">
+            AND c.port2_id = #{data.port2Id,jdbcType=VARCHAR}
+        </if>
+        <if test="data.tid != null and data.tid != ''">
+            AND c.tid = #{data.tid,jdbcType=VARCHAR}
+        </if>
+        <if test="data.serveInfo != null and data.serveInfo != ''">
+            AND c.serve_info = #{data.serveInfo,jdbcType=VARCHAR}
+        </if>
+        <if test="data.status != null and data.status != ''">
+            AND c.status = #{data.status,jdbcType=INTEGER}
+        </if>
+        <if test="data.isPasted != null">
+            AND c.is_pasted = #{data.isPasted,jdbcType=INTEGER}
+        </if>
+        <if test="data.tid2 != null and data.tid2 != ''">
+            AND c.tid2 = #{data.tid2,jdbcType=VARCHAR}
+        </if>
+        <if test="data.isBind != null and data.isBind == '0'.toString()">
+            AND (c.tid is null AND c.tid2 is null)
+        </if>
+        <if test="data.isBind != null and data.isBind == '1'.toString()">
+            AND (c.tid is not null AND c.tid2 is not null)
+        </if>
+        <if test="data.queryStr != null and data.queryStr != ''">
+            AND c.asset_id Like concat('%',#{data.queryStr,jdbcType=VARCHAR},'%')
+        </if>
+        AND c.is_del = '0'
+    </where>
+
+    order by c.created_time DESC,c.id
+  </select>
+
+
+    <update id="batchDel" parameterType="list">
+        update cable set is_del = '1' where id in
+        (
+            <foreach collection="list" separator="," item="item">
+                #{item}
+            </foreach>
+        )
+    </update>
+
+
+    <update id="untyingLabel" parameterType="com.manage.idc.cable.domain.Cable">
+        update cable set tid=null,tid2=null where id = #{id}
+    </update>
+</mapper>

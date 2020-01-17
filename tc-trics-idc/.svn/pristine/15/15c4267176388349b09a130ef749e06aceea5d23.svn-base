@@ -1,0 +1,56 @@
+package com.manage.idc.device.domain.ext;
+
+import com.manage.idc.device.domain.Res;
+import com.manage.idc.device.domain.ResExt;
+
+import java.util.List;
+
+/**
+ * @Author: WangZiFan
+ * @Date: 2019/10/26 15:46
+ * @Description:
+ */
+public class ResQuery extends Res {
+    /*
+        id集合
+     */
+    private List<Long> ids;
+
+
+    /*
+        扩展查询集合
+     */
+    private List<ResExt> resExts;
+
+
+    /*
+        app模糊查询
+     */
+    private String queryStr;
+
+
+
+    public String getQueryStr() {
+        return queryStr;
+    }
+
+    public void setQueryStr(String queryStr) {
+        this.queryStr = queryStr;
+    }
+
+    public List<Long> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Long> ids) {
+        this.ids = ids;
+    }
+
+    public List<ResExt> getResExts() {
+        return resExts;
+    }
+
+    public void setResExts(List<ResExt> resExts) {
+        this.resExts = resExts;
+    }
+}

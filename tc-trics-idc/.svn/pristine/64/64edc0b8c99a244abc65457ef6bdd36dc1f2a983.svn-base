@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" style="border: none;background: none">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" th:href="@{/img/favicon.html}">
+
+    <title>组织机构管理</title>
+    <style>
+        .node-menuTree1:not(.node-disabled):hover {
+            background:rgba(74,144,226,0.3)!important;
+        }
+    </style>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-reset.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/jquery-treegrid/0.2.0/css/jquery.treegrid.min.css">
+   <!-- <link rel="stylesheet" type="text/css" th:href="@{/3rd/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{/js/tableTree2/css/iconfont/iconfont.css}">
+    <link rel="stylesheet" th:href="@{/js/tableTree2/css/table-tree.css}">-->
+
+</head>
+
+<body style="border: none;background: none">
+<div id="operateDiv" style="display: none;">
+    <shiro:hasPermission name="org:update">
+        <a class="layui-btn layui-btn-primary layui-btn-xs"  lay-event="edit" data-toggle="modal" data-target="#editOrg">修改</a>
+    </shiro:hasPermission>
+    <shiro:hasPermission name="org:add">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add" data-toggle="modal" data-target="#addOrg">添加</a>
+    </shiro:hasPermission>
+    <shiro:hasPermission name="org:delete">
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </shiro:hasPermission>
+</div>
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog" style="width: 60%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    添加机构
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal tasi-form" id="addForm" method="get">
+                    <div class="form-group" style="display:none;">
+                        <label class="control-label col-lg-2">级别</label>
+                        <div class="col-sm-10">
+                            <input type="hidden" name="parentFullCode">
+                            <input type="text" name="level" class="form-control" disabled   placeholder="级别">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">机构名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="name" placeholder="机构名称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">编码</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="fullCode" placeholder="编码">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">所属区域</label>
+                        <div class="col-lg-10">
+                            <select class="selectpicker show-tick form-control" data-live-search="true"  id="regionId" name="regionSelect">
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">上级机构</label>
+                        <div class="col-sm-10">
+                            <input type="hidden" id="parentId">
+                            <div id="orgTree"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary"  id="addOrgs">
+                    提交
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="editOrg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 60%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="">
+                    编辑机构
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal tasi-form" method="get">
+<!--                    <div class="form-group">-->
+<!--                        <label class="control-label col-lg-2">级别</label>-->
+<!--                        <div class="col-sm-10">-->
+<!--                            <input type="hidden" name="id">-->
+<!--                            <input type="text" name="levels" class="form-control" disabled   placeholder="级别">-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">机构名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="names" placeholder="机构名称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">编码</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="fullCodes" placeholder="编码">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">所属区域</label>
+                        <div class="col-lg-10">
+                            <select class="selectpicker show-tick form-control" data-live-search="true" id="regionIds" name="regionSelects">
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">上级机构</label>
+                        <div class="col-sm-10">
+                            <input type="hidden" id="orgId">
+                            <input type="hidden" id="parentIds">
+                            <div id="orgTrees"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary" shiro:hasPermission="org:update"  id="editOrgs">
+                    提交
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!-- page start-->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <span class="tab-o">系统管理</span> > <span class="tab-er">机构管理</span>
+            </header>
+        </section>
+    </div>
+</div>
+<div class="row" style="margin-bottom: 15px">
+    <div class="col-sm-12">
+        <button type="button" class="btn bg-yellow" data-toggle="modal" data-target="#myModal">新建机构</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <table id="treeTable" ></table>
+        </section>
+    </div>
+</div>
+
+<div class="row" style="margin:15px 0">
+    <div id="data" class="col-md-12">
+        <div class="table-tree" style="padding: 15px">
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:inline="javascript">
+    ctxPath = /*[[@{/}]]*/ '';
+</script>
+
+
+
+
+<script th:src="@{/3rd/bootstrap-table/tree/jquery.min.js}"></script>
+<!-- js placed at the end of the document so the pages load faster -->
+<!--<script th:src="@{/js/jquery.js}"></script>-->
+<script th:src="@{/3rd/bootstrap-table/tree/bootstrap3.3.7.min.js}"></script>
+<script th:src="@{/js/jquery.scrollTo.min.js}"></script>
+<script th:src="@{/js/jquery.nicescroll.js}" type="text/javascript"></script>
+<script th:src="@{/assets/jquery-knob/js/jquery.knob.js}"></script>
+
+<link rel="stylesheet" th:href="@{/3rd/bootstrap-table/bootstrap-table.css}" >
+<script th:src="@{/3rd/bootstrap-treeview.js}"></script>
+<script th:src="@{/3rd/bootstrap-table/tree/bootstrap-table.min.js}"></script>
+<script th:src="@{/3rd/bootstrap-table/tree/bootstrap-table-treegrid.js}"></script>
+<script th:src="@{/3rd/bootstrap-table/tree/jquery.treegrid.min.js}"></script>
+
+<link rel="stylesheet" th:href="@{/3rd/bootstrap-table/select/bootstrap-select.min.css}">
+<script th:src="@{/3rd/bootstrap-table/select/bootstrap-select.min.js}"></script>
+
+
+<script th:inline="javascript" th:src="@{/pagejs/common/tableLoad.js}"></script>
+<script th:inline="javascript" th:src="@{/pagejs/common/selectNode.js}"></script>
+<script th:inline="javascript" th:src="@{/pagejs/common/util.js}"></script>
+<script th:inline="javascript" th:src="@{/pagejs/system/org.js}"></script>
+</body>
+</html>

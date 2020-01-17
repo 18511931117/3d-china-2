@@ -1,0 +1,647 @@
+function updateModel(val) {
+    $("#updateForm")[0].reset();
+    $.ajax({
+        url: ctxPath +"device/getDevicePage?id="+val,
+        type:'get',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                var obj = data.rows[0];
+                loadRoomSelect($("#updateForm").find(":input[name='roomId']"),obj.roomId,obj.orgId);
+                loadRackSelect($("#updateForm").find(":input[name='rackId']"),obj.roomId,obj.rackId);
+                loadDevTypeSelect($("#updateForm").find(":input[name='resTypeCode']"),data.rows[0].resTypeCode);
+                loadDevStatus($("#updateForm").find(":input[name='status']"),data.rows[0].status);
+                feedBackVal($("#updateForm"),obj);
+                $("#updateModeButton").click();
+            }
+        }
+    })
+}
+
+
+
+function infoModel(val) {
+    $("#deviceInfo")[0].reset();
+    $.ajax({
+        url: ctxPath +"device/getDevicePage?id="+val,
+        type:'get',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                loadRoomSelect($("#deviceInfo").find(":input[name='roomId']"),data.rows[0].roomId,data.rows[0].orgId);
+                loadRackSelect($("#deviceInfo").find(":input[name='rackId']"),data.rows[0].roomId,data.rows[0].rackId);
+                loadDevTypeSelect($("#deviceInfo").find(":input[name='resTypeCode']"),data.rows[0].resTypeCode);
+                loadDevStatus($("#deviceInfo").find(":input[name='status']"),data.rows[0].status);
+                feedBackVal($("#deviceInfo"),data.rows[0]);
+                $("#infoButton").click();
+            }
+        }
+    })
+}
+
+
+function del(val) {
+    // if(confirm("是否确认删除该数据")){
+        $.ajax({
+            url: ctxPath +"device/delDevice/"+val,
+            type:'post',
+            //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+            success: function(data){
+                if(data.code = '0'){
+                    //alert("删除成功");
+                    var obj={
+                        type:"showSweetAlert",
+                        title:"提示",
+                        content:"<div>是否删除这条数据",
+                        btn:["关闭","确定"],
+                        callBack1:function () {
+                            console.log("取消")
+                        },
+                        callBack2:function () {
+                            // console.log("确定")
+                            $('.msg-layer-bg').css('display','none')
+                            $('.msg-layer').css('display','none')
+                            refreshfTable($("#demo"),'1',getQuery);
+                        },
+                    };
+                    method.msg_layer(obj);
+
+                }else{
+                    //alert("删除失败!")
+                    var obj={
+                        type:"showSweetAlert",
+                        title:"提示",
+                        content:"<div>删除失败",
+                    };
+                    method.msg_layer(obj);
+                }
+            }
+        })
+    // }
+}
+
+
+function untying(value){
+    // if(confirm("是否确认解除绑定？")){
+        $.ajax({
+            url: ctxPath +"device/untyingLabel",
+            type:'post',
+            data:{'id':value},
+            //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+            success: function(data){
+                if(data.code = '0'){
+                    //alert("解绑成功");
+                    var obj={
+                        type:"showSweetAlert",
+                        title:"提示",
+                        content:"<div>是否解绑这条数据",
+                        btn:["关闭","确定"],
+                        callBack1:function () {
+                            console.log("取消")
+                        },
+                        callBack2:function () {
+                            // console.log("确定")
+                            $('.msg-layer-bg').css('display','none')
+                            $('.msg-layer').css('display','none')
+                            refreshfTable($("#demo"),'1');
+                        },
+                    };
+                    method.msg_layer(obj);
+                }else{
+                    //alert("解绑失败!")
+                    var obj={
+                        type:"showSweetAlert",
+                        title:"提示",
+                        content:"<div>解绑失败",
+                        btn:["关闭","确定"],
+                        callBack1:function () {
+                            console.log("取消")
+                        },
+                        callBack2:function () {
+                            // console.log("确定")
+                            $('.msg-layer-bg').css('display','none')
+                            $('.msg-layer').css('display','none')
+                            refreshfTable($("#demo"),'1');
+                        },
+                    };
+                    method.msg_layer(obj);
+                }
+            }
+        })
+    // }
+}
+
+
+function getQuery () {
+    var data = $("#formTestFilter").serializeObject();
+    var index = 0;
+    $("#formTestFilter").find(".ext").each(function () {
+        data['resExts[' + index +'].itemCode'] = $(this).attr("name");
+        data['resExts[' + index +'].itemValue'] = $(this).val();
+        index++;
+    });
+    return data;
+}
+
+
+
+$(function () {
+
+
+
+
+    loadOrg($("select[name='orgId']"));
+    //查询下拉框
+
+    $("#openFilter").find("select[name='orgId']").change(function () {
+        loadRoomSelect($("#openFilter").find(":input[name='roomId']"),'',$(this).val());
+    })
+
+
+    $("#openFilter").find("select[name='roomId']").change(function () {
+        loadRackSelect($("#openFilter").find(":input[name='rackId']"),$(this).val());
+    })
+
+
+    $("button[name='export_button']").click(function () {
+        var idlist = $('#demo').bootstrapTable('getAllSelections');
+        if(idlist.length == 0){
+           // alert("至少选择一条信息!");
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"<div>至少选择一条信息",
+            };
+            method.msg_layer(obj);
+            return false
+        }
+        for (var i = 0; i< idlist.length;i++){
+            $("#exportForm").append("<input type='hidden' name='ids' value='"+idlist[i].id+"'>");
+        }
+        $("#exportForm").submit();
+        $("#exportForm").html("");
+    });
+    
+    $("button[name='down_button']").click(function () {
+        $("#downModel").submit();
+    })
+
+
+    $("button[name='impl_button']").click(function () {
+        if($("#file-0")[0].files[0] != null && $("#file-0")[0].files[0] != '' && $("#file-0")[0].files[0] != undefined) {
+            var fd = new FormData();
+            fd.append("devFile", $("#file-0")[0].files[0]);
+            $.ajax({
+                url: ctxPath + 'device/importDevice',
+                type: 'post',
+                processData: false,
+                contentType: false,
+                data: fd,
+                success: function (data) {
+                    if (data.code == '0') {
+                        if(data.data == null || data.data.length == 0){
+                            var obj={
+                                type:"showSweetAlert",
+                                title:"提示",
+                                content:"<div>导入成功",
+                            };
+                            method.msg_layer(obj);
+                            $("#importModel").find("button[name='close']").click();
+                            refreshfTable($("#demo"),'1',getQuery);
+                        }else{
+                            var obj={
+                                type:"showSweetAlert",
+                                title:"提示",
+                                content:"<div>导入成功，部分导入失败",
+                            };
+                            method.msg_layer(obj);
+                            $("#importModel").find("button[name='close']").click();
+                            var column =  [
+                                {field:'orgName',title: '所属机构', }
+                                ,{field:'resTypeName', title: '设备类型'}
+                                ,{field:'name', title: '设备名称'}
+                                ,{field:'model', title: '规格型号', }
+                                ,{field:'owner', title: '所有人'}
+                                ,{field:'roomName', title: '机房名称',} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                                ,{field:'rackName', title: '机架', }
+                                ,{field:'sheft', title: '机位', }
+                                ,{field:'ps', title: '失败原因'}
+                            ];
+
+                            $("#errorTable").bootstrapTable('destroy');
+                            setDataloadPageTable($("#errorTable"),column,data.data);
+                            $("button[name='errorData_button']").click();
+                        }
+
+                    } else {
+                        var str = "";
+                        if(data.message != '' && data.message != undefined && data.message != null){
+                            str = "<div>"+data.message;
+                        }else{
+                            str = "导入失败";
+                        }
+                        //alert("导入失败!")
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:str,
+                        };
+                        method.msg_layer(obj);
+                    }
+
+                }
+            })
+        }else{
+          // alert("请选择导入文件!")
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"<div>请选择导入文件",
+
+            };
+            method.msg_layer(obj);
+        }
+    })
+
+
+
+    function addFunctionAlty(value, row, index) {
+        var data = [
+            '<button id="bind" type="button" class="btn bg-yellow table-btn"  onclick="infoModel(&apos;'+value+'&apos;)">详情</button>',
+        ];
+        if($("#editFlag").text() != null && $("#editFlag").text() != '' && $("#editFlag").text() != undefined){
+            data.push('<button id="edit" type="button" class="btn bg-yellow table-btn" onclick="updateModel(&apos;'+value+'&apos;)">编辑</button>');
+        }
+        if($("#delFlag").text() != null && $("#delFlag").text() != '' && $("#delFlag").text() != undefined){
+            data.push('<button id="del" type="button" class="btn bg-bold table-btn del" onclick="del(&apos;'+value+'&apos;)">删除</button>');
+        }
+        if(row.barcode != null && row.barcode != '' && row.barcode != undefined && $("#untyingFlag").text() != null && $("#untyingFlag").text() != '' && $("#untyingFlag").text() != undefined){
+            data.push('<button id="unbind" type="button" class="btn bg-bold table-btn" onclick="untying(&apos;'+value+'&apos;)">解绑</button>');
+        }
+        return data.join('');
+    }
+
+
+   var columns =  [
+        {checkbox: true,width: 50}
+        ,{field:'name',valign:'middle',title: '设备名称', }
+        ,{field:'resTypeName', title: '设备分类'}
+        ,{field:'orgName', title: '所属机构'}
+        ,{field:'roomName', title: '机房', }
+        ,{field:'rackName', title: '机架'}
+        ,{field:'sheft', title: '机位',} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+        ,{field:'owner', title: '所有人', }
+        ,{field:'statusName', title: '状态', }
+        ,{field:'barcode', title: '标签编号'}
+        ,{field:'id', title: '操作',width: 270,formatter: addFunctionAlty}
+    ];
+
+
+    loadTable($('#demo'),columns,ctxPath+'device/getDevicePage', getQuery);
+
+
+    $("#demo").on('post-body.bs.table',function(data){
+        $(this).find("input:checkbox").each(function (i) {
+            var $check = $(this);
+            if ($check.attr("id") && $check.next("label")) {
+                return;
+            }
+            $check.next().remove();
+            var name = $check.attr("name");
+            var id = name + "-" + i;
+            var $label = $('<label for="'+ id +'"></label>');
+            $check.attr("id", id).parent().addClass("checkbox-custom").append($label);
+        });
+    });
+
+    loadDevTypeSelect($("select[name='resTypeCode']"));
+    loadDevStatus($(":input[name='status']"));
+
+    /*$("#addDevForm").find(":input[name='orgId']").change(function () {
+        alert($(this).val());
+    })*/
+
+    $("#addDevForm").find("select[name='roomId']").change(function () {
+        loadRackSelect($("#addDevForm").find("select[name='rackId']"),$(this).val());
+    })
+
+
+    $("#updateForm").find("select[name='roomId']").change(function () {
+        loadRackSelect($("#updateForm").find("select[name='rackId']"),$(this).val());
+    })
+
+
+    $.get(
+        ctxPath +"resExtCfg/getList",
+        {'resTypeCode':'DEV'},
+        function(data){
+            var ele = $("#queryRow");
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    var str = "";
+                    if(obj.isQuery == '1'){
+                        if(obj.valType == '6362335975393198082'){
+                            str+= "<div class='form-group col-sm-2'>"+
+                                "<label>"+obj.itemName+"</label>"+
+                                "<div class='input-group date datetimepicker2' >"+
+                                "<input type='text' class='form-control ext' name='"+obj.itemCode+"' placeholder='YYYY-MM-DD'/>"+
+                                "<span class='input-group-addon'>"+
+                                "<span class='glyphicon glyphicon-calendar'></span>"+
+                                "</span>"+
+                                "</div>"+
+                                "</div>";
+                        }else{
+                            str = "<div class='form-group col-sm-2 '>" +
+                                "  <label class=''>"+obj.itemName+"</label>" +
+                                "  <input type='text'  name='"+obj.itemCode+"' class='form-control ext' lay-verify='title' placeholder="+obj.itemName+">" +
+                                "</div>";
+                        }
+                    }
+                    ele.append(str);
+
+
+                    $('.datetimepicker2').datetimepicker({
+
+                        format: 'YYYY-MM-DD',
+
+                        locale: moment.locale('zh-cn')
+
+                    });
+                }
+            }
+        })
+
+    $.get(
+        ctxPath +"resExtGrp/getList",
+        {'resTypeCode':'DEV'},
+        function(data){
+            var ele = $("#updateForm");
+            var infoele = $("#deviceInfo");
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    var str = "<div>" +
+                        "  <div class='row-fulid' style='margin: 15px 0'>" +
+                            "  <header style='padding: 5px;padding-left: 0px;border-bottom: 1px solid rgba(0,206,255,.3)'>"+obj.extGrpName+"</header>" +
+                        "  </div><div class='row'>";
+                    var resExtCfgList = obj.resExtCfgList;
+                    for (var j = 0;j<resExtCfgList.length;j++){
+                        if(resExtCfgList[j].valType == '6362335975393198082'){
+                            str+= "<div class='form-group col-sm-2'>"+
+                                        "<label>"+resExtCfgList[j].itemName+"</label>"+
+                                        "<div class='input-group date datetimepicker2'>"+
+                                            "<input type='text' class='form-control ext'  name='"+resExtCfgList[j].itemCode+"' placeholder='YYYY-MM-DD'/>"+
+                                            "<span class='input-group-addon'>"+
+                                            "<span class='glyphicon glyphicon-calendar'></span>"+
+                                            "</span>"+
+                                        "</div>"+
+                                    "</div>";
+                        }else{
+                            str+= "<div class='form-group col-sm-2'>" +
+                                "  <label for=''>"+resExtCfgList[j].itemName+"</label>" +
+                                "  <input class='form-control ext'  name='"+resExtCfgList[j].itemCode+"'  placeholder='"+resExtCfgList[j].itemName+"'>" +
+                                "  </div>";
+                        }
+
+                    }
+
+                    str+= "</div></div>";
+                    ele.append(str);
+                    infoele.append(str);
+                }
+                infoele.find(":input").attr("disabled",true);
+
+                $('.datetimepicker2').datetimepicker({
+
+                    format: 'YYYY-MM-DD',
+
+                    locale: moment.locale('zh-cn')
+
+                });
+            }
+        })
+
+
+
+
+    var treePro = {
+        levels: 1,//设置初始化展开几级菜单
+         showBorder:true,                //是否显示边框
+        showCheckbox:false,              //是否显示多选框
+        data: [],
+
+    };
+    //loadOrgTree($("#addDevForm").find("[name='orgTree']"),'',treePro);
+
+
+    $.get(
+        ctxPath +"org/getOrgSelectTree",
+        function(data) {
+            var bean = data.data;
+            if (data.code == '200') {
+                $("#addDevForm").find("[name='orgTree']").treeview({
+                    showCheckbox: false,
+                    data: bean,
+                    onNodeSelected: function (event, node) {
+                        var orgId = node.id;
+                        $("#addDevForm").find(":input[name='orgId']").val(orgId);
+                        loadRoomSelect($("#addDevForm").find(":input[name='roomId']"), '', orgId);
+                        $("#addDevForm").find(":input[name='rackId']").html("<option value=''>请先选择机房</option>");
+                    },
+                    onNodeUnselected: function (event, node) {
+                        $("#addDevForm").find(":input[name='orgId']").val("");
+                        $("#addDevForm").find(":input[name='roomId']").html("<option value=''>请先选择机构</option>");
+                        $("#addDevForm").find(":input[name='rackId']").html("<option value=''>请先选择机房</option>");
+                    }
+                })
+            }
+        })
+    
+    
+    $("button[name='del_button']").click(function () {
+        var idlist = $('#demo').bootstrapTable('getAllSelections');
+        console.log($('#demo').bootstrapTable('getAllSelections'))
+        if(idlist.length == 0){
+          // alert("至少选择一条信息!");
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"<div>至少选择一条信息",
+            };
+            method.msg_layer(obj);
+            return false
+        }
+        // if(confirm("是否确认删除选中项?")){
+            var ids = [];
+            for (var i = 0; i< idlist.length;i++){
+                ids.push(idlist[i].id)
+            }
+            $.ajax({
+                url: ctxPath +"device/batchDelDevice",
+                type:'post',
+                contentType:"application/json",
+                dataType:"json",
+                data:JSON.stringify(ids) ,
+                success: function (data) {
+                    if(data.code = '0'){
+                      //  alert("删除成功!");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:"<div>删除成功",
+                            btn:["关闭","确定"],
+                            callBack1:function () {
+                                console.log("取消")
+                            },
+                            callBack2:function () {
+                                // console.log("确定")
+                                $('.msg-layer-bg').css('display','none')
+                                $('.msg-layer').css('display','none')
+                                refreshfTable($("#demo"),'1',getQuery);
+
+                            },
+                        };
+
+                        method.msg_layer(obj);
+
+                    }else{
+                       // alert("删除失败!");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:"<div>删除失败",
+                            // btn:["关闭","确定"],
+                            // callBack1:function () {
+                            //     console.log("取消")
+                            // },
+                            // callBack2:function () {
+                            //     // console.log("确定")
+                            //     $('.msg-layer-bg').css('display','none')
+                            //     $('.msg-layer').css('display','none')
+                            //     refreshfTable($("#demo"),'1',getQuery);
+                            // },
+                        };
+                        method.msg_layer(obj);
+                    }
+                }
+            })
+        // }
+    })
+
+
+    $("button[name='addButton']").click(function () {
+        var data = $("#addDevForm").serializeObject();
+        if(checkNull($("#addDevForm"),data)){
+            $.ajax({
+                url: ctxPath +"device/addDevice",
+                type:'post',
+                data:data ,
+                success: function (data) {
+                    if(data.code = '0'){
+                        //  alert("添加成功!");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:"<div>添加成功",
+                            // btn:["关闭","确定"],
+                            // callBack1:function () {
+                            //     console.log("取消")
+                            // },
+                            // callBack2:function () {
+                            //     // console.log("确定")
+                            //     $('.msg-layer-bg').css('display','none')
+                            //     $('.msg-layer').css('display','none')
+                            //     refreshfTable($("#demo"),'1',getQuery);
+                            // },
+                        };
+                        method.msg_layer(obj);
+                        refreshfTable($("#demo"),'1',getQuery);
+                        $("#myModal").find("button[name='close']").click();
+                    }else{
+                        // alert("添加失败!");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:"<div>添加失败",
+                            // btn:["关闭","确定"],
+                            // callBack1:function () {
+                            //     console.log("取消")
+                            // },
+                            // callBack2:function () {
+                            //     // console.log("确定")
+                            //     $('.msg-layer-bg').css('display','none')
+                            //     $('.msg-layer').css('display','none')
+                            //     refreshfTable($("#demo"),'1',getQuery);
+                            // },
+                        };
+                        method.msg_layer(obj);
+                    }
+                }
+            })
+        }
+    })
+
+    $("button[name='search_btn']").click(function () {
+        refreshfTable($("#demo"),'1',getQuery);
+        $("#openFilter").find("#close").click();
+    })
+
+
+    $("#content3814").find("button[name='commit_btn']").click(function () {
+        var data = $("#content3814").find("#updateForm").serializeObject();
+        var index = 0;
+        $("#content3814").find("#updateForm").find(".ext").each(function () {
+            data['resExts[' + index +'].itemCode'] = $(this).attr("name");
+            data['resExts[' + index +'].itemValue'] = $(this).val();
+            index++;
+        });
+        $.ajax({
+            url: ctxPath +"device/updateDevice",
+            type:'post',
+            data:data,
+            //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+            success: function(data){
+                if(data.code = '0'){
+                   // alert("修改成功");
+                    var obj={
+                        type:"showSweetAlert",
+                        title:"提示",
+                        content:"<div>修改成功",
+                        // btn:["关闭","确定"],
+                        // callBack1:function () {
+                        //     console.log("取消")
+                        // },
+                        // callBack2:function () {
+                        //     // console.log("确定")
+                        //     $('.msg-layer-bg').css('display','none')
+                        //     $('.msg-layer').css('display','none')
+                        //     refreshfTable($("#demo"),'1',getQuery);
+                        // },
+                    };
+                    method.msg_layer(obj);
+                    $("#content3814").find("button[name='close']").click();
+                    refreshfTable($("#demo"),'1',getQuery);
+                }else{
+                   // alert("修改失败!")
+                    var obj={
+                        type:"showSweetAlert",
+                        title:"提示",
+                        content:"<div>修改失败",
+                        // btn:["关闭","确定"],
+                        // callBack1:function () {
+                        //     console.log("取消")
+                        // },
+                        // callBack2:function () {
+                        //     // console.log("确定")
+                        //     $('.msg-layer-bg').css('display','none')
+                        //     $('.msg-layer').css('display','none')
+                        //     refreshfTable($("#demo"),'1',getQuery);
+                        // },
+                    };
+                    method.msg_layer(obj);
+                }
+            }
+        })
+    })
+})

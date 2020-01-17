@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.system.mapper.IndexReportMapper">
+  <select id="getReportTotalSum" resultType="java.util.Map">
+     SELECT
+	(SELECT COUNT(*) FROM rack where is_del=0) rackTotal,
+	(SELECT COUNT(*) FROM sys_org where is_del=0) orgTotal,
+	(SELECT COUNT(*) FROM room where is_del=0) roomTotal,
+	(
+		SELECT
+			COUNT(*)
+		FROM
+			res
+		WHERE
+			is_del = 0
+		AND `status` = '1'
+	) deviceTotal,
+	1 level,
+	(
+		SELECT
+			COUNT(rt.id)
+		FROM
+			res_type rt where rt.is_del=0
+	) 'deviceTypeTotal'
+  </select>
+
+  <select id="getReportColumnarTotal" resultType="java.util.Map">
+			SELECT
+	rs.region_id,
+	DATE_FORMAT(rs.created_time, '%Y') year ,
+	sum(
+		CASE
+		WHEN rs.`status` = 1 THEN
+			1
+		ELSE
+			0
+		END
+	) 'onlineTotal',
+	sum(
+		CASE
+		WHEN rs.`status` = 6 THEN
+			1
+		ELSE
+			0
+		END
+	) 'scrapTotal',
+	count(rs.id) 'deviceTotal',
+	sum(
+		CASE
+		WHEN rs.`status` = 0 THEN
+			1
+		ELSE
+			0
+		END
+	) 'unknownTotal'
+FROM
+	res rs
+LEFT JOIN sys_org so ON rs.org_id=so.id
+	  WHERE rs.is_del=0
+	<if test="fullCode!=null">
+		AND  so.full_code  LIKE CONCAT('',#{fullCode},'%')
+	</if>
+	<if test="regionId!=null">
+		AND rs.region_id=#{regionId}
+	</if>
+GROUP BY
+	DATE_FORMAT(rs.created_time, '%Y')
+  </select>
+	<select id="getReportRegionTotal" resultType="java.util.Map">
+		SELECT
+		a.deviceTotal,
+		b.rackTotal,
+		c.orgTotal,
+		d.roomTotal,
+		1 level,
+		e.deviceTypeTotal
+			FROM
+	(
+		(
+			SELECT
+				COUNT(rs.id) 'deviceTotal'
+			FROM
+				res rs
+			LEFT JOIN sys_org so ON so.id = rs.org_id
+			WHERE
+			<if test="fullCode!=null">
+				 so.full_code  LIKE CONCAT('',#{fullCode},'%')
+			</if>
+
+			AND rs.is_del = 0
+			AND `status` = '1'
+			<if test="regionId!=null">
+				and
+				rs.region_id = #{regionId}
+			</if>
+		) a,
+		(
+			SELECT
+				COUNT(rk.id) 'rackTotal'
+			FROM
+				rack rk
+			LEFT JOIN sys_org so ON so.id = rk.org_id
+			WHERE
+			<if test="fullCode!=null">
+				 so.full_code  LIKE CONCAT('',#{fullCode},'%')
+			</if>
+			AND rk.is_del = 0
+			<if test="regionId!=null">
+				and
+				rk.region_id = #{regionId}
+			</if>
+		) b,
+		(
+			SELECT
+				COUNT(so.id) 'orgTotal'
+			FROM
+				sys_org so
+			WHERE
+				so.is_del = 0
+			<if test="fullCode!=null">
+				AND so.full_code  LIKE CONCAT('',#{fullCode},'%')
+			</if>
+			<if test="regionId!=null">
+				and
+				so.region_id = #{regionId}
+			</if>
+		) c,
+		(
+			SELECT
+				COUNT(rm.id) 'roomTotal'
+			FROM
+				room rm
+			LEFT JOIN sys_org so ON rm.org_id = so.id
+			WHERE
+			<if test="fullCode!=null">
+				 so.full_code  LIKE CONCAT('',#{fullCode},'%')
+			</if>
+			AND rm.is_del = 0
+		<if test="regionId!=null">
+			and
+			rm.region_id = #{regionId}
+		</if>
+		) d,
+		(
+			SELECT
+				COUNT(rt.id) 'deviceTypeTotal'
+			FROM
+				res_type rt where rt.is_del=0
+		) e
+	)
+  </select>
+	<select id="getReportBrokenTotal" resultType="java.util.Map">
+		SELECT
+	DATE_FORMAT(a.created_time, '%Y') year,
+COUNT(DISTINCT(altd.res_id))'allocationTotal',
+	COUNT(DISTINCT(rtd.res_id))'repairTotal',
+		COUNT(DISTINCT(btd.res_id)) 'borrowTotal',
+sum(
+		CASE
+		WHEN a.`status` = 6 THEN
+		1
+		ELSE
+		0
+		END
+		) 'scrapTotal'
+FROM
+	(
+		SELECT
+			rs.*
+		FROM
+			res rs
+		LEFT JOIN sys_org so ON rs.org_id = so.id
+		<if test="fullCode!=null">
+			WHERE  so.full_code  LIKE CONCAT('',#{fullCode},'%')
+		</if>
+		<if test="regionId!=null">
+			AND rs.region_id=#{regionId}
+		</if>
+	) a
+LEFT JOIN allocation_task_desc altd on a.id=altd.res_id and altd.is_del=0
+LEFT JOIN repair_task_desc rtd on a.id=rtd.res_id and rtd.is_del=0
+LEFT JOIN borrow_task_desc btd on a.id=btd.res_id and btd.is_del=0
+GROUP BY
+		DATE_FORMAT(a.created_time, '%Y')
+  </select>
+
+	<select id="getReportRegion" resultType="java.util.Map">
+			SELECT
+				id,
+				name
+			FROM
+				sys_region
+  </select>
+
+	<select id="getReportCakeTotal" resultType="java.util.Map">
+				SELECT
+	IFNULL(
+		sum(
+			CASE
+			WHEN rs.`status` = '1' THEN
+				1
+			ELSE
+				0
+			END
+		),
+		0
+	) 'onlineTotal',
+	IFNULL(
+		sum(
+			CASE
+			WHEN rs.`status` = '0' THEN
+				1
+			ELSE
+				0
+			END
+		),
+		0
+	) 'unknownTotal',
+	IFNULL(
+		sum(
+			CASE
+			WHEN rs.`status` = '6' THEN
+				1
+			ELSE
+				0
+			END
+		),
+		0
+	) 'scrapTotal',
+	IFNULL(
+		sum(
+			CASE
+			WHEN rs.`status` = '4' THEN
+				1
+			ELSE
+				0
+			END
+		),
+		0
+	) 'repairTotal',
+	IFNULL(
+		sum(
+			CASE
+			WHEN rs.`status` = '5' THEN
+				1
+			ELSE
+				0
+			END
+		),
+		0
+	) 'borrowTotal',
+	IFNULL(
+		sum(
+			CASE
+			WHEN rs.`status` = '3' THEN
+				1
+			ELSE
+				0
+			END
+		),
+		0
+	) 'allocationTotal'
+FROM
+	res rs
+LEFT JOIN sys_org so ON rs.org_id = so.id
+		WHERE rs.is_del=0
+		<if test="fullCode!=null">
+		 AND  so.full_code  LIKE CONCAT('',#{fullCode},'%')
+		</if>
+		<if test="regionId!=null">
+			AND rs.region_id=#{regionId}
+		</if>
+	</select>
+
+<!--  <select id="selectByPrimaryKey1">-->
+<!--    SELECT-->
+<!--	rs.region_id,-->
+<!--	DATE_FORMAT(rs.created_time, '%Y'),-->
+<!--	sum(-->
+<!--		CASE-->
+<!--		WHEN rs.`status` = 1 THEN-->
+<!--			1-->
+<!--		ELSE-->
+<!--			0-->
+<!--		END-->
+<!--	) '在线数量',-->
+<!--	sum(-->
+<!--		CASE-->
+<!--		WHEN rs.`status` = 6 THEN-->
+<!--			1-->
+<!--		ELSE-->
+<!--			0-->
+<!--		END-->
+<!--	) '报废',-->
+<!--	count(rs.id) '总数',-->
+<!--	sum(-->
+<!--		CASE-->
+<!--		WHEN rs.`status` = 0 THEN-->
+<!--			1-->
+<!--		ELSE-->
+<!--			0-->
+<!--		END-->
+<!--	) '未知'-->
+<!--FROM-->
+<!--	res rs where rs.is_del=0-->
+<!--GROUP BY-->
+<!--	DATE_FORMAT(rs.created_time, '%Y')-->
+<!--HAVING-->
+<!--	rs.region_id = 6358557891934289924-->
+<!--    </select>-->
+
+<!--  <select id="selectByPrimaryKey1">-->
+<!--    SELECT-->
+<!--	rs.region_id,-->
+<!--	DATE_FORMAT(rs.created_time, '%Y') date,-->
+<!--	sum(-->
+<!--		CASE-->
+<!--		WHEN rs.`status` = 3 THEN-->
+<!--			1-->
+<!--		ELSE-->
+<!--			0-->
+<!--		END-->
+<!--	) '调拨',-->
+<!--	sum(-->
+<!--		CASE-->
+<!--		WHEN rs.`status` = 4 THEN-->
+<!--			1-->
+<!--		ELSE-->
+<!--			0-->
+<!--		END-->
+<!--	) '维修',-->
+<!--	sum(-->
+<!--		CASE-->
+<!--		WHEN rs.`status` = 5 THEN-->
+<!--			1-->
+<!--		ELSE-->
+<!--			0-->
+<!--		END-->
+<!--	) '借用',-->
+<!--	sum(-->
+<!--		CASE-->
+<!--		WHEN rs.`status` = 6 THEN-->
+<!--			1-->
+<!--		ELSE-->
+<!--			0-->
+<!--		END-->
+<!--	) '报废'-->
+<!--FROM-->
+<!--	res rs-->
+<!--	where rs.is_del=0-->
+<!--GROUP BY-->
+<!--	DATE_FORMAT(rs.created_time, '%Y')-->
+<!--HAVING-->
+<!--	rs.region_id = 6358557891934289924-->
+<!--    </select>-->
+
+</mapper>

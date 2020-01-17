@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" th:href="@{/img/favicon.html}">
+
+    <title>江苏有线三网融合扭曲中心数据中心-设备线缆管理系统</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-reset.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <link th:href="@{/assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css}" rel="stylesheet" type="text/css" media="screen"/>
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.css}" type="text/css">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+
+    <link th:href="@{/3rd/webgl/css/page.css}" rel="stylesheet">
+
+    <style>
+
+
+    </style>
+
+    <script type="text/javascript" th:src="@{/3rd/webgl/js/three.min.js}"></script>
+    <!--<script type="text/javascript" th:src="@/js/jquery-2.1.0.js}"></script>-->
+    <script type="text/javascript" th:src="@{/3rd/webgl/js/D.min.js}"></script>
+    <script type="text/javascript" th:src="@{/3rd/webgl/js/doT.min.js}"></script>
+    <!--<script type="text/javascript" th:src="@/js/photo-sphere-viewer.min.js}"></script>-->
+    <script type="text/javascript" th:src="@{/3rd/webgl/js/WebGL.js}"></script>
+    <script type="text/javascript" th:src="@{/3rd/webgl/js/OrbitControls.js}"></script>
+    <script type="text/javascript" th:src="@{/3rd/webgl/js/stats.min.js}"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+    <script th:src="@{/js/html5shiv.js}"></script>
+    <script th:src="@{/js/respond.min.js}"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <div class="row">
+        <div class="col-xs-3">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="mt-15" style="background: #5C5F95;border-radius: 6px">
+                        <div id="status" style="height: 400px">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 10px">
+                <div class="col-xs-12">
+                    <div class="mt-15" style="background: #5C5F95;border-radius: 6px">
+                        <div id="scrapped" style="height: 400px">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="ification1 ification-warp">
+                        <div class="ification-top">
+                            <p class="RealTimeStatistics-titleText">在线设备</p>
+                            <span class="RealTimeStatistics-tag">实时</span>
+                        </div>
+                        <div>
+                            <h2 class="ification-bottom num1"></h2>
+                            <div>
+                                <p class="RealTimeStatistics-total num1"></p>
+                                <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="ification2 ification-warp">
+                        <div class="ification-top">
+                            <p class="RealTimeStatistics-titleText">机房数量</p>
+                            <span class="RealTimeStatistics-tag">实时</span>
+                        </div>
+                        <div>
+                            <h2 class="ification-bottom num2"></h2>
+                            <div>
+                                <p class="RealTimeStatistics-total num2"></p>
+                                <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="ification3 ification-warp">
+                        <div class="ification-top">
+                            <p class="RealTimeStatistics-titleText">机架数量</p>
+                            <span class="RealTimeStatistics-tag">实时</span>
+                        </div>
+                        <div>
+                            <h2 class="ification-bottom num3"></h2>
+                            <div>
+                                <p class="RealTimeStatistics-total num3"></p>
+                                <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="mt-15"  style="background: #5C5F95;border-radius: 6px">
+                        <div class="" style="font-weight: 700;font-size: 18px;padding: 10px 0 0 20px;color: #fff">
+                            江苏省区域地图
+                        </div>
+                        <div id="mapadd" style="height: 465px">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 20px">
+                <div class='col-xs-4'>
+                    <div class="ification4 ification-warp">
+                        <div class="ification-top">
+                            <p class="RealTimeStatistics-titleText">设备分类</p>
+                            <span class="RealTimeStatistics-tag">实时</span>
+                        </div>
+                        <div>
+                            <h2 class="ification-bottom num4"></h2>
+                            <div>
+                                <p class="RealTimeStatistics-total num4"></p>
+                                <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-xs-4'>
+                    <div class="ification5 ification-warp">
+                        <div class="ification-top">
+                            <p class="RealTimeStatistics-titleText">行政部门</p>
+                            <span class="RealTimeStatistics-tag">实时</span>
+                        </div>
+                        <div>
+                            <h2 class="ification-bottom num5"></h2>
+                            <div>
+                                <p class="RealTimeStatistics-total num5"></p>
+                                <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-xs-4'>
+                    <div class="ification6 ification-warp">
+                        <div class="ification-top">
+                            <p class="RealTimeStatistics-titleText">地级市</p>
+                            <span class="RealTimeStatistics-tag">实时</span>
+                        </div>
+                        <div>
+                            <h2 class="ification-bottom num6"></h2>
+                            <div>
+                                <p class="RealTimeStatistics-total num6"></p>
+                                <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="mt-15" style="background: #5C5F95;border-radius: 6px">
+                        <div id="quantity" style="height: 400px">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="mt-15" style="background: #5C5F95;border-radius: 6px;height: 400px;margin-top: 10px">
+                        <div style="padding: 10px 0 0 20px">
+                            <p style="font-size: 18px;font-weight: 700;color: #fff;">机房3维视图</p>
+                        </div>
+                        <div style="width: 100%;height: 300px;display: flex;justify-content: center;align-items: center">
+                            <a href="#" style="padding: 0 15px">
+                                <img src="img/3d.jpg" alt="图片" style="width: 100%">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" th:inline="javascript">
+        ctxPath = /*[[@{/}]]*/ '';
+    </script>
+<!-- js placed at the end of the document so the pages load faster -->
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/jquery-1.8.3.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery.scrollTo.min.js}"></script>
+<!--<script th:src="@{/js/jquery.nicescroll.js}" type="text/javascript"></script>-->
+<script th:src="@{/js/jquery.sparkline.js}" type="text/javascript"></script>
+<script th:src="@{assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js}"></script>
+<script th:src="@{/js/owl.carousel.js}" ></script>
+<script th:src="@{/js/jquery.customSelect.min.js}" ></script>
+
+<!--common script for all pages-->
+<!--<script th:src="@{/js/common-scripts.js}"></script>-->
+
+<!--script for this page-->
+<script th:src="@{/js/map/echarts.min.js}"></script>
+<script th:src="@{/js/map/jiangsu.js}"></script>
+<!--<script th:src="@{/js/map/index.js}"></script>-->
+<!--    <script th:src="@/js/sparkline-chart.js}"></script>-->
+<!--    <script th:src="@/js/easy-pie-chart.js}"></script>-->
+<script>
+
+
+    function status(list) {
+        var wxStatus = echarts.init(document.getElementById('status'));
+
+        wxStatus.setOption({
+            title : {
+                text: '设备状态',
+                x:'left',
+                y: 'top',
+                padding: [10, 15],
+                textStyle: {
+                    color:"#fff"
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}: {c} ({d}%)"
+            },
+            legend: {
+                icon: "circle",   //  这个字段控制形状  类型包括 circle，rect ，roundRect，triangle，diamond，pin，arrow，none
+                itemWidth: 10,  // 设置宽度
+                itemHeight: 10, // 设置高度
+                orient: 'horizontal',
+                x: 'left',
+                bottom:'20',
+                left: 'center',
+                data: names,
+                itemGap:35,
+                textStyle:{
+                    color:"#fff"
+                }
+            },
+            color:['#2980E3', '#329FE0','#4DCCCB','#4A90E2'],
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: ['40%', '60%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        normal: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '20',
+                                fontWeight: 'bold'
+                            }
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    data: brower
+                }
+            ]
+        });
+        var names = []; //类别数组（用于存放饼图的类别）
+        var brower = [];
+
+        var arrNum = []
+        $.each(list, function(index, item) {
+            names.push(item.name); //挨个取出类别并填入类别数组
+            arrNum = item.data
+            var nums = 0;
+            $.each(arrNum,function (ind,item) {
+                nums += parseInt(item)
+            })
+           // console.log(nums)
+            brower.push({
+                name: item.name,
+                value: nums,
+            });
+
+        });
+
+        //console.log(brower)
+        wxStatus.setOption({
+            legend: {
+                data: names
+            },
+            series: [{
+                data: brower
+            }]
+        })
+        window.addEventListener("resize",()=>{
+            wxStatus.resize();
+    });
+    }
+    function scrapped(list,time){
+        var wxScrapped = echarts.init(document.getElementById('scrapped'));
+        var series=[]
+
+
+
+        for(var i = 0;i<list.length;i++){
+            series.push({
+                name: list[i].name,
+                data: list[i].data,
+                type: 'bar',
+                barGap: 0,
+
+            })
+        }
+
+        option = {
+            title : {
+                text: '设备报废',
+                x:'left',
+                y: 'top',
+                padding: [10, 15],
+                textStyle: {
+                    color:"#fff"
+                }
+            },
+            color: ['#F5B856', '#66A0E3', '#E5E8AE', '#F2C2AA'],
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                top:'25%',
+                containLabel: true
+            },
+            legend: {
+                icon: "circle",   //  这个字段控制形状  类型包括 circle，rect ，roundRect，triangle，diamond，pin，arrow，none
+                itemWidth: 10,  // 设置宽度
+                itemHeight: 10, // 设置高度
+                top:45,
+                itemGap:35,
+                // right:20,
+                left:10,
+                data: ['设备数量', '报废数量', '在线数量', '初始数量'],
+                textStyle:{
+                    color:"#fff"
+                }
+
+            },
+            toolbox: {
+                show: true,
+                orient: 'vertical',
+                left: 'right',
+                top: 'center',
+                feature: {
+                }
+            },
+            calculable: true,
+            xAxis: [
+                {
+                    type: 'category',
+                    axisTick: {show: false},
+                    data: time
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: series,
+        };
+
+
+        wxScrapped.setOption(option);
+
+        window.addEventListener("resize",()=>{
+            wxScrapped.resize();
+    });
+
+    }
+    function quanTity(list,time){
+        var Tjtity = echarts.init(document.getElementById('quantity'));
+
+        var series=[]
+        for(var i = 0;i<list.length;i++){
+            series.push({
+                name: list[i].name,
+                data: list[i].data,
+                symbolSize:10,
+                type:'line',
+                symbol:'circle',
+                smooth: true,
+                stack: '总量',
+            })
+        }
+
+        option = {
+            title: {
+                padding: [10, 15],
+                text: '数量统计折线图',
+                textStyle: {
+                    color:"#fff"
+                }
+            },
+            tooltip: {
+                orient: 'horizontal',
+                x: 'left',
+                trigger: 'axis'
+            },
+            legend: {
+                icon: "circle",   //  这个字段控制形状  类型包括 circle，rect ，roundRect，triangle，diamond，pin，arrow，none
+                itemWidth: 10,  // 设置宽度
+                itemHeight: 10, // 设置高度
+                orient: 'horizontal',
+                itemGap:35,
+                // data:['设备维修','报废设备','设备调用','设备借用'],
+                top:40,
+                left:10,
+                textStyle:{
+                    color:"#fff"
+                }
+            },
+            color:['#F5B856', '#D13902','#50E3C2','#4A90E2'],
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                top:'20%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: time
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: series
+        };
+
+        Tjtity.setOption(option);
+
+
+        window.addEventListener("resize",()=>{
+            Tjtity.resize();
+    });
+
+    }
+
+
+
+
+    function doresize(list) {
+        var maps = echarts.init(document.getElementById('mapadd'));
+
+        var data=[]
+
+        for(var i = 0;i<list.length;i++){
+            data.push({
+                name:list[i].name,
+                itemStyle: {
+                    normal: {
+                        areaColor: '#F3e8ff',
+                        borderColor: '#B29eca'
+                    }
+                },
+                mid:list[i].id
+            })
+        }
+        option = {
+
+            tooltip : {
+                trigger: 'item',
+                formatter: '{b}'
+            },
+
+            series : [{
+                name: '江苏',
+                type: 'map',
+                mapType: '江苏',
+                roam: false,
+                //top:'8%',
+                zoom:1.2,
+                //x:'25%',
+                //layoutCenter: ['25%', '25%'],
+                // 如果宽高比大于 1 则宽度为 100，如果小于 1 则高度为 100，保证了不超过 100x100 的区域
+                layoutSize: 240,
+                selectedMode : 'single',//multiple多选
+                itemStyle:{
+                    normal:{
+                        label:{
+                            show:true,
+                            textStyle: {
+                                color: "#B29eca", //字体颜色
+                                fontSize: 10 ,
+                            }
+                        },
+                        fontSize: 8 ,
+                       areaStyle:{color:'#90b3ff'},
+                        areaColor:'#B29eca',
+                       borderWidth: 1,
+                        // borderColor:'#ca211a',//区块的边框颜色
+                        /*shadowBlur: 2,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)',*/
+
+                    },
+                    emphasis:{//鼠标hover样式
+                        label:{
+                            show:true,
+                            textStyle:{
+                                color:'#ffffff'
+                            }
+                        },
+                        areaColor: "#59cb74",
+                        borderWidth: 1,
+                        borderColor:'#fff'
+                        //areaStyle:{color:'#c9ef90'}
+                    }
+                },
+                data:data,
+            }]
+        };
+        maps.setOption(option);
+
+        window.addEventListener("resize",()=>{
+            maps.resize();
+        });
+        maps.off('click')
+        maps.on('click', function(params){
+            console.log(params.data.mid);
+            //change_region(params.name);
+            //alert(params.name);
+            ajaxnameDelay(params.data.mid)
+            //此处写点击事件内容
+        });
+
+    }
+    ajaxname()
+    ajaxnameDelay()
+    function ajaxname(mid){
+
+        $.ajax({
+            url: ctxPath+"getReportData",
+            type: 'get',
+            dataType: "json",
+            success: function(res) {
+                console.log(res)
+                // var data={}
+                // for(var i=0;i<res.length;i++){
+                //     if(res[i].id==mid){
+                //         data=res[i]
+                //     }
+                // }
+                // var list=data.value.list
+                // var baofei=data.value.baofei
+                // var tongji=data.value.tongji
+
+                var region = res.data.region
+
+                var list= res.data.columnar//饼图
+
+                var baofei=res.data.columnar//柱状图
+                var tongji=res.data.broken//折线图
+                var time = res.data.date
+                console.log(time)
+                status(list)
+                scrapped(baofei,time)
+                quanTity(tongji,time)
+                doresize(region)
+                var num = res.data.total
+                $(".num1").text(num.deviceTotal)
+                $(".num2").html(num.rackTotal)
+                $(".num3").html(num.deviceTypeTotal)
+                $(".num4").html(num.roomTotal)
+                $(".num5").html(num.orgTotal)
+                $(".num6").html(num.level)
+                // doresize()
+            }
+        })
+
+    }
+    function ajaxnameDelay(mid) {
+
+        $.ajax({
+            url: ctxPath + "getReportData",
+            type: 'get',
+            dataType: "json",
+            success: function (res) {
+                var region = res.data.region
+                var list = res.data.columnar //饼图
+                var baofei = res.data.columnar //柱状图
+                var tongji = res.data.broken //折线图
+                var time = res.data.date
+                status(list)
+                scrapped(baofei, time)
+                quanTity(tongji, time)
+                var num = res.data.total
+                $(".num1").text(num.deviceTotal)
+                $(".num2").html(num.rackTotal)
+                $(".num3").html(num.deviceTypeTotal)
+                $(".num4").html(num.roomTotal)
+                $(".num5").html(num.orgTotal)
+                $(".num6").html(num.level)
+                // doresize()
+            }
+        })
+
+    }
+
+</script>
+
+
+</body>
+</html>

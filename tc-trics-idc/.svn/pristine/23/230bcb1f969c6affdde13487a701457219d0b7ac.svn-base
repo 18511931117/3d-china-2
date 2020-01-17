@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" href="../img/favicon.html">
+
+    <title>设备贴标</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-reset.css" rel="stylesheet">
+    <!--external css-->
+    <link href="../assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/style-responsive.css" rel="stylesheet" />
+      <link rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.5/css/layui.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+  <section id="container" class="">
+      <!--header start-->
+      <header class="header white-bg">
+          <div class="sidebar-toggle-box">
+              <div data-original-title="Toggle Navigation" data-placement="right" class="icon-reorder tooltips"></div>
+          </div>
+          <!--logo start-->
+          <a href="#" class="logo" >江苏有线</a>
+          <!--logo end-->
+          <div class="top-nav ">
+              <ul class="nav pull-right top-menu">
+                  <li>
+                      <input type="text" class="form-control search" placeholder="Search">
+                  </li>
+                  <!-- user login dropdown start-->
+                  <li class="dropdown">
+                      <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                          <img alt="" src="../img/avatar1_small.jpg">
+                          <span class="username">Jhon Doue</span>
+                          <b class="caret"></b>
+                      </a>
+                      <ul class="dropdown-menu extended logout">
+                          <div class="log-arrow-up"></div>
+                          <li><a href="../login.html"><i class="icon-key"></i> Log Out</a></li>
+                      </ul>
+                  </li>
+                  <!-- user login dropdown end -->
+              </ul>
+          </div>
+      </header>
+      <!--header end-->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu">
+                  <li class="">
+                      <a class="" href="../index.html">
+                          <i class="icon-dashboard"></i>
+                          <span>首页</span>
+                      </a>
+                  </li>
+                  <li class="sub-menu active">
+                      <a href="javascript:;" class="">
+                          <i class="icon-book"></i>
+                          <span>设备管理</span>
+                          <span class="arrow"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="general.html">设备信息管理</a></li>
+                          <li><a class="" href="buttons.html">设备标签绑定</a></li>
+                          <li class="active"><a class="" href="widget.html">设备贴标</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon-cogs"></i>
+                          <span>线缆管理</span>
+                          <span class="arrow"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="../label2/grids.html">线缆信息管理</a></li>
+                          <li><a class="" href="../label2/calendar.html">线缆标签绑定</a></li>
+                          <li><a class="" href="../label2/charts.html">线缆贴标</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon-tasks"></i>
+                          <span>任务管理</span>
+                          <span class="arrow"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="../task/form_component.html">盘点任务</a></li>
+                          <li><a class="" href="../task/form_wizard.html">调拨任务</a></li>
+                          <li><a class="" href="../task/form_validation.html">借用任务</a></li>
+                          <li><a class="" href="../task/form_task.html">维修任务</a></li>
+                          <li><a class="" href="../task/tabledetail.html">报废任务</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon-th"></i>
+                          <span>日志管理</span>
+                          <span class="arrow"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="../log/basic_table.html">盘点任务日志</a></li>
+                          <li><a class="" href="../log/basic_table2.html">调拨任务日志</a></li>
+                          <li><a class="" href="../log/basic_table3.html">借用任务日志</a></li>
+                          <li><a class="" href="../log/basic_table4.html">维修任务日志</a></li>
+                          <li><a class="" href="../log/basic_table5.html">操作日志</a></li>
+                          <li><a class="" href="../log/basic_table6.html">告警日志</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon-glass"></i>
+                          <span>系统管理</span>
+                          <span class="arrow"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="../system/user.html">账号管理</a></li>
+                          <li><a class="" href="../system/role.html">角色管理</a></li>
+                          <li><a class="" href="../system/menu.html">菜单管理</a></li>
+                          <li><a class="" href="../system/profile.html">机构管理</a></li>
+                          <li><a class="" href="../system/invoice.html">机房管理</a></li>
+                          <li><a class="" href="../system/jjmangt.html">机架管理</a></li>
+                          <li><a class="" href="../system/fenclass.html">设备分类管理</a></li>
+                          <li><a class="" href="../system/lablemangt.html">标签管理</a></li>
+                          <li><a class="" href="../system/3djfang.html">3D机房</a></li>
+                          <li><a class="" href="../404.html">404 Error</a></li>
+                          <li><a class="" href="../500.html">500 Error</a></li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a class="" href="../login.html">
+                          <i class="icon-user"></i>
+                          <span>Login Page</span>
+                      </a>
+                  </li>
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+              <!-- page start-->
+              <div class="row">
+                      <div class="col-lg-12">
+                          <section class="panel">
+                              <header class="panel-heading">
+                                  设备贴标
+                              </header>
+                          </section>
+                      </div>
+              </div>
+
+              <div class="row-fulid">
+                  <section class="panel">
+                      <header class="panel-heading tab-bg-dark-navy-blue">
+                          <ul class="nav nav-tabs">
+                              <li class="active">
+                                  <a data-toggle="tab" href="#home">pc端贴标</a>
+                              </li>
+                              <li class="">
+                                  <a data-toggle="tab" href="#about">手持端贴标</a>
+                              </li>
+                          </ul>
+                      </header>
+                      <div class="panel-body">
+                          <div class="tab-content">
+                              <div id="home" class="tab-pane active">
+                                  <div class="row" style="margin: 15px 0;">
+                                      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#openFilter">筛选</button>
+                                      <button type="button" class="btn btn-info">批量打印</button>
+                                      <button type="button" class="btn btn-info">确认贴标完成</button>
+                                      <button type="button" class="btn btn-info">导出</button>
+                                  </div>
+                                  <div class="row">
+                                      <section class="panel">
+                                          <table class="layui-hide" id="test" lay-filter="test"></table>
+                                          <script type="text/html" id="barDemo">
+                                              <a class="layui-btn layui-btn-xs" lay-event="del">打印</a>
+                                              <a class="layui-btn layui-btn-xs" lay-event="del">确认贴标完成</a>
+                                          </script>
+                                      </section>
+                                  </div>
+                              </div>
+                              <div id="about" class="tab-pane">
+                                  <div class="row" style="margin: 15px 0;">
+                                      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#openFilter">筛选</button>
+                                      <button type="button" class="btn btn-info">批量打印</button>
+                                      <button type="button" class="btn btn-info">导出</button>
+                                  </div>
+                                  <div class="row">
+                                      <section class="panel">
+                                          <table class="layui-hide" id="test" lay-filter="test"></table>
+                                          <script type="text/html" id="barDemo">
+                                              <a class="layui-btn layui-btn-xs" lay-event="del">打印</a>
+                                              <a class="layui-btn layui-btn-xs" lay-event="del">确认贴标完成</a>
+                                          </script>
+                                      </section>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </section>
+              </div>
+              <!-- page end-->
+          </section>
+      </section>
+      <!--main content end-->
+      <section>
+          <div class="modal fade" id="openFilter" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog" style="width: 60%">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                              &times;
+                          </button>
+                          <h4 class="modal-title">
+                              筛选详情
+                          </h4>
+                      </div>
+                      <div class="modal-body">
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">设备名称</label>
+                                  <input type="email" class="form-control" id="" placeholder="设备名称">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">机房</label>
+                                  <div class="">
+                                      <select class="form-control">
+                                          <option>M2机房</option>
+                                      </select>
+                                  </div>
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">设备类型</label>
+                                  <div class="">
+                                      <select class="form-control">
+                                          <option>M2机房</option>
+                                      </select>
+                                  </div>
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">采购单位</label>
+                                  <input type="email" class="form-control" id="" placeholder="采购单位">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">使用单位</label>
+                                  <input type="email" class="form-control" id="" placeholder="使用单位">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">品牌制造商</label>
+                                  <input type="email" class="form-control" id="" placeholder="品牌制造商">
+                              </div>
+
+                          </div>
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">出厂日期从</label>
+                                  <input type="email" class="form-control" id="" placeholder="出厂日期从">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">到货日期从</label>
+                                  <input type="email" class="form-control" id="" placeholder="到货日期从">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">初验日期从</label>
+                                  <input type="email" class="form-control" id="" placeholder="初验日期从">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">终验日期从</label>
+                                  <input type="email" class="form-control" id="" placeholder="终验日期从">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">采购日期从</label>
+                                  <input type="email" class="form-control" id="" placeholder="采购日期从">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">型号</label>
+                                  <input type="email" class="form-control" id="" placeholder="型号">
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">出厂日期到</label>
+                                  <input type="email" class="form-control" id="" placeholder="出厂日期到">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">到货日期到</label>
+                                  <input type="email" class="form-control" id="" placeholder="到货日期到">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">初验日期到</label>
+                                  <input type="email" class="form-control" id="" placeholder="初验日期到">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">终验日期到</label>
+                                  <input type="email" class="form-control" id="" placeholder="终验日期到">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">采购日期从</label>
+                                  <input type="email" class="form-control" id="" placeholder="采购日期从">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">代理供货商</label>
+                                  <div class="">
+                                      <select class="form-control">
+                                          <option>代理商1</option>
+                                      </select>
+                                  </div>
+                              </div>
+
+
+                          </div>
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">序列号</label>
+                                  <input type="email" class="form-control" id="" placeholder="序列号">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">责任人</label>
+                                  <input type="email" class="form-control" id="" placeholder="责任人">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">使用状态</label>
+                                  <input type="email" class="form-control" id="" placeholder="使用状态">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">地址</label>
+                                  <input type="email" class="form-control" id="" placeholder="地址">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">楼宇编号</label>
+                                  <input type="email" class="form-control" id="" placeholder="楼宇编号">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">楼层编号</label>
+                                  <input type="email" class="form-control" id="" placeholder="楼层编号">
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">维保到期从</label>
+                                  <input type="email" class="form-control" id="" placeholder="维保到期从">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">机架编号</label>
+                                  <input type="email" class="form-control" id="" placeholder="机架编号">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">机柜U位</label>
+                                  <input type="email" class="form-control" id="" placeholder="机柜U位">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">业务信息</label>
+                                  <input type="email" class="form-control" id="" placeholder="业务信息">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">设备编号</label>
+                                  <input type="email" class="form-control" id="" placeholder="设备编号">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">维保状态</label>
+                                  <div class="">
+                                      <select class="form-control">
+                                          <option>在保</option>
+                                          <option>不在保</option>
+                                      </select>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">维保到期到</label>
+                                  <input type="email" class="form-control" id="" placeholder="维保到期到">
+                              </div>
+                          </div>
+                      </div>
+                      <div class="data">
+
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                          </button>
+                          <button type="button" class="btn btn-primary">
+                              确认筛选
+                          </button>
+                      </div>
+                  </div><!-- /.modal-content -->
+              </div><!-- /.modal -->
+          </div>
+      </section>
+  </section>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="../js/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.scrollTo.min.js"></script>
+    <script src="../js/jquery.nicescroll.js" type="text/javascript"></script>
+    <script src="../assets/jquery-knob/js/jquery.knob.js"></script>
+
+
+    <!--common script for all pages-->
+    <script src="../js/common-scripts.js"></script>
+  <script src="https://www.layuicdn.com/layui-v2.5.5/layui.js"></script>
+
+  <script>
+      //knob
+      $(".knob").knob();
+
+      layui.use('table', function(){
+
+
+          var table = layui.table;
+
+          table.render({
+              elem: '#test'
+              // ,url:'/test/table/demo1.json'
+              ,title: '用户数据表'
+              ,cols: [[
+                  {type: 'checkbox'},
+                  {field: 'id', title: 'ID',}
+                  , {field: '资产编号', title: '资产编号'}
+                  , {field: '设备名称', title: '设备名称',}
+                  , {field: '设备分类', title: '设备分类'}
+                  , {field: '机房', title: '机房'}
+                  , {field: '标签编号', title: '标签编号'}
+                  , {field: '状态', title: '状态'}
+
+                  , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+              ]],
+              data: [
+                  {
+                      "id": 10000,
+                      "资产编号": "user-0",
+                      "设备名称": "user-0",
+                      "设备分类": "user-0",
+                      "机房": "user-0",
+                      "标签编号": "user-0",
+                      "状态": "user-0",
+                  },
+              ]
+              ,page: true
+          });
+
+          //监听行工具事件
+          table.on('tool(test)', function(obj){
+              var data = obj.data;
+              //console.log(obj)
+              if(obj.event === 'del'){
+                  layer.confirm('真的删除行么', function(index){
+                      obj.del();
+                      layer.close(index);
+                  });
+              } else if(obj.event === 'edit'){
+
+              }
+          });
+      });
+
+
+      layui.use('table', function(){
+          var table = layui.table;
+
+          table.render({
+              elem: '#test2'
+              // ,url:'/test/table/demo1.json'
+              ,title: '用户数据表'
+              ,cols: [[
+                  {type: 'checkbox'},
+                  {field: 'id', title: 'ID',}
+                  , {field: '资产编号', title: '资产编号'}
+                  , {field: '设备名称', title: '设备名称',}
+                  , {field: '设备分类', title: '设备分类'}
+                  , {field: '机房', title: '机房'}
+                  , {field: '标签编号', title: '标签编号'}
+                  , {field: '状态', title: '状态'}
+
+                  , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo2'}
+              ]],
+              data: [
+                  {
+                      "id": 10000,
+                      "资产编号": "user-0",
+                      "设备名称": "user-0",
+                      "设备分类": "user-0",
+                      "机房": "user-0",
+                      "标签编号": "user-0",
+                      "状态": "user-0",
+                  },
+              ]
+              ,page: true
+          });
+
+          //监听行工具事件
+          table.on('tool(test)', function(obj){
+              var data = obj.data;
+              //console.log(obj)
+              if(obj.event === 'del'){
+                  layer.confirm('真的删除行么', function(index){
+                      obj.del();
+                      layer.close(index);
+                  });
+              } else if(obj.event === 'edit'){
+
+              }
+          });
+      });
+
+  </script>
+
+
+  </body>
+</html>

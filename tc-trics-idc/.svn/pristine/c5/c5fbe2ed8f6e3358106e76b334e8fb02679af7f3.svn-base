@@ -1,0 +1,316 @@
+package com.manage.idc.log.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.config.socket.WebSocketServer;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.enums.TaskState;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.device.domain.Res;
+import com.manage.idc.device.mapper.ResMapper;
+import com.manage.idc.log.domain.AlarmsTaskLog;
+import com.manage.idc.log.mapper.AlarmsLogMapper;
+import com.manage.idc.log.service.*;
+import com.manage.idc.system.domain.AlarmsLogRole;
+import com.manage.idc.system.domain.SysUser;
+import com.manage.idc.system.mapper.AlarmsLogRoleMapper;
+import com.manage.idc.system.mapper.SysUserMapper;
+import com.manage.idc.task.domain.*;
+import com.manage.idc.task.mapper.AllocationTaskDescMapper;
+import com.manage.idc.task.mapper.BorrowTaskDescMapper;
+import com.manage.idc.task.mapper.RepairTaskDescMapper;
+import com.manage.idc.task.mapper.ScrapTaskDescMapper;
+import com.manage.idc.task.service.AllocationTaskService;
+import com.manage.idc.task.service.BorrowTaskService;
+import com.manage.idc.task.service.RepairTaskService;
+import com.manage.idc.task.service.ScrapTaskService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.websocket.Session;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/22 20:30
+ **/
+@Service
+@Transactional
+public class AlarmTaskLogServiceImpl implements AlarmTaskLogService {
+    @Autowired
+    private AlarmsLogMapper alarmsLogMapper;
+
+    @Autowired
+    private AlarmsLogRoleMapper alarmsLogRoleMapper;
+
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+
+    @Autowired
+    private AllocationTaskService allocationTaskService;
+
+    @Autowired
+    private BorrowTaskService borrowTaskService;
+
+    @Autowired
+    private RepairTaskService repairTaskService;
+
+    @Autowired
+    private ScrapTaskService scrapTaskService;
+
+    @Autowired
+    private ResMapper resMapper;
+
+    @Autowired
+    private BorrowTaskDescMapper borrowTaskDescMapper;
+
+    @Autowired
+    private AllocationTaskDescMapper allocationTaskDescMapper;
+
+
+
+
+    @Autowired
+    private RepairTaskDescMapper repairTaskDescMapper;
+
+
+    @Autowired
+    private ScrapTaskDescMapper scrapTaskDescMapper;
+
+
+    @Override
+    public int checkLogTask(AlarmsTaskLog alarmsLog) {
+        AlarmsTaskLog alarmsTaskLog = alarmsLogMapper.selectByPrimaryKey(alarmsLog.getId());
+        Long resId = alarmsTaskLog.getResId();
+
+        //借调
+        BorrowTaskDesc desc = new BorrowTaskDesc();
+        desc.setResId(resId);
+        desc.setState(TaskState.CONDUCT_TASK.getState());
+        desc.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        desc = borrowTaskDescMapper.selectOne(desc);
+
+        if(desc != null){
+            return 1;
+        }
+
+        //调拨
+        AllocationTaskDesc allocationTaskDesc = new AllocationTaskDesc();
+        allocationTaskDesc.setResId(resId);
+        allocationTaskDesc.setState(TaskState.CONDUCT_TASK.getState());
+        allocationTaskDesc.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        allocationTaskDesc = allocationTaskDescMapper.selectOne(allocationTaskDesc);
+
+        if(allocationTaskDesc != null){
+            return 1;
+        }
+
+        //维修
+        RepairTaskDesc repairTaskDesc = new RepairTaskDesc();
+        repairTaskDesc.setResId(resId);
+        repairTaskDesc.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        repairTaskDesc.setState(TaskState.CONDUCT_TASK.getState());
+        repairTaskDesc = repairTaskDescMapper.selectOne(repairTaskDesc);
+
+        if(repairTaskDesc != null){
+            return 1;
+        }
+
+
+        //报废
+        ScrapTaskDesc scrapTaskDesc = new ScrapTaskDesc();
+        scrapTaskDesc.setResId(resId);
+        scrapTaskDesc.setState(TaskState.CONDUCT_TASK.getState());
+        scrapTaskDesc.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        scrapTaskDesc = scrapTaskDescMapper.selectOne(scrapTaskDesc);
+
+        if(scrapTaskDesc != null){
+            return 1;
+        }
+        List<AlarmsTaskLog> alarmsTaskLogs = alarmsLogMapper.selectList(DataSetUtile.setQueryMap(alarmsTaskLog, null, null));
+        if(alarmsTaskLogs.size()>0 && alarmsTaskLogs!=null){
+            //获取最后一次
+            AlarmsTaskLog lastLog = alarmsTaskLogs.get(alarmsTaskLogs.size() - 1);
+            //获取第一次
+            AlarmsTaskLog firstLog = alarmsTaskLogs.get(0);
+            if (lastLog.getRoomId()==firstLog.getRoomId()){
+                return 0;
+            }
+        }
+
+        return 0;
+    }
+
+    @Override
+    @Transactional
+    public void add(AlarmsTaskLog alarmsLog) {
+        alarmsLog.setCreateTime(new Date());
+        alarmsLog.setId(IdGen.getUUId());
+        alarmsLogMapper.insertSelective(alarmsLog);
+    }
+
+    @Override
+    public PageInfo<AlarmsTaskLog> getPage(AlarmsTaskLog alarmsLog, PageRequest pageRequest) {
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        alarmsLog.setOrgId(SessionUtil.getUser().getOrgId());
+        List<AlarmsTaskLog> list = alarmsLogMapper.selectByCondition(DataSetUtile.setQueryMap(alarmsLog,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<>(list);
+    }
+
+    @Override
+    public List<AlarmsTaskLog> export(AlarmsTaskLog alarmsLog) {
+        return null;
+    }
+
+
+    @Override
+    @Async("asyncWarningExecutor")
+    public void warningPush(String userId, Session session) {
+        SysUser sysUser = new SysUser();
+        sysUser.setId(Long.parseLong(userId));
+        sysUser = sysUserMapper.selectUserById(sysUser);
+
+        Integer count = alarmsLogMapper.selectWarningCountByUserId(sysUser.getOrgId().toString());
+        if(null != count && count > 0){
+            WebSocketServer.SendMessage(session,count+"");
+        }else{
+            WebSocketServer.SendMessage(session,"0");
+        }
+    }
+
+
+    @Override
+    public List<Long> findUserRoleByOrg(AlarmsLogRole alarmsLog) {
+        return alarmsLogRoleMapper.selectRoleIdByOrgId(alarmsLog.getOrgId());
+    }
+
+
+    @Override
+    @Transactional
+    public void addLogRole(Long orgId,String roleIds) {
+        alarmsLogRoleMapper.deleteByOrgId(orgId);
+        String[] split = roleIds.split(",");
+        for (String ids:
+        split) {
+            AlarmsLogRole alarmsLogRole = new AlarmsLogRole();
+            alarmsLogRole.setId(IdGen.getUUId());
+            alarmsLogRole.setCreatedTime(new Date());
+            alarmsLogRole.setOrgId(orgId);
+            alarmsLogRole.setRoleId(Long.parseLong(ids));
+            alarmsLogRoleMapper.insert(alarmsLogRole);
+        }
+
+    }
+
+
+    @Override
+    public PageInfo<AlarmsTaskLog> getResInfoLog(AlarmsTaskLog alarmsLog, PageRequest pageRequest) {
+        if(null != pageRequest && null != pageRequest.getPage() && null != pageRequest.getLimit()){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List <AlarmsTaskLog> list = alarmsLogMapper.selectList(DataSetUtile.setQueryMap(alarmsLog,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<>(list);
+    }
+
+
+    @Override
+    public void handleLog(Long logId, String hanleState, String reason) {
+        AlarmsTaskLog log = alarmsLogMapper.selectByPrimaryKey(logId);
+
+        Long resId = log.getResId();
+        Res res = new Res();
+        res.setId(resId);
+        res = resMapper.selectOne(res);
+
+
+        AlarmsTaskLog alarmsTaskLog = new AlarmsTaskLog();
+        alarmsTaskLog.setResId(log.getResId());
+        alarmsTaskLog.setState(1);
+        List<AlarmsTaskLog> alarmsTaskLogs = alarmsLogMapper.selectList(DataSetUtile.setQueryMap(alarmsTaskLog, null, null));
+        //最后一次机房记录作为目的地机房
+        AlarmsTaskLog lastLog = alarmsTaskLogs.get(alarmsTaskLogs.size() - 1);
+
+
+        if("0".equals(hanleState)){
+            AllocationTask allocationTask = new AllocationTask();
+            allocationTask.setResIds(resId+"");
+
+            allocationTask.setTaskName("告警处理--调拨任务");
+            allocationTask.setRemark(reason);
+
+            //设置目的地和起始机构
+            allocationTask.setStartOrgId(res.getOrgId());
+            allocationTask.setEndOrgId(lastLog.getOrgId());
+
+            //设置目的地和起始机房
+            allocationTask.setStartRoomId(res.getRoomId());
+            allocationTask.setEndRoomId(lastLog.getRoomId());
+            allocationTaskService.add(allocationTask);
+        }else if("1".equals(hanleState)){
+            BorrowTask borrowTask = new BorrowTask();
+
+            borrowTask.setRemark(reason);
+            borrowTask.setTaskName("告警日志处理--借用任务");
+
+            borrowTask.setResIds(res.getId()+"");
+            borrowTask.setOrgId(SessionUtil.getUser().getOrgId());
+            //设置起始和目的地机构
+            borrowTask.setStartOrgId(res.getOrgId());
+            borrowTask.setEndOrgId(lastLog.getOrgId());
+            //设置起始和目的地机房
+            borrowTask.setStartRoomId(res.getRoomId());
+            borrowTask.setEndRoomId(lastLog.getRoomId());
+            borrowTaskService.add(borrowTask);
+        }else if("2".equals(hanleState)){
+            ScrapTask scrapTask = new ScrapTask();
+            scrapTask.setResIds(res.getId()+"");
+            scrapTask.setOrgId(SessionUtil.getUser().getOrgId());
+            scrapTask.setRemark(reason);
+            scrapTask.setTaskName("告警日志处理--报废任务");
+            scrapTask.setRoomId(res.getRoomId());
+            scrapTaskService.add(scrapTask);
+        }else if("3".equals(hanleState)){
+            RepairTask repairTask = new RepairTask();
+            repairTask.setTaskName("告警日志处理--维修任务");
+            repairTask.setResIds(res.getId()+"");
+            repairTask.setOrgId(res.getOrgId());
+            repairTask.setRemark(reason);
+            repairTask.setRoomId(res.getRoomId());
+            repairTaskService.add(repairTask);
+        }
+
+        long handleId = IdGen.getUUId();
+        Map<String, Object> map = new HashMap<>();
+        map.put("id",handleId);
+        //map.put("log_id",taskLog.getId());
+        map.put("hanle_state",hanleState);
+        map.put("user_id",SessionUtil.getUser().getId());
+        map.put("reason",reason);
+        alarmsLogMapper.insertHandle(map);
+
+
+        for (AlarmsTaskLog taskLog:
+        alarmsTaskLogs) {
+            Map<String, Object> ahMap = new HashMap<>();
+            ahMap.put("id",IdGen.getUUId());
+            ahMap.put("log_id",taskLog.getId());
+            ahMap.put("hanle_id",handleId);
+            alarmsLogMapper.insertHandleLog(ahMap);
+            taskLog.setState(0);
+            alarmsLogMapper.updateByPrimaryKey(taskLog);
+        }
+    }
+}

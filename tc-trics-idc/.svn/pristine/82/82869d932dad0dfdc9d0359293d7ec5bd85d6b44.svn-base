@@ -1,0 +1,78 @@
+package com.manage.idc.system.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.system.domain.Rack;
+import com.manage.idc.system.domain.SysMenu;
+import com.manage.idc.system.domain.SysRegion;
+import com.manage.idc.system.domain.SysRole;
+import com.manage.idc.system.service.SysRegionService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/21 13:46
+ **/
+@Api(tags = "区域字典管理")
+@RestController
+@RequestMapping("region")
+public class SysRegionController {
+    @Autowired
+    private SysRegionService sysRegionService;
+
+
+    @GetMapping("getPage")
+    @ResponseBody
+    @ApiOperation(value = "获取字典分页列表", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getPage(SysRegion sysRegion, PageRequest pageRequest){
+        PageInfo<SysRegion> pageInfo = sysRegionService.getPage(sysRegion,pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+    @GetMapping("getList")
+    @ResponseBody
+    @ApiOperation(value = "获取字典分页列表", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getList(SysRegion sysRegion){
+        List<SysRegion> pageInfo = sysRegionService.getList(sysRegion);
+        return DataSetUtile.setSuccessResult(pageInfo);
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequiresPermissions("region:add")
+    @ApiOperation(value = "字典添加", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse add(SysRegion sysRegion) {
+        sysRegionService.add(sysRegion);
+        return new ResultResponse().success();
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequiresPermissions("region:delete")
+    @ApiOperation(value = "字典删除", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse deleteMenus(String regionIds) {
+        sysRegionService.delete(regionIds);
+        return new ResultResponse().success();
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequiresPermissions("region:update")
+    @ApiOperation(value = "字典修改", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse update(SysRegion sysRegion) {
+        sysRegionService.update(sysRegion);
+        return new ResultResponse().success();
+    }
+
+
+}

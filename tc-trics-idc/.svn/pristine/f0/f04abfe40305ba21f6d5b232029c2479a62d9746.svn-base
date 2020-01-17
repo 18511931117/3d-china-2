@@ -1,0 +1,31 @@
+package com.manage.idc.common.entiy;
+
+/**
+ * @Description 常量
+ * @Author lyq_j
+ * @DATE 2019/10/14 14:28
+ **/
+public class IdcConstant {
+    // 前端页面路径前缀
+    public static final String VIEW_PREFIX = "idc/views/";
+
+    // 验证码 Session Key
+    public static final String CODE_PREFIX = "idc_captcha_";
+
+    // 系统参数
+    public static interface SYSTEM_ISDEL {
+        //未删除
+        Integer NOT_DEL = 0;
+
+        //已删除
+        Integer DEL = 1;
+    }
+
+    public static interface SYSTEM_ISBIND {
+        //未绑定
+        Integer NOT_BIND = 0;
+
+        //未绑定
+        Integer BIND = 1;
+    }
+}

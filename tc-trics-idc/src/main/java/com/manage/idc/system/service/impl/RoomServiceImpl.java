@@ -1,0 +1,143 @@
+package com.manage.idc.system.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.system.domain.Room;
+import com.manage.idc.system.domain.SysOrg;
+import com.manage.idc.system.domain.ext.RoomExt;
+import com.manage.idc.system.mapper.RoomMapper;
+import com.manage.idc.system.mapper.SysOrgMapper;
+import com.manage.idc.system.service.RoomService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Author: WangZiFan
+ * @Date: 2019/10/21 9:26
+ * @Description:
+ */
+@Service
+public class RoomServiceImpl implements RoomService {
+    @Autowired
+    private RoomMapper roomMapper;
+
+    @Autowired
+    private SysOrgMapper sysOrgMapper;
+
+    /*
+     * @Description: 获取机房
+     * @Author: WangZiFan
+     * @Date: 2019/11/3 10:28
+     * @param room
+     * @return com.manage.idc.system.domain.Room
+     */
+    @Override
+    public Room getRoom(Room room) {
+        return roomMapper.selectOne(room);
+    }
+
+    /*
+     * @Description: 添加机房
+     * @Author: WangZiFan
+     * @Date: 2019/10/21 9:30
+     * @param room
+     * @return void
+     */
+    @Override
+    @Transactional
+    public void addRoom(Room room) {
+        room.setId(IdGen.getUUId());
+        Long orgId = room.getOrgId();
+
+        SysOrg sysOrg = new SysOrg();
+        sysOrg.setId(orgId);
+        sysOrg = sysOrgMapper.selectOne(sysOrg);
+
+        room.setRegionId(Long.parseLong(sysOrg.getRegionId()));
+
+        roomMapper.insert(room);
+    }
+    /*
+     * @Description: 获取分页对象
+     * @Author: WangZiFan
+     * @Date: 2019/10/21 9:30
+     * @param room
+     * @param pageRequest
+     * @return com.github.pagehelper.PageInfo
+     */
+    @Override
+    public PageInfo getPage(Room room, PageRequest pageRequest) {
+        if(null != pageRequest && pageRequest.getPage() != null && pageRequest.getLimit() != null){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<RoomExt> list =null;
+        if (room.getOrgId()==null){
+            list = roomMapper.selectByCondition(DataSetUtile.setQueryMap(room,pageRequest,SessionUtil.getUser()));
+        }else {
+            list = roomMapper.selectByCondition(DataSetUtile.setQueryMap(room,pageRequest,null));
+        }
+
+        return new PageInfo(list);
+    }
+    /*
+     * @Description: 删除机房
+     * @Author: WangZiFan
+     * @Date: 2019/10/21 9:30
+     * @param id
+     * @return void
+     */
+    @Override
+    @Transactional
+    public void delRoom(Long id) {
+        Room room = new Room();
+        room.setId(id);
+        room.setUpdatedTime(new Date());
+        room.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        roomMapper.updateRoom(room);
+    }
+    /*
+     * @Description: 修改机房
+     * @Author: WangZiFan
+     * @Date: 2019/10/23 15:48
+     * @param room
+     * @return void
+     */
+    @Override
+    @Transactional
+    public void updateRoom(Room room) {
+        room.setUpdatedTime(new Date());
+
+        Long orgId = room.getOrgId();
+        SysOrg sysOrg = new SysOrg();
+        sysOrg.setId(orgId);
+        sysOrg = sysOrgMapper.selectOne(sysOrg);
+
+        room.setRegionId(Long.parseLong(sysOrg.getRegionId()));
+
+        roomMapper.updateRoom(room);
+    }
+
+    @Override
+    public List<Room> getRoomByOrgId(Room room) {
+        if(room==null){
+            room.setOrgId(SessionUtil.getUser().getOrgId());
+        }
+        return roomMapper.getRoomByOrgId(room);
+    }
+
+    @Override
+    public List<RoomExt>  getOrgCurrentRoom(Room room, PageRequest pageRequest) {
+        List<RoomExt>
+            list = roomMapper.selectByCondition(DataSetUtile.setQueryMap(room,pageRequest,SessionUtil.getUser()));
+        return list;
+    }
+}

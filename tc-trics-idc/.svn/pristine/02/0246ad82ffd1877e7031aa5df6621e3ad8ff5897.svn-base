@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.device.mapper.ResExtMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.device.domain.ResExt" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="res_id" property="resId" jdbcType="INTEGER" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="item_value" property="itemValue" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="is_del" property="isDel" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from res_ext
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+
+    <delete id="deleteByResId" parameterType="long" >
+    delete from res_ext
+    where res_id = #{value}
+  </delete>
+
+
+  <insert id="insert" parameterType="com.manage.idc.device.domain.ResExt" >
+    insert into res_ext (
+        id,
+        res_id,
+        item_code,
+        item_value,
+        remark
+      )
+    values (
+        #{id,jdbcType=INTEGER},
+        #{resId,jdbcType=INTEGER},
+        #{itemCode,jdbcType=VARCHAR},
+        #{itemValue,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+
+
+
+  <insert id="batchInsert" parameterType="list" >
+    insert into res_ext (
+        id,
+        res_id,
+        item_code,
+        item_value,
+        remark
+      )
+    values
+    <foreach collection="list" item="item" separator=",">
+      (
+          #{item.id,jdbcType=INTEGER},
+          #{item.resId,jdbcType=INTEGER},
+          #{item.itemCode,jdbcType=VARCHAR},
+          #{item.itemValue,jdbcType=VARCHAR},
+          #{item.remark,jdbcType=VARCHAR}
+        )
+    </foreach>
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.device.domain.ResExt" >
+    update res_ext
+    set
+        <if test="isValid != null and isValid != ''">
+          is_valid = #{isValid,jdbcType=INTEGER},
+        </if>
+        <if test="resId != null and resId != ''">
+          res_id = #{resId,jdbcType=INTEGER},
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+          item_code = #{itemCode,jdbcType=VARCHAR},
+        </if>
+        <if test="itemValue != null and itemValue != ''">
+          item_value = #{itemValue,jdbcType=VARCHAR},
+        </if>
+        <if test="remark != null and remark != ''">
+          remark = #{remark,jdbcType=VARCHAR},
+        </if>
+        <if test="isDel != null and remark != ''">
+          is_del = #{isDel,jdbcType=INTEGER},
+        </if>
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, is_valid, res_id, item_code, item_value, remark, created_time, updated_time, 
+    is_del
+    from res_ext
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, is_valid, res_id, item_code, item_value, remark, created_time, updated_time, 
+    is_del
+    from res_ext
+  </select>
+
+
+  <update id="updateIsDelByResId" parameterType="long" >
+    update res_ext
+    set is_del = '1'
+    where res_id = #{value}
+  </update>
+
+
+
+  <update id="updateByResId" parameterType="com.manage.idc.device.domain.ResExt" >
+    update res_ext
+    set
+    <if test="isValid != null and isValid != ''">
+      is_valid = #{isValid,jdbcType=INTEGER},
+    </if>
+    <if test="itemCode != null and itemCode != ''">
+      item_code = #{itemCode,jdbcType=VARCHAR},
+    </if>
+    <if test="itemValue != null and itemValue != ''">
+      item_value = #{itemValue,jdbcType=VARCHAR},
+    </if>
+    <if test="remark != null and remark != ''">
+      remark = #{remark,jdbcType=VARCHAR},
+    </if>
+    <if test="isDel != null and remark != ''">
+      is_del = #{isDel,jdbcType=INTEGER},
+    </if>
+    updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where res_id = #{resId}
+    <if test="itemCode != null and itemCode != ''">
+        AND item_code = #{itemCode,jdbcType=VARCHAR}
+    </if>
+  </update>
+    
+    
+    <select id="selectDeviceExtInfoById" parameterType="map" resultType="map">
+        SELECT RC.item_name title,RE.item_value as value FROM RES_EXT RE LEFT JOIN RES_EXT_CFG RC ON RE.item_code = RC.item_code
+        where RE.RES_ID = #{devId} AND RC.ext_grp_code = #{groupByCode}
+    </select>
+</mapper>

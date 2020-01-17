@@ -1,0 +1,261 @@
+var editObj=null,ptable=null,treeGrid=null,tableId='treeTable',layer=null;
+layui.config({
+    base: '../js/design/extend/'
+}).extend({
+    treeGrid:'treeGrid'
+}).use(['jquery','treeGrid','layer'], function(){
+    var $=layui.jquery;
+    treeGrid = layui.treeGrid;//很重要
+    layer=layui.layer;
+    ptable=treeGrid.render({
+        id:tableId
+        ,elem: '#'+tableId
+        ,url: ctxPath+'menu/getList'
+        ,cellMinWidth: 100
+        ,idField:'id'//必須字段
+        ,treeId:'id'//树形id字段名称
+        ,treeUpId:'parentId'//树形父id字段名称
+        ,treeShowName:'name'//以树形式显示的字段
+        ,heightRemove:[".dHead",10]//不计算的高度,表格设定的是固定高度，此项不生效
+        ,height:'400px'
+        ,isFilter:false
+        ,iconOpen:false//是否显示图标【默认显示】
+        ,isOpenDefault:false//节点默认是展开还是折叠【默认展开】
+        ,loading:true
+        ,method:'get'
+        ,isPage:false
+        ,cols: [[
+            {type:'checkbox',sort:true}
+            // ,{field:'id', title: '编号'}
+            /*,{field:'id', title: 'id'}*/
+            ,{field:'name', title: '菜单名'}
+            ,{field:'permission', title: '权限标识'}
+            ,{field:'type', title: '类型(1:菜单 2:按钮)'}
+            ,{field:'url', title: 'URL'}
+            ,{field:'parentId', title: 'parentId'}
+            ,{field:'num', title: '排序'}
+            ,{width:150,title: '操作', align:'center'/*toolbar: '#barDemo'*/
+                ,templet: function(d){
+                    var html='';
+                    var edBtn='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit" data-toggle="modal" data-target="#editMenu">修改</a>';
+                    var addBtn='<a class="layui-btn layui-btn-xs" lay-event="add" data-toggle="modal" data-target="#addMenu" >添加</a>';
+                    var delBtn='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+                    return edBtn+addBtn+delBtn;
+                }
+            }
+        ]]
+        ,parseData:function (res) {//数据加载后回调
+            return res;
+        }
+        // ,onClickRow:function (index, o) {
+        //     console.log(index,o,"单击！");
+        //     //msg("单击！,按F12，在控制台查看详细参数！");
+        // }
+        // ,onDblClickRow:function (index, o) {
+        //     console.log(index,o,"双击");
+        //     msg("双击！,按F12，在控制台查看详细参数！");
+        // }
+        // ,onCheck:function (obj,checked,isAll) {//复选事件
+        //     console.log(obj,checked,isAll,"复选");
+        //     msg("复选,按F12，在控制台查看详细参数！");
+        // }
+        // ,onRadio:function (obj) {//单选事件
+        //     console.log(obj,"单选");
+        //     msg("单选,按F12，在控制台查看详细参数！");
+        // }
+    });
+
+
+    treeGrid.on('tool('+tableId+')',function (obj) {
+        if(obj.event === 'del'){//删除行
+            del(obj);
+        }else if(obj.event==="add"){//添加行
+            addMenu(obj);
+        }else if(obj.event=="edit"){
+            edit(obj)
+        }
+    });
+});
+//删除菜单
+function del(obj) {
+    layer.confirm("你确定删除数据吗？如果存在下级节点则一并删除，此操作不能撤销！", {icon: 3, title:'提示'},
+        function(index){//确定回调
+            $.ajax({
+                url:  "/menu/delete",
+                type: "POST",
+                data:{
+                    menuIds:obj.data.id
+                },
+                cache:false,
+                dataType: "json",
+                success: function(data){
+                    layer.msg(data.message);
+                    if(data.code=="0"){
+                        obj.del();
+                    }
+                },
+                error:function(err){
+                    layer.msg("服务器内部错误！")
+                }
+            });
+        },function (index) {//取消回调
+            layer.close(index);
+        }
+    );
+}
+
+var i=1000000;
+//添加
+function add(pObj) {
+    // var pdata=pObj?pObj.data:null;
+    // var param={};
+    // param.name=""
+    // param.id=++i;
+    // param.parentId=pdata?pdata.id:null;
+    // treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
+
+
+}
+//修改数据回显
+function edit(obj) {
+    $("#menuId").val(obj.data.id)
+    $("#names").val(obj.data.name)
+    $("#permissions").val(obj.data.permission)
+    $("#types").val(obj.data.type)
+    $("#urls").val(obj.data.url)
+    $("#parents").val(obj.data.parentId)
+    $("#nums").val(obj.data.num)
+}
+//修改数据接口
+$("#editData").on("click",function () {
+    var id= $("#menuId").val();
+    var name = $("#names").val();
+    if(name==""){
+        layer.msg("请输入菜单名称！！")
+        $("#names").focus()
+        return
+    }
+    var permission= $("#permissions").val();
+    if(permission==""){
+        layer.msg("请输入权限标识！！")
+        $("#permissions").focus()
+        return;
+    }
+    var type =$("#types").val();
+    if(type==""){
+        layer.msg("请输入类型(1:菜单 2:按钮)！！")
+        $("#types").focus()
+        return;
+    }
+    var url =$("#urls").val();
+    if(url==""){
+        layer.msg("请输入菜单名称！！")
+        $("#urls").focus();
+        return;
+    }
+    var parentId =$("#parents").val();
+    if(parentId==""){
+        layer.msg("请输入URL！！")
+        $("#parents").focus()
+        return;
+    }
+    var num =$("#nums").val();
+    if(num==""){
+        layer.msg("请输入排序！！")
+        $("#nums").focus();
+        return;
+    }
+    $.ajax({
+        url:  "/menu/update",
+        type: "POST",
+        data:{
+            id:id,
+            name:name,
+            permission:permission,
+            type:type,
+            url:url,
+            parentId:parentId,
+            num,num
+        },
+        cache:false,
+        dataType: "json",
+        success: function(data){
+            layer.msg(data.message);
+            if(data.code=="0"){
+                setTimeout('window.location.reload()',1500);
+
+            }
+        },
+        error:function(err){
+            layer.error("服务器内部错误！")
+        }
+    });
+
+})
+//添加menu
+function addMenu(pObj) {
+    console.log(pObj)
+    $("#pid").val(pObj.data.id)
+}
+$("#addMenus").on("click",function () {
+    var name = $("#name").val();
+    if(name==""){
+        layer.msg("请输入菜单名称！！")
+        $("#name").focus()
+        return
+    }
+    var permission= $("#permission").val();
+    if(permission==""){
+        layer.msg("请输入权限标识！！")
+        $("#permission").focus()
+        return;
+    }
+    var type =$("#type").val();
+    if(type==""){
+        layer.msg("请输入类型(1:菜单 2:按钮)！！")
+        $("#type").focus()
+        return;
+    }
+    var url =$("#url").val();
+    if(url==""){
+        layer.msg("请输入URL！！")
+        $("#url").focus();
+        return;
+    }
+    var parentId =$("#pid").val();
+    if(parentId==""){
+        layer.msg("请输入URL！！")
+        $("#parent").focus()
+        return;
+    }
+    var num =$("#num").val();
+    if(num==""){
+        layer.msg("请输入排序！！")
+        $("#num").focus();
+        return;
+    }
+    $.ajax({
+        url:  "/menu/add",
+        type: "POST",
+        data:{
+            name:name,
+            permission:permission,
+            type:type,
+            url:url,
+            parentId:parentId,
+            num,num
+        },
+        cache:false,
+        dataType: "json",
+        success: function(data){
+            layer.msg(data.message);
+            if(data.code=="0"){
+                setTimeout('window.location.reload()',1500);
+
+            }
+        },
+        error:function(err){
+            layer.error("服务器内部错误！")
+        }
+    });
+})

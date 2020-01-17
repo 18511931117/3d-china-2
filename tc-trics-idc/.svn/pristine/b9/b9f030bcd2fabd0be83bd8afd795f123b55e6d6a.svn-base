@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" href="../img/favicon.html">
+
+    <title>任务日志管理</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-reset.css}" rel="stylesheet">
+    <!--external css-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+    <![endif]-->
+
+    <![endif]-->
+</head>
+
+<body>
+            <div class="row">
+                <div class="col-lg-12">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            任务管理
+                        </header>
+                    </section>
+                </div>
+                <div class="col-lg-12">
+                    <button class="btn btn-success" id="exportDesc">导出任务明细</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <section class="panel">
+                        <table class="layui-hide" id="test" lay-filter="test"></table>
+                    </section>
+                </div>
+            </div>
+
+            <script type="text/javascript" th:inline="javascript">
+                ctxPath = /*[[@{/}]]*/ '';
+            </script>
+
+            <!-- js placed at the end of the document so the pages load faster -->
+            <script th:src="@{/js/jquery.js}"></script>
+            <script th:inline="javascript">
+                var id;
+                $(function () {
+                    id = [[${id}]];
+                    $('#test').bootstrapTable({
+                        url:ctxPath+'allocationTask/desc?id='+id,
+                        method: 'GET',
+                        uniqueId: 'id',                        // 绑定ID，不显示
+                        striped: false,                         //是否显示行间隔色
+                        cache: false,                          //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                        sortable: true,                        //是否启用排序
+                        sidePagination: "server",              //分页方式：client客户端分页，server服务端分页（*）
+                        undefinedText: '--',
+                        strictSearch: true,
+                        clickToSelect: true,                   // 点击选中行
+                        pagination: true,                      //是否显示分页
+                        pageNumber:1,                          //初始化加载第一页，默认第一页,并记录
+                        pageSize:10,//每页显示的数量
+                        pageList: [10, 20, 50, 100],//设置每页显示的数量
+                        paginationPreText:"上一页",
+                        paginationNextText:"下一页",
+                        paginationLoop:false,
+                        //得到查询的参数
+                        queryParams : function (params) {
+                            //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                            var temp = {
+                                limit: params.limit,                         //页面大小
+                                page: (params.offset / params.limit) + 1,   //页码
+                                sort: params.sort,      //排序列名
+                                sortOrder: params.order, //排位命令（desc，asc）
+                            };
+                            return temp;
+                        },
+                        columns:
+                            [{checkbox: true,width: 50}
+                                ,{field: 'id', title: 'ID',}
+                                , {field: 'resId', title: '设备编号'}
+                                , {field: 'resName', title: '设备名称',}
+                                , {field: 'resTypeCode', title: '设备分类'}
+                                , {field: 'roomName', title: '机房'}
+                                , {field: 'rackName', title: '机架'}
+                                , {field: 'sheft', title: '机位'}
+                                , {field: 'labelCode', title: '标签编号'}
+                                , {field: 'ownerName', title: '所有人'}
+                                , {field: 'state', title: '状态',formatter:function (value, row, index) {
+                                    var state=row.state;  //0-待执行,2-执行中,8-执行完毕
+                                    switch (state) {
+                                        case 0:
+                                            return"待执行"
+                                        case 1:
+                                            return "进行中"
+                                        case 2:
+                                            return "已完成"
+                                    }
+                                }}
+                            ]
+                    });
+                })
+
+            </script>
+<!--script for this page-->
+            <script th:src="@{/js/bootstrap.min.js}"></script>
+            <link rel="stylesheet" th:href="@{/3rd/bootstrap-table/bootstrap-table.css}" >
+            <script th:src="@{/3rd/bootstrap-table/bootstrap-table.js}"></script>
+</body>
+</html>

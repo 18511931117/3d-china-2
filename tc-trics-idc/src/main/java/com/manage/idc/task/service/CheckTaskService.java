@@ -1,0 +1,34 @@
+package com.manage.idc.task.service;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.task.domain.CheckTask;
+import com.manage.idc.task.domain.CheckTaskDesc;
+
+import java.util.List;
+
+public interface CheckTaskService {
+    void add(CheckTask checkTask);
+
+    PageInfo<CheckTaskDesc> desc(CheckTask checkTask,PageRequest pageRequest);
+
+    void delete(CheckTask checkTask);
+
+    List<CheckTaskDesc> export(CheckTask checkTask);
+
+    PageInfo<CheckTask> getPage(CheckTask checkTask, PageRequest pageRequest);
+
+    void updateState(CheckTask checkTask);
+
+    List<CheckTaskDesc> getCheckTaskDesc(CheckTaskDesc checkTask);
+
+    PageInfo<CheckTask> getCheckTaskPage(CheckTask checkTask, PageRequest pageRequest);
+
+    String chenDeviceTid(CheckTask checkTask);
+
+    void updateAppTaskDescState(CheckTaskDesc checkTaskDesc);
+
+    void updateAppTaskState(CheckTask checkTask);
+
+    void addCheckTask(CheckTask checkTask);
+}

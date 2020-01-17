@@ -1,0 +1,567 @@
+package com.manage.idc.cable.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.manage.idc.cable.domain.Cable;
+import com.manage.idc.cable.domain.ext.CableExt;
+import com.manage.idc.cable.domain.ext.CableQuery;
+import com.manage.idc.cable.mapper.CableMapper;
+import com.manage.idc.cable.service.CableService;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.utils.*;
+import com.manage.idc.device.domain.Res;
+import com.manage.idc.device.domain.ext.ResQuery;
+import com.manage.idc.device.mapper.ResMapper;
+import com.manage.idc.system.domain.Label;
+import com.manage.idc.system.domain.ResExtCfg;
+import com.manage.idc.system.domain.Room;
+import com.manage.idc.system.domain.SysOrg;
+import com.manage.idc.system.mapper.LabelMapper;
+import com.manage.idc.system.mapper.RoomMapper;
+import com.manage.idc.system.mapper.SysOrgMapper;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.crypto.Data;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.*;
+
+/**
+ * @Author: WangZiFan
+ * @Date: 2019/10/24 16:08
+ * @Description:
+ */
+@Service
+public class CableServiceImpl implements CableService {
+    @Autowired
+    private CableMapper cableMapper;
+
+
+    @Autowired
+    private ResMapper resMapper;
+
+
+    @Autowired
+    private RoomMapper roomMapper;
+
+    @Autowired
+    private SysOrgMapper sysOrgMapper;
+
+
+    @Autowired
+    private LabelMapper labelMapper;
+
+
+    /*
+     * @Description: 获取线缆分页对象
+     * @Author: WangZiFan
+     * @Date: 2019/10/30 16:07
+     * @param cable
+     * @param pageRequest
+     * @return com.github.pagehelper.PageInfo<com.manage.idc.cable.domain.ext.CableExt>
+     */
+    @Override
+    public PageInfo<CableExt> getPage(CableQuery cable, PageRequest pageRequest) {
+        if(null != pageRequest && null != pageRequest.getPage() && null != pageRequest.getLimit()){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<CableExt> cableExts = cableMapper.selectByCondition(DataSetUtile.setQueryMap(cable, pageRequest, null));
+        return new PageInfo<>(cableExts);
+    }
+
+    /*
+     * @Description: 导入线缆
+     * @Author: WangZiFan
+     * @Date: 2019/10/24 17:23
+     * @param cableFile
+     * @return boolean
+     */
+    @Override
+    public List<CableExt> importCable(MultipartFile cableFile) throws IOException {
+
+        File file = FileToUtile.multipartFileToFile(cableFile);
+
+        String[] title={"cableType","intf1Type","room1Name","res1Code","port1Id","intf2Type","room2Name","res2Code","port2Id","serveInfo"};
+
+        String[] titleCheck={"线缆类型","源端接口类型","源端机房","源端设备编号","源端板卡/端口ID","宿端接口类型","宿端机房","宿端设备编号","宿端板卡/端口ID","业务信息"};
+
+        List<CableExt> list = ImportExeclUtil.readExcelFirstSheet(file, Arrays.asList(title), CableExt.class, Arrays.asList(titleCheck));
+
+        FileToUtile.deleteFile(file);
+
+        if(list == null){
+            return null;
+        }
+        List<CableExt> back = new ArrayList<>();
+        for (CableExt ext:
+             list) {
+            String room1Name = ext.getRoom1Name();
+            String room2Name = ext.getRoom2Name();
+
+            Room room = new Room();
+            room.setName(room1Name);
+            room = roomMapper.selectOne(room);
+            if(null != room) {
+                ext.setRoom1Id(room.getId());
+            }else{
+                ext.setPs("[源端机房未找到]");
+                back.add(ext);
+                continue;
+            }
+
+            room = new Room();
+            room.setName(room2Name);
+            room = roomMapper.selectOne(room);
+            if(null != room){
+                ext.setRoom2Id(room.getId());
+            }else{
+                ext.setPs("[宿端机房未找到]");
+                back.add(ext);
+                continue;
+            }
+
+
+            String res1Code = ext.getRes1Code();
+            Res res = new Res();
+            res.setAssetId(res1Code);
+            res = resMapper.selectOne(res);
+
+            if(null != res){
+                ext.setOrg1Id(res.getOrgId());
+            }else{
+                ext.setPs("[源端设备未找到]");
+                back.add(ext);
+                continue;
+            }
+
+            ext.setRes1Id(res.getId());
+
+
+            SysOrg sysOrg = new SysOrg();
+            sysOrg.setId(res.getOrgId());
+            sysOrg = sysOrgMapper.selectOne(sysOrg);
+
+            ext.setAssetId(sysOrg.getFullCode()+"-"+"CABLE-"+RandomUtile.getRandomString(8));
+
+
+            String res2Code = ext.getRes2Code();
+            res = new Res();
+            res.setAssetId(res2Code);
+            res = resMapper.selectOne(res);
+
+            if(null != res){
+                ext.setOrg2Id(res.getOrgId());
+            }else{
+                ext.setPs("[宿端设备未找到]");
+                back.add(ext);
+                continue;
+            }
+
+            ext.setRes2Id(res.getId());
+
+            //ext.setAssetId(res);
+
+        }
+        list.removeAll(back);
+
+        List<List> insertList = ListUtile.divisionList(list);
+
+        for (List insert:
+        insertList) {
+            cableMapper.batchInsert(insert);
+        }
+
+        return back;
+    }
+
+    /*
+     * @Description: TODO
+     * @Author: WangZiFan
+     * @Date: 2019/10/24 17:27
+     * @param response
+     * @return void
+     */
+    @Override
+    public void exportCableModel(HttpServletResponse response) throws IOException {
+        String fileName = "线缆导入模板";
+
+        String[] title ={"线缆类型","源端接口类型","源端机房","源端设备编号","源端板卡/端口ID","宿端接口类型","宿端机房","宿端设备编号","宿端板卡/端口ID","业务信息"};
+
+
+        ExportPOIUtils.start_download(response,fileName,null,title,null);
+    }
+
+
+    @Override
+    public void exportCable(List<Long> ids,HttpServletResponse response) throws IOException {
+        String[] title ={"线缆类型","源端接口类型","源端机房","源端设备","源端板卡/端口ID","宿端接口类型","宿端机房","宿端设备","宿端板卡/端口ID","业务信息"};
+
+        String[] propertis = {"cableType","intf1Type","room1Name","res1Name","port1Id","intf2Type","room2Name","res2Name","port2Id","serveInfo"};
+
+        CableQuery cable = new CableQuery();
+        cable.setIds(ids);
+
+        List<CableExt> list = cableMapper.selectByCondition(DataSetUtile.setQueryMap(cable, null, null));
+
+        Gson gson = new Gson();
+
+        String json = gson.toJson(list);
+
+        Type type = TypeToken.getParameterized(List.class, Map.class).getType();
+
+
+        ExportPOIUtils.start_download(response,"线缆信息导出",gson.fromJson(json,type),title,propertis);
+
+    }
+
+
+    /*
+     * @Description: 删除线缆
+     * @Author: WangZiFan
+     * @Date: 2019/10/24 18:06
+     * @param id
+     * @return void
+     */
+    @Override
+    public void delCable(Long id) {
+        Cable cable = new Cable();
+        cable.setId(id);
+        cable.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        cable.setUpdatedTime(new Date());
+        cableMapper.updateByPrimaryKey(cable);
+    }
+    /*
+     * @Description: 修改线缆
+     * @Author: WangZiFan
+     * @Date: 2019/10/24 18:45
+     * @param cable
+     * @return void
+     */
+    @Override
+    public void updateCable(Cable cable) {
+        cable.setUpdatedTime(new Date());
+        cableMapper.updateByPrimaryKey(cable);
+    }
+    /*
+     * @Description: 线缆绑定标签
+     * @Author: WangZiFan
+     * @Date: 2019/10/24 18:52
+     * @param cable
+     * @return void
+     */
+    @Override
+    public void bindLabel(Cable cable) {
+        cable.setUpdatedTime(new Date());
+        cableMapper.updateByPrimaryKey(cable);
+
+        Label label = new Label();
+        label.setTid(cable.getTid());
+        label.setIsBinding(IdcConstant.SYSTEM_ISBIND.BIND);
+        label.setUpdatedTime(new Date());
+        labelMapper.updateByTid(label);
+
+
+        label = new Label();
+        label.setTid(cable.getTid2());
+        label.setIsBinding(IdcConstant.SYSTEM_ISBIND.BIND);
+        label.setUpdatedTime(new Date());
+
+        labelMapper.updateByTid(label);
+    }
+
+
+    @Override
+    public String appBindLabel(Cable cable) {
+        String tid = cable.getTid();
+        String tid2 = cable.getTid2();
+
+        if(!StringUtils.isNotEmpty(tid) || !StringUtils.isNotEmpty(tid2)){
+            return "源端宿端标签均不可为空!";
+        }
+        Cable query = new Cable();
+        query.setId(cable.getId());
+        query = cableMapper.selectOne(query);
+        if(StringUtils.isNotEmpty(query.getTid()) || StringUtils.isNotEmpty(query.getTid2())){
+            return "该线缆已绑定标签!";
+        }
+
+        Label check = labelMapper.selectByTid(tid);
+        Label check2 = labelMapper.selectByTid(tid2);
+
+        if(check != null && check.getIsBinding().equals(1)){
+            return "源端标签已绑定!";
+        }
+        if(check2 != null && check2.getIsBinding().equals(1)){
+            return "宿端标签已绑定!";
+        }
+
+
+        cable.setUpdatedTime(new Date());
+        cable.setIsPasted(IdcConstant.SYSTEM_PASTED.PASTED);
+        cableMapper.updateByPrimaryKey(cable);
+
+        Label label = new Label();
+        label.setTid(cable.getTid());
+        label.setIsBinding(IdcConstant.SYSTEM_ISBIND.BIND);
+        label.setIsPasted(IdcConstant.SYSTEM_PASTED.PASTED);
+        label.setUpdatedTime(new Date());
+
+        labelMapper.updateByTid(label);
+
+
+        label = new Label();
+        label.setTid(cable.getTid2());
+        label.setIsBinding(IdcConstant.SYSTEM_ISBIND.BIND);
+        label.setIsPasted(IdcConstant.SYSTEM_PASTED.PASTED);
+        label.setUpdatedTime(new Date());
+
+        labelMapper.updateByTid(label);
+
+        return null;
+    }
+
+    /*
+     * @Description: 获取APP线缆分页对象
+     * @Author: WangZiFan
+     * @Date: 2019/10/25 11:50
+     * @param queryStr
+     * @param pageRequest
+     * @return com.github.pagehelper.PageInfo<com.manage.idc.cable.domain.ext.CableExt>
+     */
+    @Override
+    public PageInfo<CableExt> getAppCablePage(CableQuery cableQuery, PageRequest pageRequest) {
+        Map<String, Object> map = new HashMap<>();
+        if(null != pageRequest && null != pageRequest.getPage() && null != pageRequest.getLimit()){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<CableExt> list = cableMapper.selectByCondition(DataSetUtile.setQueryMap(cableQuery,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<>(list);
+    }
+
+
+    @Override
+    public List<Map<String,Object>> getAppCableInfo(Long id) {
+        CableQuery cable = new CableQuery();
+        cable.setId(id);
+        CableExt obj = cableMapper.selectByCondition(DataSetUtile.setQueryMap(cable,null,null)).get(0);
+        List<Map<String,Object>> backList = new ArrayList<>();
+
+        Map<String, Object> backMap = new HashMap<>();
+
+        backMap.put("title","线缆信息");
+
+        List<Map<String,Object>> list = new ArrayList<>();
+        String[] titles = {"线缆类型","线缆编号","源端接口类型","源端机房/机架","源端位置信息(楼层编号)","源端位置信息(机柜U位)",
+                "源端设备编号(资产编号)","源端板卡/端口ID","宿端接口类型","源端机房/机架","宿端位置信息(楼层编号)","宿端位置信息(机柜U位)",
+                "宿端设备编号(资产编号)","宿端板卡/端口ID","tid1","tid2","业务信息"};
+        for(int i=0;i<titles.length;i++){
+            Map<String, Object> map = new HashMap<>();
+            map.put("title",titles[i]);
+            switch (i){
+                case 0:map.put("value",obj.getCableType()); break;
+                case 1:map.put("value",obj.getAssetId()); break;
+                case 2:map.put("value",obj.getIntf1Type()); break;
+                case 3:map.put("value",obj.getRoom1Name()); break;
+                case 4:map.put("value",obj.getFloor1()); break;
+                case 5:map.put("value",obj.getRackU1()); break;
+                case 6:map.put("value",obj.getRes1Code()); break;
+                case 7:map.put("value",obj.getPort1Id()); break;
+                case 8:map.put("value",obj.getIntf2Type()); break;
+                case 9:map.put("value",obj.getRoom2Name()); break;
+                case 10:map.put("value",obj.getFloor2()); break;
+                case 11:map.put("value",obj.getRackU2()); break;
+                case 12:map.put("value",obj.getRes2Code()); break;
+                case 13:map.put("value",obj.getPort2Id()); break;
+                case 14:map.put("value",obj.getTid()); break;
+                case 15:map.put("value",obj.getTid2()); break;
+                case 16:map.put("value",obj.getServeInfo()); break;
+            }
+            list.add(map);
+        }
+
+        backMap.put("valueList",list);
+        backList.add(backMap);
+
+        return backList;
+    }
+
+    /*
+     * @Description: 获取线缆对象
+     * @Author: WangZiFan
+     * @Date: 2019/11/3 14:14
+     * @param cable
+     * @return com.manage.idc.cable.domain.Cable
+     */
+    @Override
+    public Cable getCable(Cable cable) {
+        return cableMapper.selectOne(cable);
+    }
+
+    /*
+     * @Description: 添加线缆
+     * @Author: WangZiFan
+     * @Date: 2019/11/3 15:26
+     * @param cable
+     * @return void
+     */
+    @Override
+    public void addCable(Cable cable) {
+        cable.setId(IdGen.getUUId());
+
+        /*Res res1 = new Res();
+        res1.setId(cable.getRes1Id());
+        res1 = resMapper.selectOne(res1);
+
+        Res res2 = new Res();
+        res2.setId(cable.getRes2Id());
+        res2 = resMapper.selectOne(res1);
+
+        Long orgId1 = res1.getOrgId();
+
+
+
+        cable.setOrg1Id(sysOrg1.getId());
+        cable.setOrg2Id(res2.getOrgId());*/
+
+        SysOrg sysOrg1 = new SysOrg();
+        sysOrg1.setId(cable.getOrg1Id());
+        sysOrg1 = sysOrgMapper.selectOne(sysOrg1);
+
+
+        cable.setAssetId(sysOrg1.getFullCode()+"-"+"CABLE-"+RandomUtile.getRandomString(8));
+
+        cableMapper.insert(cable);
+    }
+
+    /*
+     * @Description: TODO
+     * @Author: WangZiFan
+     * @Date: 2019/11/4 14:55
+     * @param ids
+     * @return void
+     */
+    @Override
+    public void batchDel(List<Long> ids) {
+        cableMapper.batchDel(ids);
+    }
+    /*
+     * @Description: TODO
+     * @Author: WangZiFan
+     * @Date: 2019/11/12 15:57
+     * @param cable
+     * @return void
+     */
+    @Override
+    public void untyingLabel(Cable cable) {
+        cableMapper.untyingLabel(cable);
+
+        Label label = new Label();
+        label.setTid(cable.getTid());
+        label.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        labelMapper.updateByTid(label);
+
+        label.setTid(cable.getTid2());
+        labelMapper.updateByTid(label);
+    }
+
+
+    @Override
+    @Transactional
+    public void print(Cable cable) {
+        cable = cableMapper.selectOne(cable);
+        cable.setIsPrinted(IdcConstant.SYSTEM_PRINT.PRINT);
+        cable.setUpdatedTime(new Date());
+        cableMapper.updateByPrimaryKey(cable);
+
+        if(StringUtils.isNotEmpty(cable.getTid()) && StringUtils.isNotEmpty(cable.getTid2())){
+            Label label = new Label();
+            label.setTid(cable.getTid());
+            label.setIsPrinted(IdcConstant.SYSTEM_PRINT.PRINT);
+            label.setUpdatedTime(new Date());
+            labelMapper.updateByTid(label);
+
+            label.setTid(cable.getTid2());
+            labelMapper.updateByTid(label);
+        }
+    }
+
+
+    @Override
+    @Transactional
+    public void confirm(Cable cable) {
+        cable = cableMapper.selectOne(cable);
+        cable.setIsPasted(IdcConstant.SYSTEM_PASTED.PASTED);
+        cable.setUpdatedTime(new Date());
+        cableMapper.updateByPrimaryKey(cable);
+
+        Label label = new Label();
+        label.setTid(cable.getTid());
+        label.setIsPasted(IdcConstant.SYSTEM_PASTED.PASTED);
+        label.setUpdatedTime(new Date());
+        labelMapper.updateByTid(label);
+
+        label.setTid(cable.getTid2());
+        labelMapper.updateByTid(label);
+    }
+
+
+    @Override
+    public void bindPcExport(List<Long> ids,HttpServletResponse response) {
+        CableQuery cableQuery = new CableQuery();
+        cableQuery.setIds(ids);
+        List<CableExt> cableExts = cableMapper.selectByCondition(DataSetUtile.setQueryMap(cableQuery, null, null));
+
+
+        String[] title ={"线缆编号","线缆分类","业务信息","源端设备编号","宿端设备编号","源端标签编号","宿端标签编号","状态"};
+
+        String[] propertis = {"assetId","cableType","serveInfo","res1Name","res2Name","barcode1","barcode2","isPrinted"};
+
+        Gson gson = new Gson();
+
+        String json = gson.toJson(cableExts);
+
+        Type type = TypeToken.getParameterized(List.class, Map.class).getType();
+
+
+        try {
+            ExportPOIUtils.start_download(response,"线缆信息导出",gson.fromJson(json,type),title,propertis);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void bindPhoneExport(List<Long> ids, HttpServletResponse response) {
+        CableQuery cableQuery = new CableQuery();
+        cableQuery.setIds(ids);
+        List<CableExt> cableExts = cableMapper.selectByCondition(DataSetUtile.setQueryMap(cableQuery, null, null));
+
+
+        String[] title ={"线缆编号","线缆分类","业务信息","源端设备编号","宿端设备编号","状态"};
+
+        String[] propertis = {"assetId","cableType","serveInfo","res1Name","res2Name","isPrinted"};
+
+        Gson gson = new Gson();
+
+        String json = gson.toJson(cableExts);
+
+        Type type = TypeToken.getParameterized(List.class, Map.class).getType();
+
+
+        try {
+            ExportPOIUtils.start_download(response,"线缆信息导出",gson.fromJson(json,type),title,propertis);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}

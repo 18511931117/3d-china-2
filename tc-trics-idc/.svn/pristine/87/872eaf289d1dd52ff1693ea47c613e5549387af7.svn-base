@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.system.mapper.LabelMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.Label" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="is_binding" property="isBinding" jdbcType="INTEGER" />
+    <result column="is_printed" property="isPrinted" jdbcType="INTEGER" />
+    <result column="is_pasted" property="isPasted" jdbcType="INTEGER" />
+    <result column="label_type" property="labelType" jdbcType="INTEGER" />
+    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+    <result column="epc" property="epc" jdbcType="VARCHAR" />
+    <result column="tid" property="tid" jdbcType="VARCHAR" />
+    <result column="uid" property="uid" jdbcType="VARCHAR" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="created_time" property="updatedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+
+  <sql id="allColumn">
+        id, is_valid, is_binding, is_printed,is_pasted, label_type, barcode,epc,tid, uid, created_time, updated_time
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from label
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.manage.idc.system.domain.Label" >
+    insert into label (id, is_valid, is_binding,
+      is_printed, is_pasted, label_type,
+      barcode, epc, tid,
+      uid, created_time, updated_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{isValid,jdbcType=INTEGER}, #{isBinding,jdbcType=INTEGER},
+      #{isPrinted,jdbcType=INTEGER}, #{isPasted,jdbcType=INTEGER}, #{labelType,jdbcType=INTEGER},
+      #{barcode,jdbcType=VARCHAR}, #{epc,jdbcType=VARCHAR}, #{tid,jdbcType=VARCHAR},
+      #{uid,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.system.domain.Label" >
+    update label
+    set
+        <if test="isValid != null and isValid != ''">
+          is_valid = #{isValid,jdbcType=INTEGER},
+        </if>
+        <if test="isBinding != null and isBinding != ''">
+          is_binding = #{isBinding,jdbcType=INTEGER},
+        </if>
+        <if test="isPrinted != null and isPrinted != ''">
+          is_printed = #{isPrinted,jdbcType=INTEGER},
+        </if>
+        <if test="labelType != null and labelType != ''">
+          label_type = #{labelType,jdbcType=INTEGER},
+        </if>
+        <if test="barcode != null and barcode != ''">
+          barcode = #{barcode,jdbcType=VARCHAR},
+        </if>
+        <if test="epc != null and epc != ''">
+          epc = #{epc,jdbcType=VARCHAR},
+        </if>
+        <if test="tid != null and tid != ''">
+          tid = #{tid,jdbcType=VARCHAR},
+        </if>
+        <if test="uid != null and uid != ''">
+          uid = #{uid,jdbcType=VARCHAR},
+        </if>
+        <if test="isDel != null and isDel != ''">
+          is_del = #{isDel,jdbcType=INTEGER},
+        </if>
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+        <include refid="allColumn"/>
+    from label
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+        <include refid="allColumn"/>
+    from label
+  </select>
+
+
+
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="map">
+    select
+        <include refid="allColumn"/>
+    from label
+    <where>
+      <if test="data.barcode != null and data.barcode != ''">
+        AND barcode LIKE CONCAT('%',#{data.barcode},'%')
+      </if>
+      <if test="data.isValid != null and data.isValid != ''">
+        AND is_valid = #{data.isValid,jdbcType=INTEGER}
+      </if>
+      <if test="data.isBinding != null">
+        AND is_binding = #{data.isBinding,jdbcType=INTEGER}
+      </if>
+      <if test="data.isPrinted != null and data.isPrinted != ''">
+        AND is_printed = #{data.isPrinted,jdbcType=INTEGER}
+      </if>
+      <if test="data.labelType != null and data.labelType != ''">
+        AND label_type = #{data.labelType,jdbcType=INTEGER}
+      </if>
+      <if test="data.epc != null and data.epc != ''">
+        AND epc = #{data.epc,jdbcType=VARCHAR}
+      </if>
+      <if test="data.tid != null and data.tid != ''">
+        AND tid = #{data.tid,jdbcType=VARCHAR}
+      </if>
+      <if test="data.uid != null and data.uid != ''">
+        AND uid = #{data.uid,jdbcType=VARCHAR}
+      </if>
+
+      <if test="data.isUid != null and data.isUid == '1'.toString()">
+        AND uid is not null
+      </if>
+
+      <if test="data.isUid != null and data.isUid == '0'.toString()">
+        AND uid is null
+      </if>
+
+
+      <if test="data.startBarcode != null and data.startBarcode != '' and data.endBarcode != null  and data.endBarcode != '' ">
+        AND barcode BETWEEN #{data.startBarcode,jdbcType=VARCHAR} AND #{data.endBarcode,jdbcType=VARCHAR}
+      </if>
+      AND is_del = '0'
+    </where>
+    order by barcode desc
+  </select>
+
+
+  <select id="selectNotBindLabel" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="allColumn"/>
+    from label
+    <where>
+      <if test="data.startBarcode != null and data.startBarcode != '' and data.endBarcode != null and data.endBarcode != ''">
+        AND barcode between #{data.startBarcode} AND #{data.endBarcode}
+      </if>
+      <if test="data.labelType != null and data.labelType == 'cable'">
+        AND tid is not null and uid is not null
+      </if>
+      <if test="data.labelType != null and data.labelType == 'device'">
+        AND tid is not null and uid is null
+      </if>
+        AND is_del = '0'
+        AND is_binding = '0'
+    </where>
+  </select>
+
+
+
+  <insert id="batchInsert" parameterType="list" >
+    insert into label (
+      id,
+      label_type,
+      barcode,
+      epc,
+      tid,
+      uid,
+      created_time
+      )
+    values
+    <foreach collection="list" separator="," item="t">
+    (
+        #{t.id,jdbcType=BIGINT},
+        <!--<if test="t.tid != null and t.tid != ''">
+          1,
+        </if>-->
+      <choose>
+        <when test="t.tid != null and t.tid != '' and t.uid != null and t.uid != ''" >
+          '2',
+        </when>
+        <otherwise>
+          '1',
+        </otherwise>
+      </choose>
+        #{t.barcode,jdbcType=VARCHAR},
+        #{t.epc,jdbcType=VARCHAR},
+        #{t.tid,jdbcType=VARCHAR},
+        #{t.uid,jdbcType=VARCHAR},
+        now()
+      )
+    </foreach>
+  </insert>
+
+
+
+  <update id="updateByTid" parameterType="com.manage.idc.system.domain.Label" >
+    update label
+    set
+    <if test="isValid != null and isValid != ''">
+      is_valid = #{isValid,jdbcType=INTEGER},
+    </if>
+    <if test="isBinding != null">
+      is_binding = #{isBinding,jdbcType=INTEGER},
+    </if>
+    <if test="isPrinted != null">
+      is_printed = #{isPrinted,jdbcType=INTEGER},
+    </if>
+    <if test="isPasted != null">
+      is_pasted = #{isPasted,jdbcType=INTEGER},
+    </if>
+    <if test="labelType != null and labelType != ''">
+      label_type = #{labelType,jdbcType=INTEGER},
+    </if>
+    <if test="barcode != null and barcode != ''">
+      barcode = #{barcode,jdbcType=VARCHAR},
+    </if>
+    <if test="epc != null and epc != ''">
+      epc = #{epc,jdbcType=VARCHAR},
+    </if>
+    <if test="uid != null and uid != ''">
+      uid = #{uid,jdbcType=VARCHAR},
+    </if>
+    <if test="isDel != null">
+      is_del = #{isDel,jdbcType=VARCHAR},
+    </if>
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where tid = #{tid,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByTid" resultMap="BaseResultMap" parameterType="string" >
+    select
+    <include refid="allColumn"/>
+    from label
+    where tid = #{tid,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByOrCondition"  resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="allColumn"/>
+    from label
+    <where>
+      <if test="data.barcode != null and data.barcode != ''">
+        OR barcode = #{data.barcode}
+      </if>
+      <if test="data.epc != null and data.epc != ''">
+        OR epc = #{data.epc,jdbcType=VARCHAR}
+      </if>
+      <if test="data.tid != null and data.tid != ''">
+        OR tid = #{data.tid,jdbcType=VARCHAR}
+      </if>
+      <if test="data.uid != null and data.uid != ''">
+        OR uid = #{data.uid,jdbcType=VARCHAR}
+      </if>
+      AND is_del = '0'
+    </where>
+    order by created_time desc
+  </select>
+</mapper>

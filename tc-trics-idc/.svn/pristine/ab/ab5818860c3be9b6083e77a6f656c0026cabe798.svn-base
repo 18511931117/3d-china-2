@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" th:href="@{/img/favicon.html}">
+
+    <title>线缆信息管理</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-reset.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" th:href="@{/3rd/layui/css/layui.css}"/>
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+      <script th:src="@{/js/html5shiv.js}"></script>
+      <script th:src="@{/js/respond.min.js}"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+      <div style="padding: 15px;">
+          <form id="edit">
+              <div class="row">
+                  <input type="hidden" name="id" th:value="${bean.id}">
+                  <input type="hidden" id="room1Id" th:value="${bean.room1Id}">
+                  <input type="hidden" id="room2Id" th:value="${bean.room2Id}">
+                  <input type="hidden" id="rack1Id" th:value="${bean.rack1Id}">
+                  <input type="hidden" id="rack2Id" th:value="${bean.rack2Id}">
+                  <input type="hidden" id="res1Id" th:value="${bean.res1Id}">
+                  <input type="hidden" id="res2Id" th:value="${bean.res2Id}">
+
+
+
+                  <div class="form-group col-sm-3">
+                      <label >线缆类型</label>
+                      <input  class="form-control"  placeholder="线缆类型" name="cableType" th:value="${bean.cableType}">
+                  </div>
+                  <!--<div class="form-group col-sm-3">
+                      <label >线缆编号</label>
+                      <input  class="form-control"  placeholder="线缆编号" name="assetId" th:value="${bean.assetId}">
+                  </div>-->
+                  <div class="form-group col-sm-3">
+                      <label >业务信息</label>
+                      <input  class="form-control"  placeholder="业务信息" name="serveInfo" th:value="${bean.serveInfo}">
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="form-group col-sm-3">
+                      <label >源端接口类型</label>
+                      <input  class="form-control"  placeholder="源端接口类型" name="intf1Type" th:value="${bean.intf1Type}">
+                  </div>
+                  <div class="form-group col-sm-3">
+                      <label >源端机房</label>
+                      <div >
+                          <select class="form-control" name="room1Id">
+                          </select>
+                      </div>
+                  </div>
+                  <div class="form-group col-sm-3">
+                      <label >源端机架</label>
+                      <div >
+                          <select class="form-control" name="rack1Id">
+                              <option value="">请先选择机房</option>
+                          </select>
+                      </div>
+                  </div>
+                  <div class="form-group col-sm-3">
+                      <label >源端位置信息(楼层编号)</label>
+                      <input  class="form-control"  placeholder="源端位置信息(楼层编号)" name="floor1" th:value="${bean.floor1}">
+                  </div>
+                  <div class="form-group col-sm-3">
+                      <label >源端位置信息(机柜U位)</label>
+                      <input  class="form-control"  placeholder="源端位置信息(机柜U位)" name="rackU1" th:value="${bean.rackU1}">
+                  </div>
+                  <div class="form-group col-sm-3">
+                      <label >源端设备(资产编号)</label>
+                      <div >
+                          <select class="form-control" name="res1Id">
+                              <option value="">请先选择机架</option>
+                          </select>
+                      </div>
+                  </div>
+                  <div class="form-group col-sm-3">
+                      <label >源端板卡/端口ID</label>
+                      <input  class="form-control"  placeholder="源端板卡/端口ID" name="port1Id" th:value="${bean.port1Id}">
+                  </div>
+              </div>
+              <div class="row">
+
+                  <div class="form-group col-sm-3">
+                      <label >宿端接口类型</label>
+                      <input  class="form-control"  placeholder="宿端接口类型" name="intf2Type" th:value="${bean.intf2Type}">
+                  </div>
+
+                  <div class="form-group col-sm-3">
+                      <label >宿端机房</label>
+                      <div >
+                          <select class="form-control" name="room2Id">
+
+                          </select>
+                      </div>
+                  </div>
+
+                  <div class="form-group col-sm-3">
+                      <label >宿端机架</label>
+                      <div >
+                          <select class="form-control" name="rack2Id">
+                              <option value="">请先选择机房</option>
+                          </select>
+                      </div>
+                  </div>
+
+
+                  <div class="form-group col-sm-3">
+                      <label >宿端位置信息(楼层编号)</label>
+                      <input  class="form-control"  placeholder="宿端位置信息(楼层编号)" name="floor2" th:value="${bean.floor2}">
+                  </div>
+
+
+                  <div class="form-group col-sm-3">
+                      <label >宿端位置信息(机柜U位)</label>
+                      <input  class="form-control"  placeholder="宿端位置信息(机柜U位)" name="rackU2" th:value="${bean.rackU2}">
+                  </div>
+
+                  <div class="form-group col-sm-3">
+                      <label >宿端设备(资产编号)</label>
+                      <select class="form-control" name="res2Id">
+                          <option value="">请先选择机架</option>
+                      </select>
+                  </div>
+
+
+                  <div class="form-group col-sm-3">
+                      <label >宿端板卡/端口ID</label>
+                      <input  class="form-control"  placeholder="宿端板卡/端口ID" name="port2Id" th:value="${bean.port2Id}">
+                  </div>
+              </div>
+          </form>
+      </div>
+
+    <script type="text/javascript" th:inline="javascript">
+      ctxPath = /*[[@{/}]]*/ '';
+    </script>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/jquery.scrollTo.min.js}"></script>
+    <script th:src="@{/js/jquery.nicescroll.js}" type="text/javascript"></script>
+
+
+
+    <!--common script for all pages-->
+    <script th:src="@{/js/common-scripts.js}"></script>
+    <script th:src="@{/3rd/layui/layui.js}"></script>
+
+
+    <script th:inline="javascript" th:src="@{/pagejs/common/util.js}"></script>
+    <script th:inline="javascript" th:src="@{/pagejs/common/selectNode.js}"></script>
+
+
+    <script th:inline="javascript" th:src="@{/pagejs/cable/cableEdit.js}"></script>
+  </body>
+</html>

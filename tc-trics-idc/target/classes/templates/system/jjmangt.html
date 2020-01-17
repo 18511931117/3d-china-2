@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" href="../img/favicon.html">
+
+    <title>机架管理</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-reset.css" rel="stylesheet">
+    <!--external css-->
+    <link href="../assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/style-responsive.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://www.layuicdn.com/layui/css/layui.css">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<section id="container" class="">
+    <!--header start-->
+    <header class="header white-bg">
+        <div class="sidebar-toggle-box">
+            <div data-original-title="Toggle Navigation" data-placement="right" class="icon-reorder tooltips"></div>
+        </div>
+        <!--logo start-->
+        <a href="#" class="logo" >江苏在线</a>
+        <!--logo end-->
+        <div class="top-nav ">
+            <ul class="nav pull-right top-menu">
+                <li>
+                    <input type="text" class="form-control search" placeholder="Search">
+                </li>
+                <!-- user login dropdown start-->
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                        <img alt="" src="../img/avatar1_small.jpg">
+                        <span class="username">Jhon Doue</span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu extended logout">
+                        <div class="log-arrow-up"></div>
+                        <li><a href="../login.html"><i class="icon-key"></i> Log Out</a></li>
+                    </ul>
+                </li>
+                <!-- user login dropdown end -->
+            </ul>
+        </div>
+    </header>
+    <!--header end-->
+    <!--sidebar start-->
+    <aside>
+        <div id="sidebar"  class="nav-collapse ">
+            <!-- sidebar menu start-->
+            <ul class="sidebar-menu">
+                <li class="">
+                    <a class="" href="../index.html">
+                        <i class="icon-dashboard"></i>
+                        <span>首页</span>
+                    </a>
+                </li>
+                <li class="sub-menu">
+                    <a href="javascript:;" class="">
+                        <i class="icon-book"></i>
+                        <span>设备管理</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub">
+                        <li><a class="" href="../label/general.html">设备信息管理</a></li>
+                        <li><a class="" href="../label/buttons.html">设备标签管理</a></li>
+                        <li><a class="" href="../label/widget.html">设备贴标</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="javascript:;" class="">
+                        <i class="icon-cogs"></i>
+                        <span>线缆管理</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub">
+                        <li><a class="" href="../label2/grids.html">线缆信息管理</a></li>
+                        <li><a class="" href="../label2/calendar.html">线缆标签管理</a></li>
+                        <li><a class="" href="../label2/charts.html">线缆贴标</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="javascript:;" class="">
+                        <i class="icon-tasks"></i>
+                        <span>任务管理</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub">
+                        <li><a class="" href="../task/form_component.html">盘点任务</a></li>
+                        <li><a class="" href="../task/form_wizard.html">调拨任务</a></li>
+                        <li><a class="" href="../task/form_validation.html">借用任务</a></li>
+                        <li><a class="" href="../task/form_task.html">维修任务</a></li>
+                        <li><a class="" href="../task/tabledetail.html">报废任务</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="javascript:;" class="">
+                        <i class="icon-th"></i>
+                        <span>日志管理</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub">
+                        <li><a class="" href="../log/basic_table.html">盘点任务日志</a></li>
+                        <li><a class="" href="../log/basic_table2.html">调拨任务日志</a></li>
+                        <li><a class="" href="../log/basic_table3.html">借用任务日志</a></li>
+                        <li><a class="" href="../log/basic_table4.html">维修任务日志</a></li>
+                        <li><a class="" href="../log/basic_table5.html">操作日志</a></li>
+                        <li><a class="" href="../log/basic_table6.html">告警日志</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu active">
+                    <a href="javascript:;" class="">
+                        <i class="icon-glass"></i>
+                        <span>系统管理</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub">
+                        <li><a class="" href="../system/user.html">账号管理</a></li>
+                        <li><a class="" href="../system/role.html">角色管理</a></li>
+                        <li><a class="" href="../system/menu.html">菜单管理</a></li>
+                        <li><a class="" href="../system/profile.html">机构管理</a></li>
+                        <li><a class="" href="../system/invoice.html">机房管理</a></li>
+                        <li class="active"><a class="" href="../system/jjmangt.html">机架管理</a></li>
+                        <li><a class="" href="../system/fenclass.html">设备分类管理</a></li>
+                        <li><a class="" href="../system/lablemangt.html">标签管理</a></li>
+                        <li><a class="" href="../system/3djfang.html">3D机房</a></li>
+                        <li><a class="" href="../404.html">404 Error</a></li>
+                        <li><a class="" href="../500.html">500 Error</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="" href="../login.html">
+                        <i class="icon-user"></i>
+                        <span>Login Page</span>
+                    </a>
+                </li>
+            </ul>
+            <!-- sidebar menu end-->
+        </div>
+    </aside>
+    <!--sidebar end-->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+            <!-- invoice start-->
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <section class="panel">
+                            <header class="panel-heading">
+                                机架管理
+                            </header>
+                        </section>
+                    </div>
+                </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-info"><a href="addjjia.html" style="color: #fff">添加机架</a></button>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" style="display: inline-block;height: 34px;line-height: 34px">所属机房</label>
+                        <div class="col-sm-7">
+                            <select class="form-control">
+                                <option>Guc01</option>
+                                <option>M2机房</option>
+                                <option>南京广电</option>
+                                <option>机房</option>
+                                <option>测试机房</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" style="display: inline-block;height: 34px;line-height: 34px">机房名称</label>
+                        <div class=" col-sm-8">
+                            <input type="text" class="form-control" id="exampleInputPassword3" placeholder="请输入">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-info"><a href="" style="color: #fff">搜索</a></button>
+                </div>
+
+            </div>
+
+            <!-- invoice end-->
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel">
+                        <table class="layui-hide" id="test" lay-filter="test"></table>
+                        <script type="text/html" id="barDemo">
+                            <a class="layui-btn layui-btn-xs" lay-event="edit" href="editjjia.html">编辑</a>
+                            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+    <!--main content end-->
+</section>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="../js/jquery.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/jquery.scrollTo.min.js"></script>
+<script src="../js/jquery.nicescroll.js" type="text/javascript"></script>
+
+
+<!--common script for all pages-->
+<script src="../js/common-scripts.js"></script>
+
+<script src="https://www.layuicdn.com/layui/layui.js"></script>
+
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+
+        table.render({
+            elem: '#test'
+            // ,url:'/test/table/demo1.json'
+            ,title: '用户数据表'
+            ,cols: [[
+                {type: 'checkbox'},
+                {field: 'id', title: 'ID',}
+                , {field: '机构', title: '机构'}
+                , {field: '机房', title: '机房',}
+                , {field: '名称', title: '名称'}
+                , {field: '资产编号', title: '资产编号',} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                , {field: '行列', title: '行列',}
+                , {field: '宽度', title: '宽度',}
+                , {field: '高度', title: '高度',}
+                , {field: '容量', title: '容量',}
+                , {field: 'tid', title: 'tid',}
+                , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+            ]],
+            data: [
+                {
+                    "id": 10000,
+                    "机构": "user-0",
+                    "机房": "user-0",
+                    "名称": "女",
+                    "资产编号": "城市-0",
+                    "行列": "签名-0",
+                    "宽度": "签名-0",
+                    "高度": "签名-0",
+                    "容量": 255,
+                    "tid": 255,
+
+                },
+            ]
+            ,page: true
+        });
+
+        //监听行工具事件
+        table.on('tool(test)', function(obj){
+            var data = obj.data;
+            //console.log(obj)
+            if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del();
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                layer.prompt({
+                    formType: 2
+                    ,value: data.email
+                }, function(value, index){
+                    obj.update({
+                        email: value
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

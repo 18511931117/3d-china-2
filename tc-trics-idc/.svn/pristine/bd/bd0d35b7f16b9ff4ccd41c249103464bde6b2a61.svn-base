@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.system.mapper.SysUserMapper">
+    <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.SysUser">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="is_quit" jdbcType="INTEGER" property="isQuit"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="is_del" jdbcType="INTEGER" property="isDel"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="work_num" jdbcType="VARCHAR" property="workNum"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    `id`, username, `name`, `password`,is_quit,email, `state`, `org_id`, is_del,`create_time`, `update_time`,work_num
+  </sql>
+
+    <select id="findByName" parameterType="String" resultMap="BaseResultMap">
+              SELECT
+              u.id,
+              u.username,
+              u.`name`,
+              u. password,
+              u.is_quit,
+              u.email,
+              u.state,
+              u.is_del,
+              u.org_id ,
+              u.create_time ,
+              u.update_time,
+              u.work_num,
+              d.full_code fullCode
+          FROM
+              sys_user u
+          LEFT JOIN sys_org d ON u.org_id = d.id
+          LEFT JOIN sys_user_role ur ON ur.user_id = u.id
+          LEFT JOIN sys_role r on ur.role_id=r.id
+          where u.username = #{username} and u.is_quit!=1 and u.is_del=0
+          GROUP BY
+             u.id,
+              u.username,
+              u.`name`,
+              u. password,
+              u.is_quit,
+              u.email,
+              u.state,
+              u.org_id ,
+              u.create_time ,
+              u.update_time,
+              u.work_num
+
+</select>
+    <insert id="createUser" keyColumn="id" keyProperty="id" parameterType="sysUser" useGeneratedKeys="true">
+    insert into sys_user (id,username,name,password,is_quit,email,state,org_id,create_time,update_time,work_num) values
+    (#{id,jdbcType=VARCHAR},#{username,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+     #{isQuit,jdbcType=INTEGER},#{email,jdbcType=VARCHAR},
+      #{state,jdbcType=INTEGER}, #{orgId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP},#{workNum,jdbcType=VARCHAR})
+    </insert>
+    <select id="checkUser" parameterType="String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from sys_user
+        where username=#{username}
+    </select>
+
+    <delete id="deleteUser" parameterType="java.util.List">
+        delete from sys_user where
+        id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateUser" parameterType="sysUser">
+        update sys_user
+        <set>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                `password` = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="isQuit != null">
+                `is_quit` = #{isQuit,jdbcType=INTEGER},
+            </if>
+            <if test="email != null">
+                `email` = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                `state` = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="orgId != null">
+                org_id = #{orgId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel,jdbcType=INTEGER},
+            </if>
+            <if test="workNum != null">
+                work_num = #{workNum,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectByCondition" parameterType="map" resultMap="BaseResultMap">
+        select
+        su.* ,so.name orgName
+        from sys_user su
+        LEFT JOIN sys_org so ON su.org_id = so.id
+        <where>
+            <if test="data.username != null">
+                and   su.username = #{data.username,jdbcType=VARCHAR}
+            </if>
+            <if test="data.name != null and data.name!=''">
+                and su.`name` like concat('%',#{data.name},'%')
+            </if>
+            <if test="data.password != null">
+                and  su.`password` = #{data.password,jdbcType=VARCHAR}
+            </if>
+            <if test="data.isQuit != null">
+                and  su.`is_quit` = #{data.isQuit,jdbcType=INTEGER}
+            </if>
+            <if test="data.email != null">
+                and  su.`email` = #{data.email,jdbcType=VARCHAR}
+            </if>
+            <if test="data.state != null">
+                and  su.`state` = #{data.state,jdbcType=INTEGER}
+            </if>
+            <if test="fullCode != null">
+                and so.full_code like concat('',#{fullCode},'%')
+            </if>
+            <if test="data.createTime != null">
+                and   su.create_time = #{data.createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="data.updateTime != null">
+                and   su.update_time = #{data.updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="data.isDel != null">
+                and  su.is_del = #{data.isDel,jdbcType=INTEGER}
+            </if>
+            <if test="data.id != null">
+                and  su.id != #{data.id,jdbcType=BIGINT}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="getUserByOrgId" resultMap="BaseResultMap">
+        SELECT
+         <include refid="Base_Column_List"/>
+         FROM
+        sys_user
+        <where>
+            <if test="username != null">
+                and   username = #{username,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                and  `name` = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="password != null">
+                and  `password` = #{password,jdbcType=VARCHAR}
+            </if>
+            <if test="isQuit != null">
+                and  `is_quit` = #{isQuit,jdbcType=INTEGER}
+            </if>
+            <if test="email != null">
+                and  `email` = #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="state != null">
+                and  `state` = #{state,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                and   create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateTime != null">
+                and   update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="isDel != null">
+                and  is_del = #{isDel,jdbcType=INTEGER}
+            </if>
+            <if test="orgId != null">
+               and org_id = #{orgId}
+            </if>
+        </where>
+    </select>
+    <select id="selectUserById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        sys_user
+        <where>
+            <if test="username != null">
+                and   username = #{username,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                and  `name` = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="password != null">
+                and  `password` = #{password,jdbcType=VARCHAR}
+            </if>
+            <if test="isQuit != null">
+                and  `is_quit` = #{isQuit,jdbcType=INTEGER}
+            </if>
+            <if test="email != null">
+                and  `email` = #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="state != null">
+                and  `state` = #{state,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                and   create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateTime != null">
+                and   update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="isDel != null">
+                and  is_del = #{isDel,jdbcType=INTEGER}
+            </if>
+            <if test="orgId != null">
+                and org_id = #{orgId}
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+    </select>
+    <select id="selectUserIdByRole" resultType="java.lang.Long">
+        SELECT
+              u.id,
+              u.username,
+              u.`name`,
+              u. password,
+              u.is_quit,
+              u.email,
+              u.state,
+              u.is_del,
+              u.org_id ,
+              u.create_time ,
+              u.update_time,
+              u.work_num
+          FROM
+              sys_user u
+              left join sys_user_role sr on u.id = sr.user_id
+              where u.org_id = #{orgId}
+              <if test="roleIds != null and roleIds.size()>0">
+                AND sr.role_id in (
+                    <foreach collection="roleIds" item="item" separator=",">
+                        #{item}
+                    </foreach>
+                  )
+              </if>
+    </select>
+    <select id="selectUserByApp" resultType="com.manage.idc.system.domain.SysUser">
+    SELECT
+        su.*,su.org_id orgId, so. NAME orgName,
+        sr.role_name roleName
+    FROM
+        sys_user su
+    LEFT JOIN sys_org so ON su.org_id = so.id
+    LEFT JOIN sys_user_role sur ON su.id = sur.user_id
+    LEFT JOIN sys_role sr ON sr.id = sur.role_id
+    WHERE
+        su.username = #{username}
+
+    </select>
+</mapper>

@@ -1,0 +1,120 @@
+$(function () {
+    $.ajax({
+        url: ctxPath +"resExtGrp/getList",
+        type:'get',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                var dat = data.data;
+                for(var i = 0;i<dat.length;i++){
+                    var url = ctxPath +"resExtCfg/toResExtAdd/"+dat[i].extGrpCode;
+                    var str = "<div class='widbox' style='margin: 15px 0;border: 1px solid #ced3d6;padding: 5px'>" +
+                                    "<div style='display: flex'>" +
+                                        "<div style='flex: 1;'>" +
+                                            "<button class='btn btn-info'>"+dat[i].extGrpName+"</button>" +
+                                        "</div>" +
+                                        "<div style='flex: 1;text-align: right'>" +
+                                            "<button class='btn btn-info'><a href='javascript:addExt(&apos;"+url+"&apos;)' style='color: #fff'>增加条目</a></button>" +
+                                        "</div>" +
+                                    "</div>" +
+                                "<div>" +
+                                    "<table id='"+dat[i].id+"'></table>" +
+                                "</div>" +
+                             "</div>";
+                    $("#tableDiv").append(str);
+                    createTable(dat[i].resExtCfgList,dat[i].id)
+                }
+            }
+        }
+    })
+
+    $("button[name='commit_button']").click(function () {
+        $.ajax({
+            url: ctxPath +"resExtGrp/addResExtGrp",
+            type:'post',
+            data:$("#add").serialize(),
+            //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+            success: function(data){
+                if(data.code = '0'){
+                    lay.msg("添加成功");
+                }else{
+                    lay.error("添加失败!")
+                }
+            }
+        })
+    })
+})
+
+function deleteExt(id) {
+    $.ajax({
+        url: ctxPath +"resExtCfg/delResExtCfg/"+id,
+        type:'post',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                lay.layer.msg("删除成功");
+            }else{
+                lay.layer.error("删除失败!")
+            }
+        }
+    })
+}
+
+function editExt(url) {
+   location.href = url;
+}
+
+
+function addExt(url) {
+    location.href = url;
+}
+var lay;
+function createTable(data,id) {
+    var limit = data.length;
+    layui.use('table', function(){
+        var table = layui.table;
+        lay = layui;
+
+        table.render({
+            elem: '#'+id
+            //,url: ctxPath+'label/getPage'
+            ,cols: [[
+                {field: 'itemName', title: '条目名称',}
+                , {field: 'itemCode', title: '条目编码'}
+                , {field: 'valType', title: '值类型',}
+                , {field: 'seq', title: '显示顺序'}
+                , {field: '操作', title: '操作', width: 240
+                    ,templet: function(d){
+                    var url = ctxPath +"resExtCfg/toResExtEdit/"+d.id;
+                        var delBtn='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" onclick="deleteExt(&apos;'+d.id+'&apos;)">删除</a>';
+                        var editBtn="<a class='layui-btn layui-btn-danger layui-btn-xs' lay-event='edit' onclick='editExt(&apos;"+url+"&apos;)'>编辑</a>";
+                        return editBtn+delBtn;
+                    }}
+            ]],
+            data:data,
+            limit:limit
+        });
+/*
+        //监听行工具事件
+        table.on('tool('+id+')', function(obj){
+            var data = obj.data;
+            if(obj.event === 'del'){
+                layer.confirm('是否删除该标签?', function(index){
+                    $.post(
+                        ctxPath +"label/delLabel/"+data.id,
+                        function(data){
+                            if(data.code == '200'){
+                                refreshTable();
+                                layer.alert("删除成功!");
+                            }else{
+                                layer.alert("删除失败!");
+                            }
+                        }
+                    )
+                });
+            }else if(obj.event === 'edit'){
+                location.href = ctxPath+"resExtCfg/toResExtEdit/"+obj.data.id;
+            }
+        });*/
+    })
+}

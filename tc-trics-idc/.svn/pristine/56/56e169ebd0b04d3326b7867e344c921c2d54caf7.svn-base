@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.system.mapper.SysParamMapper">
+    <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.SysParam">
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="sys_key" jdbcType="VARCHAR" property="sysKey"/>
+        <result column="sys_value" jdbcType="VARCHAR" property="sysValue"/>
+        <result column="sys_name" jdbcType="VARCHAR" property="sysName"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="is_del" jdbcType="INTEGER" property="isDel"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.manage.idc.system.domain.SysParam">
+    insert into sys_param (id, sys_key, sys_value, 
+      `type`, is_del, update_time, 
+      create_time)
+    values (#{id,jdbcType=BIGINT}, #{sysKey,jdbcType=VARCHAR}, #{sysValue,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{isDel,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+    <sql id="Base_Column_List">
+        id, sys_key, sys_value,sys_name,
+      `type`, is_del, update_time,
+      create_time
+  </sql>
+
+    <insert id="insertSelective" parameterType="com.manage.idc.system.domain.SysParam">
+        insert into sys_param
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="sysKey != null">
+                sys_key,
+            </if>
+            <if test="sysValue != null">
+                sys_value,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="sysName != null">
+                sys_name,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="sysKey != null">
+                #{sysKey,jdbcType=VARCHAR},
+            </if>
+            <if test="sysValue != null">
+                #{sysValue,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=INTEGER},
+            </if>
+            <if test="sysName != null">
+                #{sysName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <select id="selectByCondition" parameterType="map" resultMap="BaseResultMap">
+        select
+        *
+        from sys_param
+        <where>
+            <if test="data.sysKey != null">
+                and sys_key = #{data.sysKey,jdbcType=VARCHAR}
+            </if>
+            <if test="data.sysValue != null">
+                and `sys_value` = #{data.sysValue,jdbcType=VARCHAR}
+            </if>
+            <if test="data.isDel != null">
+                and `is_del` = #{data.isDel,jdbcType=INTEGER}
+            </if>
+            <if test="data.type != null">
+                and `type` = #{data.type,jdbcType=VARCHAR}
+            </if>
+            <if test="data.sysName != null">
+                and `sys_name` = #{data.sysName.type,jdbcType=VARCHAR}
+            </if>
+            <if test="data.updateTime != null">
+                and `update_time` = #{data.updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="data.createTime != null">
+                and `create_time` = #{data.createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+    <select id="getParamById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_param
+        <where>
+        <if test="sysKey != null">
+            and sys_key = #{sysKey,jdbcType=VARCHAR}
+        </if>
+        <if test="sysValue != null">
+            and `sys_value` = #{sysValue,jdbcType=VARCHAR}
+        </if>
+        <if test="isDel != null">
+            and `is_del` = #{isDel,jdbcType=INTEGER}
+        </if>
+        <if test="type != null">
+            and `type` = #{type,jdbcType=VARCHAR}
+        </if>
+        <if test="sysName != null">
+            and `sys_name` = #{sysName.type,jdbcType=VARCHAR}
+        </if>
+        <if test="updateTime != null">
+            and `update_time` = #{updateTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="createTime != null">
+            and `create_time` = #{createTime,jdbcType=TIMESTAMP}
+        </if>
+        and id=#{id}
+        </where>
+    </select>
+
+
+    <update id="update" parameterType="com.manage.idc.system.domain.SysParam">
+        update sys_param
+        <set>
+            <if test="sysKey != null">
+                sys_key= #{sysKey,jdbcType=VARCHAR},
+            </if>
+            <if test="sysValue != null">
+                sys_value= #{sysValue,jdbcType=VARCHAR},
+            </if>
+            <if test="isDel != null">
+                is_del= #{isDel,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                type= #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="sysName != null">
+                sys_name= #{sysName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time= #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time= #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

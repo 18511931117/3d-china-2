@@ -1,0 +1,443 @@
+var treeData;
+
+/*加载机房下拉框*/
+function loadRoomSelect(ele,value,orgId){
+    var str = "";
+    if(orgId != null && orgId != '' && orgId != undefined){
+        str = "?orgId="+orgId;
+    }
+    if(orgId == ''){
+        ele.html("<option value=''>请先选择机构</option>");
+    }else{
+        $.ajax({
+            type:'get',
+            async: false,
+            url:ctxPath +"room/getPage"+str,
+            success:function(data){
+                if(data.code == '0'){
+                    ele.html("<option value=''>请选择</option>");
+                    for(var i = 0 ;i<data.rows.length;i++){
+                        var obj = data.rows[i];
+                        ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                    }
+                    if(value != null && value != '' && value != undefined){
+                        ele.val(value);
+                    }
+
+                    ele.selectpicker('refresh');
+                }
+            }
+        })
+    }
+
+}
+//默认选中机房
+function loadRoomSelect(ele,value){
+    $.ajax({
+        type:'get',
+        async: false,
+        url:ctxPath +"room/getPage",
+        success:function(data){
+            if(data.code == '0'){
+                ele.html("<option value=''>请选择</option>");
+                for(var i = 0 ;i<data.rows.length;i++){
+                    var obj = data.rows[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+                if(value != null && value != '' && value != undefined){
+                    ele.val(value);
+                }
+                ele.selectpicker('refresh');
+            }
+        }
+    })
+}
+
+function loadRoomSelectAll(ele){
+    $.ajax({
+        type:'get',
+        async: false,
+        url:ctxPath +"room/getPage",
+        success:function(data){
+            if(data.code == '0'){
+                ele.html("<option value=''>请选择</option>");
+                for(var i = 0 ;i<data.rows.length;i++){
+                    var obj = data.rows[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                    ele.selectpicker('refresh');
+                }
+            }
+        }
+    })
+}
+
+/*加载机构树形菜单*/
+function loadOrgTree(ele,regioneId,checkId){
+    var str = "";
+    if(regioneId != null && regioneId != undefined && regioneId != ''){
+        str = "?regioneId="+regioneId;
+    }
+
+    $.get(
+        ctxPath +"org/getOrgSelectTree"+str,
+        function(data){
+            var bean = data.data;
+            if(data.code == '200'){
+                if(checkId != null && checkId != undefined && checkId.length>0){
+                    traverse(bean,checkId);
+                }
+                ele.treeview({
+                    showCheckbox: false,
+                    data: bean,
+                    onNodeSelected:function (event, data) {
+                        ele.prev().val(data.id);
+                        ele.prev().change();
+                    }
+                });
+            }
+        }
+    )
+}
+
+
+/*加载设备类型树形下拉框*/
+function loadDevTypeTree(ele,checkId){
+    $.get(
+        ctxPath +"resType/getTree",
+        function(data){
+            var bean = data.data;
+            if(data.code == '200'){
+                if(checkId != null && checkId != undefined && checkId.length>0){
+                    traverse(bean,checkId);
+                }
+                ele.treeview({
+                    showCheckbox: false,
+                    data: bean,
+                    onNodeSelected:function (event, data) {
+                        ele.prev().val(data.id);
+                    }
+                });
+            }
+        }
+    )
+}
+
+
+
+
+function traverse(arr,menuIdList) {
+
+    for (var a in arr) {
+        for(var i in menuIdList){
+            if(arr[a].id == menuIdList[i]){
+                arr[a]['state']['checked'] = true;
+                arr[a]['state']['selected'] = true;
+                traversePid(arr,arr[a].pid);
+                menuIdList.splice(i,1);
+                break;
+            }
+        }
+        if (typeof(arr[a].nodes) == "object") {
+            traverse(arr[a].nodes,menuIdList); //递归遍历
+        }
+    }
+
+}
+
+
+function traversePid(arr,pid) {
+
+    for (var a in arr) {
+        if(arr[a].id == pid){
+            arr[a]['state']['expanded'] = true;
+            pid.splice(i,1);
+            break;
+        }
+        if (typeof(arr[a].nodes) == "object") {
+            traverse(arr[a].nodes,pid); //递归遍历
+        }
+    }
+}
+
+
+
+
+
+function loadRegione(name,value){
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"region/getPage",
+        function(data){
+            if(data.code == '0'){
+               for (var i = 0;i<data.rows.length;i++){
+                   var obj = data.rows[i];
+                   ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+               }
+
+               if(value != null && value != undefined && value != ''){
+                   ele.val(value);
+               }
+                ele.selectpicker('refresh');
+            }
+        }
+    )
+}
+//加载角色列表
+function  loadRole(name,value) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"role/getRole",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.roleName+"</option>");
+                }
+                if(value != null && value != undefined && value != ''){
+                    ele.val(value);
+                }
+                ele.selectpicker('refresh');
+            }
+        }
+    )
+}
+
+//加载组织机构列表
+function loadOrg(ele,value) {
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"org/getOrgAll",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+                if(value != null && value != undefined && value != ''){
+                    ele.val(value);
+                }
+                ele.selectpicker('refresh');
+            }
+        }
+    )
+}
+
+function loadCurrentOrg(ele,value) {
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"org/getOrgCurrent",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+                if(value != null && value != undefined && value != ''){
+                    ele.val(value);
+                }
+                ele.selectpicker('refresh');
+            }
+        }
+    )
+}
+
+/*
+    加载机架下拉框
+ */
+function loadRackSelect(ele,roomId,val){
+    if(roomId != ''){
+        ele.html("<option value=''>请选择</option>");
+        $.ajax({
+            url:ctxPath +"rack/getPage",
+            type:'get',
+            data:{'roomId':roomId},
+            async: false,
+            success:function(data){
+                if(data.code == '0'){
+                    for (var i = 0;i<data.rows.length;i++){
+                        var obj = data.rows[i];
+                        ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                    }
+                    if(val != null && val != undefined && val != ''){
+                        ele.val(val);
+                    }
+
+                }
+                ele.selectpicker('refresh');
+            }
+    })
+    }else{
+        ele.html("<option value=''>请先选择机房</option>");
+        ele.selectpicker('refresh');
+    }
+}
+
+
+
+/*
+    加载设备下拉菜单
+ */
+function loadDevSelect(ele,rackId,val){
+   /* var ele;
+    if(pid != null && pid != undefined && pid != ''){
+        ele = $("#"+pid).find(":input[name='"+name+"']");
+    }else{
+        ele = $(":input[name='"+name+"']");
+    }*/
+    if(rackId != ''){
+        ele.html("<option value=''>请选择</option>");
+        $.get(
+            ctxPath +"device/getDevicePage",
+            {'rackId':rackId},
+            function(data){
+                if(data.code == '0'){
+                    for (var i = 0;i<data.rows.length;i++){
+                        var obj = data.rows[i];
+                        ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                    }
+
+                    if(val != null && val != undefined && val != ''){
+                        ele.val(val);
+                    }
+                    ele.selectpicker('refresh');
+                }
+            })
+    }else{
+        ele.html("<option value=''>请先选择机房</option>");
+        ele.selectpicker('refresh');
+    }
+}
+
+//加载设备类型下拉框
+function  loadDevTypeSelect(ele,val) {
+    //var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"resType/getList",
+        {'pid':'6351400136542781442'},
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.rows.length;i++){
+                    var obj = data.rows[i];
+                    ele.append("<option value='"+obj.fullCode+"'>"+obj.resTypeName+"</option>");
+                }
+                if(val != null && val != undefined && val != ''){
+                    ele.val(val);
+                }
+                ele.selectpicker('refresh');
+            }
+        }
+    )
+}
+
+
+function  loadExtTypeSelect(ele,value) {
+    //var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择值类型</option>");
+    $.get(
+        ctxPath +"param/getPage",
+        {'type':'dataType'},
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.rows.length;i++){
+                    var obj = data.rows[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.sysName+"</option>");
+                }
+                if(value != null && value != '' && value != undefined){
+                    ele.val(value);
+                }
+                ele.selectpicker('refresh');
+            }
+        }
+    )
+}
+
+function  loadDevStatus(ele,value) {
+    //var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"param/getPage",
+        {'type':'devStatus'},
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.rows.length;i++){
+                    var obj = data.rows[i];
+                    ele.append("<option value='"+obj.sysValue+"'>"+obj.sysName+"</option>");
+                }
+                if(value != null && value != '' && value != undefined){
+                    ele.val(value);
+                }
+                ele.selectpicker('refresh');
+            }
+        }
+    )
+}
+function loadRegion(ele,value) {
+    //var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"region/getList",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+                if(value != null && value != '' && value != undefined){
+                    ele.val(value);
+                }
+            }
+            ele.selectpicker('refresh');
+        }
+    )
+}
+function loadCurrentUser(name) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"user/getOrgCurrentUser",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+                ele.selectpicker('refresh');
+            }
+        }
+    )
+}
+function loadUser(name) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"user/getUserByOrgId",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+                ele.selectpicker('refresh');
+            }
+        }
+    )
+}
+function loadOrgUser(name,orgId) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"user/getUserByOrgId?orgId="+orgId,
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+                ele.selectpicker('refresh');
+            }
+        }
+    )
+}

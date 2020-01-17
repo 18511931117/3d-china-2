@@ -1,0 +1,53 @@
+package com.manage.idc.log.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.log.domain.AlarmsTaskLog;
+import com.manage.idc.log.mapper.AlarmsLogMapper;
+import com.manage.idc.log.service.AlarmTaskLogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/22 20:30
+ **/
+@Service
+@Transactional
+public class AlarmTaskLogServiceImpl implements AlarmTaskLogService {
+    @Autowired
+    private AlarmsLogMapper alarmsLogMapper;
+
+    @Override
+    public void add(AlarmsTaskLog alarmsLog) {
+        alarmsLog.setCreateTime(new Date());
+        alarmsLog.setId(IdGen.getUUId());
+        alarmsLog.setUserId(SessionUtil.getUser().getId());
+        alarmsLogMapper.insertSelective(alarmsLog);
+    }
+
+    @Override
+    public PageInfo<AlarmsTaskLog> getPage(AlarmsTaskLog alarmsLog, PageRequest pageRequest) {
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        alarmsLog.setOrgId(SessionUtil.getUser().getOrgId());
+        List<AlarmsTaskLog> list = alarmsLogMapper.selectByCondition(DataSetUtile.setQueryMap(alarmsLog,pageRequest,null));
+        return new PageInfo<>(list);
+    }
+
+    @Override
+    public List<AlarmsTaskLog> export(AlarmsTaskLog alarmsLog) {
+
+        return null;
+    }
+}

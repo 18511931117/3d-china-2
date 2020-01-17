@@ -1,0 +1,70 @@
+package com.manage.idc.task.domain;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.Date;
+import lombok.Data;
+
+/**
+ * scrap_task
+ * @author 
+ */
+@Data
+@ApiModel("报废任务表")
+public class ScrapTask extends TaskQueryVO implements Serializable {
+    @JsonSerialize(using= ToStringSerializer.class)
+    private Long id;
+
+    /**
+     * 任务名称
+     */
+    @ApiModelProperty("任务名称")
+    private String taskName;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty("备注")
+    private String remark;
+
+    /**
+     * 任务类型
+     */
+    @ApiModelProperty("任务类型")
+    private Integer taskType;
+
+    /**
+     * 任务状态
+     */
+    @ApiModelProperty("任务状态")
+    private Integer state;
+
+    /**
+     * 所属机构
+     */
+    @ApiModelProperty("所属机构")
+    private Long orgId;
+
+
+    /**
+     * 是否删除 1：删除 0：未删除
+     */
+    @ApiModelProperty("是否删除 1：删除 0：未删除")
+    private Integer isDel;
+
+    private Date createTime;
+
+    private Long userId;
+    private Long orgPid;
+
+    private Long roomId;
+
+    private String ids;
+
+    private String fullCode;
+
+    private static final long serialVersionUID = 1L;
+}

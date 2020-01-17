@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en" style="background: none;border: none" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" th:href="@{/img/favicon.html}">
+
+    <title>江苏有线三网融合扭曲中心数据中心-设备线缆管理系统</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-reset.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <link th:href="@{/assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css}" rel="stylesheet" type="text/css" media="screen"/>
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.css}" type="text/css">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+
+    <link th:href="@{/3rd/webgl/css/page.css}" rel="stylesheet">
+
+    <style>
+
+        .gdt{ border: 1px solid #3023AE;padding: 10px;overflow-y: scroll;width: 100%;height: 100%}
+        .gdt::-webkit-scrollbar{width:4px;}
+        .gdt::-webkit-scrollbar-track{background-color:rgba(255,255,255,0);border-radius: 10px;}
+        .gdt::-webkit-scrollbar-thumb{background-color:#3023AE;border-radius: 10px;}
+        .gdt::-webkit-scrollbar-thumb:hover {background-color:#5FE3FF}
+        .gdt::-webkit-scrollbar-thumb:active {background-color:#00aff0}
+    </style>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+    <script th:src="@{/js/html5shiv.js}"></script>
+    <script th:src="@{/js/respond.min.js}"></script>
+    <![endif]-->
+</head>
+
+<body style="background: none;border: none" class="gdt" id="gdt">
+    <div class="row" style="margin-top: 35px">
+        <div class="col-xs-3">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="mt-15" style="border-radius: 6px;background:rgba(255,255,255,0.1)">
+                        <div id="status" style="height: 400px">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 15px">
+                <div class="col-xs-12">
+                    <div class="mt-15" style="border-radius: 6px;background:rgba(255,255,255,0.1)">
+                        <div id="scrapped" style="height: 400px">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6" style="padding: 0">
+            <div class="row" >
+                <div class="info-top" style="display: flex;padding:  0 15px">
+                    <div class="" style="flex: 1">
+                        <div class="ification1 ification-warp">
+                            <div class="ification-top" style="display: flex">
+                                <div style="flex: 1;display: flex;align-content: center;justify-content: center" >
+                                    <i class="zaixian icon-top"></i>
+                                </div>
+                                <div style="flex: 1;padding-top: 5px">
+                                    <span class="RealTimeStatistics-titleText">在线数量</span>
+                                    <p class="ification-bottom deviceTotal"></p>
+                                </div>
+                                <div style="flex: 1" class="ification-shishi">
+                                    <span class="RealTimeStatistics-tag">实时</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <!--                                <p class="RealTimeStatistics-total deviceTotal"></p>-->
+                                    <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="" style="flex: 1;padding: 0 15px">
+                        <div class="ification2 ification-warp">
+                            <div class="ification-top" style="display: flex">
+                                <div style="flex: 1;display: flex;align-content: center;justify-content: center">
+                                    <i class="jifang icon-top"></i>
+                                </div>
+                                <div style="flex: 1;padding-top: 5px">
+                                    <span class="RealTimeStatistics-titleText">机房数量</span>
+                                    <p class="ification-bottom roomTotal"></p>
+                                </div>
+                                <div class="ification-shishi" style="flex: 1">
+                                    <span class="RealTimeStatistics-tag">实时</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <!--                                <p class="RealTimeStatistics-total deviceTotal"></p>-->
+                                    <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="" style="flex: 1">
+                        <div class="ification3 ification-warp">
+                            <div class="ification-top" style="display: flex;display: flex;align-content: center;justify-content: center">
+                                <div style="flex: 1;display: flex;align-content: center;justify-content: center">
+                                    <i class="jijia icon-top"></i>
+                                </div>
+                                <div style="flex: 1;padding-top: 5px">
+                                    <span class="RealTimeStatistics-titleText">机架数量</span>
+                                    <p class="ification-bottom rackTotal"></p>
+                                </div>
+                                <div class="ification-shishi" style="flex: 1">
+                                    <span class="RealTimeStatistics-tag">实时</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <!--                                <p class="RealTimeStatistics-total deviceTotal"></p>-->
+                                    <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="mt-15"  style="border-radius: 6px;background:rgba(255,255,255,0.1)" id="areaList">
+<!--                        <div class="" style="font-weight: 700;font-size: 18px;padding: 10px 0 0 20px; color: rgba(255,255,255,.8)">-->
+<!--                            江苏省区域地图-->
+<!--                        </div>-->
+                        <div id="mapadd" style="height: 512px;width: 100%">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 15px;">
+                <div class="info-top" style="display: flex;padding: 0 15px">
+                    <div class='' style="flex: 1">
+                        <div class="ification4 ification-warp">
+                            <div class="ification-top" style="display: flex">
+                                <div style="flex: 1;display: flex;align-content: center;justify-content: center">
+                                    <i class="fenlei icon-top"></i>
+                                </div>
+                                <div style="flex: 1;padding-top: 5px">
+                                    <span class="RealTimeStatistics-titleText">设备分类</span>
+                                    <p class="ification-bottom deviceTypeTotal"></p>
+                                </div>
+                                <div class="ification-shishi" style="flex: 1">
+                                    <span class="RealTimeStatistics-tag">实时</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <!--                                <p class="RealTimeStatistics-total deviceTotal"></p>-->
+                                    <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='' style="flex: 1;padding: 0 15px">
+                        <div class="ification5 ification-warp">
+                            <div class="ification-top" style="display: flex">
+                                <div style="flex: 1;display: flex;align-content: center;justify-content: center">
+                                    <i class="xingzheng icon-top"></i>
+                                </div>
+                                <div style="flex: 1;padding-top: 5px">
+                                    <span class="RealTimeStatistics-titleText">行政部门</span>
+                                    <p class="ification-bottom orgTotal"></p>
+                                </div>
+                                <div class="ification-shishi" style="flex: 1">
+                                    <span class="RealTimeStatistics-tag">实时</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <!--                                <p class="RealTimeStatistics-total deviceTotal"></p>-->
+                                    <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='' style="flex: 1">
+                        <div class="ification4 ification-warp">
+                            <div class="ification-top" style="display: flex">
+                                <div style="flex: 1;display: flex;align-content: center;justify-content: center">
+                                    <i class="diji icon-top"></i>
+                                </div>
+                                <div style="flex: 1;padding-top: 5px">
+                                    <span class="RealTimeStatistics-titleText">地级市</span>
+                                    <p class="ification-bottom level"></p>
+                                </div>
+                                <div class="ification-shishi" style="flex: 1">
+                                    <span class="RealTimeStatistics-tag">实时</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <!--                                <p class="RealTimeStatistics-total deviceTotal"></p>-->
+                                    <p class="RealTimeStatistics-desc">当前分类总记录数</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="mt-15" style="border-radius: 6px;background:rgba(255,255,255,0.1)">
+                        <div id="quantity" style="height: 400px">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="mt-15" id="imgList" style="border-radius: 6px;height: 400px;margin-top: 15px;background:rgba(255,255,255,0.1)">
+                        <div style="padding: 10px 0 0 20px">
+                            <p style="font-size: 18px;font-weight: 700;color: #fff;">机房3维视图</p>
+                        </div>
+                        <div style="width: 100%;height: 300px;display: flex;justify-content: center;align-items: center"id="img" >
+                            <a href="javascript:jiFangUrl()"  style="padding: 0 15px">
+                                <img th:src="@{img/imgd1.jpg}" alt="图片" style="width: 100%">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" th:inline="javascript">
+        ctxPath = /*[[@{/}]]*/ '';
+    </script>
+<!-- js placed at the end of the document so the pages load faster -->
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/jquery-1.8.3.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery.scrollTo.min.js}"></script>
+<!--<script th:src="@{/js/jquery.nicescroll.js}" type="text/javascript"></script>-->
+<!--<script th:src="@{/js/jquery.sparkline.js}" type="text/javascript"></script>-->
+<script th:src="@{assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js}"></script>
+<script th:src="@{/js/owl.carousel.js}" ></script>
+<script th:src="@{/js/jquery.customSelect.min.js}" ></script>
+
+<!--common script for all pages-->
+<script th:src="@{/js/common-scripts.js}"></script>
+
+<!--script for this page-->
+<script th:src="@{/js/map/echarts.min.js}"></script>
+<script th:src="@{/js/map/ECharts-GL.js}"></script>
+<script th:src="@{/js/map/jiangsu.js}"></script>
+<!--<script th:src="@{/js/map/index.js}"></script>-->
+<!--    <script th:src="@/js/sparkline-chart.js}"></script>-->
+<!--    <script th:src="@/js/easy-pie-chart.js}"></script>-->
+<script>
+
+
+
+
+
+
+    var id = '[[${currentRegionId}]]';
+
+
+    window.onload = function () {
+        ajaxname(id)
+    }
+
+
+    function jiFangUrl() {
+        window.location.href = ctxPath+'3dRoom';
+    }
+
+    function status(list) {
+        var wxStatus = echarts.init(document.getElementById('status'));
+
+        var names = []; //类别数组（用于存放饼图的类别）
+        var brower = [];
+        var bgColor = [
+            {
+                normal: {//颜色渐变
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: '#80C1FF'},
+                            {offset: 1, color: '#4691D8'}
+                        ]
+                    )
+                }
+            },
+            {
+                normal: {//颜色渐变
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: '#1BD5B6'},
+                            {offset: 1, color: '#20FFDA'}
+                        ]
+                    )
+                }
+            },
+            {
+                normal: {//颜色渐变
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: '#D5C498'},
+                            {offset: 1, color: '#FBECC3'}
+                        ]
+                    )
+                }
+            },
+            {
+                normal: {//颜色渐变
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: '#D6B6FF'},
+                            {offset: 1, color: '#AC84E0'}
+                        ]
+                    )
+                }
+            },{
+                normal: {//颜色渐变
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: '#87DEFF'},
+                            {offset: 1, color: '#75C3E0'}
+                        ]
+                    )
+                }
+            },
+            {
+                normal: {//颜色渐变
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: '#B7D6FF'},
+                            {offset: 1, color: '#9EC8FF'}
+                        ]
+                    )
+                }
+            }
+
+        ]
+        var arrNum = []
+        $.each(list, function(index, item) {
+                names.push(item.name); //挨个取出类别并填入类别数组
+                brower.push({
+                    name: item.name,
+                    value: item.data,
+                    itemStyle:bgColor[index]
+                });
+
+
+
+
+        });
+        var bing_colorList_start = ['#00ff00','#FE190E','#005eff','#AD52E9','#ff9c00'];
+        var bing_colorList_end = ['#02FBF3','#FE9101','#53EEE0','#F87194','#FED13E'];
+        option = {
+            // color: ["#EAEA26", "#906BF9", "#FE5656", "#01E17E", "#3DD1F9", "#FFAD05"],
+            title: {
+                text: '设备状态',
+                x:'left',
+                y: 'top',
+                padding: [10, 15],
+                textStyle: {
+                    color: 'rgba(255,255,255,.8)'
+                }
+            },
+            grid: {
+                right: '2%',
+                bottom: '5%',
+                top: '5%',
+                containLabel: true
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{b} : {c} ({d}%)"
+            },
+            legend: {
+                icon: "circle",   //  这个字段控制形状  类型包括 circle，rect ，roundRect，triangle，diamond，pin，arrow，none
+                orient: 'horizontal',
+
+                x: 'left',
+                bottom:'20',
+                left: 'center',
+                type: "scroll",
+                itemWidth: 10,
+                itemHeight: 10,
+                textStyle: {
+                    color: 'rgba(255,255,255,.8)'
+                },
+                data: names,
+                pageIconColor:'#ffffff',
+                pageIconInactiveColor:'#ffffff',
+                pageTextStyle:{
+                    color:'rgba(255,255,255,.5)'
+                },
+                // data: ['设备数量', '报废数量', '在线数量', '初始数量'],
+
+            },
+            // series: [
+            //
+            //     {
+            //         type: 'pie',
+            //         radius: ["5%", "10%"],
+            //         hoverAnimation: false,
+            //     },
+            //     {
+            //         stack: 'a',
+            //         type: 'pie',
+            //         radius: ['10%', '70%'],
+            //         roseType: 'area',
+            //         zlevel:20,
+            //         label: {
+            //             normal: {
+            //                 show: false,
+            //                 formatter: "{c}",
+            //                 textStyle: {
+            //                     fontSize: 12,
+            //                 },
+            //                 position: 'outside'
+            //             },
+            //             emphasis: {
+            //                 show: false
+            //             }
+            //         },
+            //         data:brower
+            //     }, ]
+            series: [{
+                type: 'pie',
+                radius: [30, '55%'],
+                center: ['50%', '50%'],
+                roseType: 'radius',
+                data: brower,
+                label: {
+                    normal: {
+                        show:false,
+                        textStyle: {
+                            fontSize: 14
+                        },
+                        formatter: function(param) {
+                            return param.name + ':\n' + Math.round(param.percent) + '%';
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        smooth: false,
+                        lineStyle: {
+                            width: 2
+                        }
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        shadowBlur: 30,
+                        shadowColor: 'rgba(0, 0, 0, 0.4)'
+                    }
+                },
+
+            }]
+        }
+
+
+        wxStatus.setOption(option)
+        window.addEventListener("resize",()=>{
+            wxStatus.resize();
+    });
+    }
+    function scrapped(list,time){
+        var wxScrapped = echarts.init(document.getElementById('scrapped'));
+        var series=[]
+        var bgColor = [
+            {
+                barBorderRadius: [30, 30, 0, 0],
+                color: {
+                    x: 0,
+                    y: 0,
+                    x2: 1,
+                    y2: 1,
+                    colorStops: [
+                        {offset: 0, color: '#A323AE'},
+                        {offset: 0.3, color: '#53A0FD'},
+                        {offset: 1, color: '#B4EC51'}
+                    ]
+                }
+            },
+            {
+                barBorderRadius: [30, 30, 0, 0],
+                color: {
+                    x: 0,
+                    y: 0,
+                    x2: 1,
+                    y2: 1,
+                    colorStops: [
+                        {offset: 0, color: '#57FFE0'},
+                        {offset: 0.3, color: '#3AA5C7'},
+                        {offset: 1, color: '#3469E2'}
+                    ]
+                }
+            },
+            {
+                barBorderRadius: [30, 30, 0, 0],
+                color: {
+                    x: 0,
+                    y: 0,
+                    x2: 1,
+                    y2: 1,
+                    colorStops: [
+                        {offset: 0, color: '#F78678'},
+                        {offset: 0.5, color: '#C359D0'},
+                        {offset: 1, color: '#963EF5'}
+                    ]
+                }
+            },
+            {
+                barBorderRadius: [30, 30, 0, 0],
+                color: {
+                    x: 0,
+                    y: 0,
+                    x2: 1,
+                    y2: 1,
+                    colorStops: [
+                        {offset: 0.3, color: '#52DAFF'},
+                        {offset: 1, color: '#0505FF'},
+                    ]
+                }
+            }
+        ]
+
+
+        for(var i = 0;i<list.length;i++){
+            series.push({
+                name:list[i].name,
+                type:'bar',
+                barWidth: 10,
+                data:list[i].data,
+                itemStyle:bgColor[i],
+
+
+            })
+        }
+
+        option = {
+            textStyle: {
+                color: 'rgba(255,255,255,.8)',
+                fontWeight: 'normal'
+            },
+            title : {
+                text: '设备报废',
+                x:'left',
+                y: 'top',
+                padding: [10, 15],
+                textStyle: {
+                    color: 'rgba(255,255,255,.8)',
+                }
+            },
+            // color: ['#F5B856', '#66A0E3', '#E5E8AE', '#F2C2AA'],
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                top:'25%',
+                containLabel: true
+            },
+            legend: {
+                icon: "circle",   //  这个字段控制形状  类型包括 circle，rect ，roundRect，triangle，diamond，pin，arrow，none
+                itemWidth: 10,  // 设置宽度
+                itemHeight: 10, // 设置高度
+                top:45,
+                type: "scroll",
+                // itemGap:35,
+                // right:20,
+                pageIconColor:'#ffffff',
+                pageIconInactiveColor:'#ffffff',
+                pageTextStyle:{
+                    color:'rgba(255,255,255,.5)'
+                },
+                // data: ['设备数量', '报废数量', '在线数量', '初始数量'],
+                textStyle:{
+                    color: 'rgba(255,255,255,.8)'
+                }
+
+            },
+            toolbox: {
+                show: true,
+                orient: 'vertical',
+                left: 'right',
+                top: 'center',
+                feature: {
+                }
+            },
+            calculable: true,
+            xAxis: [
+                {
+                    type: 'category',
+                    axisTick: {
+                        show: true,
+
+                    },
+
+                    axisLine: {       // 坐标轴 轴线
+                        show: true,  // 是否显示
+                        // ------   线 ---------
+                        lineStyle: {
+                            color: 'rgba(255,255,255,.5)',
+                            width: 1,
+                            type: 'solid'
+                        }
+                    },
+                    data:time
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    splitLine:{
+                        show:true,
+                        lineStyle:{
+                            type:'dashed',
+                            color:'#595ca3'
+                        }
+                    },
+                    axisLine: {    // 坐标轴 轴线
+                        show: true,  // 是否显示
+                        lineStyle: {
+                            color: 'rgba(255,255,255,.5)',
+                            width: 1,
+                            type: 'solid'
+                        }
+                    },
+                },
+
+            ],
+
+            series : series
+        };
+
+
+        wxScrapped.setOption(option);
+
+        window.addEventListener("resize",()=>{
+            wxScrapped.resize();
+    });
+
+    }
+    function quanTity(list,time){
+        var Tjtity = echarts.init(document.getElementById('quantity'));
+
+        var lineStyle = [
+            {
+                normal: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: "#F4FF92" },
+                        { offset: 0.5, color: "#E5CC40" },
+                        { offset: 1, color: "#DBB710" }
+                    ])
+                }
+            }, //填充区域样式
+            {
+                normal: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: "#AB3838" },
+                        { offset: 0.2, color: "#FC1D1D" },
+                        { offset: 0.3, color: "#D13902" }
+                    ])
+                }
+            }, //填充区域样式
+            {
+                normal: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: "#3023AE" },
+                        { offset: 0.5, color: "#566CAA" },
+                        { offset: 1, color: "#53A0FD" }
+                    ])
+                }
+            }, //填充区域样式
+            {
+                normal: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: "#A323AE" },
+                        { offset: 0.5, color: "#7767D9" },
+                        { offset: 1, color: "#53A0FD" }
+                    ])
+                }
+            }, //填充区域样式
+        ]
+
+
+        var series=[]
+        for(var i = 0;i<list.length;i++){
+            series.push({
+                name: list[i].name,
+                data: list[i].data,
+                symbolSize:10,
+                type:'line',
+                symbol:'circle',
+                smooth: true,
+                stack: '总量',
+                areaStyle:lineStyle[i],
+                lineStyle: {
+                    normal:{
+                        width:2
+                    }
+                }
+            })
+        }
+
+        option = {
+            textStyle: {
+                color: 'rgba(255,255,255,.8)',
+                fontWeight: 'normal'
+            },
+            title: {
+                padding: [10, 15],
+                text: '数量统计折线图',
+                textStyle: {
+                    color: 'rgba(255,255,255,.8)'
+                }
+            },
+            tooltip: {
+                orient: 'horizontal',
+                x: 'left',
+                trigger: 'axis'
+            },
+            legend: {
+                icon: "circle",   //  这个字段控制形状  类型包括 circle，rect ，roundRect，triangle，diamond，pin，arrow，none
+                itemWidth: 10,  // 设置宽度
+                itemHeight: 10, // 设置高度
+                orient: 'horizontal',
+                type: "scroll",
+                pageIconColor:'#ffffff',
+                pageIconInactiveColor:'#ffffff',
+                pageTextStyle:{
+                    color:'rgba(255,255,255,.5)'
+                },
+                // itemGap:35,
+                // data:['设备维修','报废设备','设备调用','设备借用'],
+                top:45,
+                // left:10,
+                textStyle:{
+                    color: 'rgba(255,255,255,.8)'
+                }
+            },
+            color:['#EBA40E', '#F9081D','#6EB5CD','#A01FDF',],
+            grid: {
+                left: '5%',
+                right: '4%',
+                bottom: '2%',
+                top:'25%',
+                containLabel: true
+
+
+            },
+            toolbox: {
+                // feature: {
+                //     saveAsImage: {}
+                // }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                axisLine: {    // 坐标轴 轴线
+                    show: true,  // 是否显示
+                    lineStyle: {
+                        color: 'rgba(255,255,255,.5)',
+                        width: 1,
+                        type: 'solid'
+                    }
+                },
+                data: time
+            },
+            yAxis: {
+                type: 'value',
+                splitLine:{
+                    show:true,
+                    lineStyle:{
+                        type:'dashed',
+                        color:'#595ca3'
+                    }
+                },
+                axisLine: {    // 坐标轴 轴线
+                    show: true,  // 是否显示
+                    lineStyle: {
+                        color: 'rgba(255,255,255,.5)',
+                        width: 1,
+                        type: 'solid'
+                    }
+                },
+            },
+            series: series
+        };
+
+        Tjtity.setOption(option);
+
+
+        window.addEventListener("resize",()=>{
+            Tjtity.resize();
+    });
+
+    }
+
+
+
+
+    function doresize(list) {
+        var maps = echarts.init(document.getElementById('mapadd'));
+
+        var data=[]
+
+        for(var i = 0;i<list.length;i++){
+            if(list[i].name != '江苏省') {
+                if (list[i].id != id) {
+                    data.push({
+                        name: list[i].name,
+                        itemStyle: {
+                            normal: {
+                                areaColor: '#04C4FF',
+                                borderColor: '#B29eca',
+                                color: "#04C4FF",
+                            }
+                        },
+                        mid: list[i].id
+                    })
+                } else {
+                    data.push({
+                        name: list[i].name,
+                        itemStyle: {
+                            normal: {
+                                areaColor: '#04C4FF',
+                                borderColor: '#B29eca',
+                                color: '#7dff53',
+                            }
+                        },
+                        mid: list[i].id
+                    })
+                }
+            }
+        }
+        var option = {
+            title: {
+                text: '江苏省区域地图',
+                x:'left',
+                y: 'top',
+                padding: [10, 15],
+                textStyle: {
+                    color: 'rgba(255,255,255,.8)'
+                }
+            },
+            series: [{
+                type: 'map3D',
+                map: '江苏',
+                shading: 'lambert',
+                realisticMaterial: {
+                    roughness: 0.2,
+                    metalness: 0
+                },
+
+                regionHeight: 3,
+                boxWidth:120,
+                boxDepth:95,
+                top:'-10%',
+                left:'-8%',
+                //left:'10%',
+                // 环境贴图，支持純颜色值，渐变色，全景贴图的 url。默认为 'auto'，在配置有 light.ambientCubemap.texture 的时候会使用该纹理作为环境贴图。否则则不显示环境贴图。
+                // environment: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{      // 配置为垂直渐变的背景
+                //     offset: 0, color: '#00aaff' // 天空颜色
+                // },], false),
+
+                label: {                // 标签的相关设置
+                    show: true,                 // (地图上的城市名称)是否显示标签 [ default: false ]
+                  //  distance: 50,               // 标签距离图形的距离，在三维的散点图中这个距离是屏幕空间的像素值，其它图中这个距离是相对的三维距离
+                    //formatter:,               // 标签内容格式器
+                    textStyle: {                // 标签的字体样式
+                        color: '#fdf4ff',                  // 地图初始化区域字体颜色
+                        fontSize: 12,                    // 字体大小
+                        opacity: 1,                     // 字体透明度
+                        backgroundColor: 'rgba(0,23,11,0)'      // 字体背景色
+                    },
+                },
+
+                itemStyle: {            // 三维地理坐标系组件 中三维图形的视觉属性，包括颜色，透明度，描边等。
+                    //color: '#04C4FF',       // 地图板块的颜色
+                    opacity: 1,                 // 图形的不透明度 [ default: 1 ]
+                    borderWidth: 1,           // (地图板块间的分隔线)图形描边的宽度。加上描边后可以更清晰的区分每个区域   [ default: 0 ]
+                    borderColor: '#fff'         // 图形描边的颜色。[ default: #333 ]
+                },
+
+                emphasis: {             // 鼠标 hover 高亮时图形和标签的样式 (当鼠标放上去时  label和itemStyle 的样式)
+                    label: {                // label高亮时的配置
+                        show: true,
+                        textStyle: {
+                            color: '#ffffff',      // 高亮时标签颜色变为 白色
+                            // fontSize: 15,       // 高亮时标签字体 变大
+                            borderColor: '#ff2f33'
+                        }
+                    },
+                    itemStyle: {//鼠标滑过
+                        color: '#7dff53',// itemStyle高亮时的配置
+                        // areaColor: '#66ffff',   // 高亮时地图板块颜色改变
+                    }
+                },
+
+                groundPlane: {			// 地面可以让整个组件有个“摆放”的地方，从而使整个场景看起来更真实，更有模型感。
+                    show: false,				// 是否显示地面。[ default: false ]
+                    color: '#aa2729'			// 地面颜色。[ default: '#aaa' ]
+                },
+
+                data:data
+            }]
+        };
+        maps.setOption(option);
+
+
+       maps.off('click')
+       maps.on('click', function(params){
+            if(id=='6358538100104232960'){
+            //console.log("111111")
+           //change_region(params.name);
+           //alert(params.name);
+           ajaxnameDelay(params.data.mid)
+           //此处写点击事件内容
+            }
+       });
+        window.addEventListener("resize",()=>{
+            maps.resize();
+        });
+
+
+    }
+
+    // ajaxnameDelay()
+
+    function ajaxname(mid){
+        var urls = ''
+                if(mid == '6358538100104232960'){
+                    urls =ctxPath+"getReportData"
+                }else{
+                    urls = ctxPath+"getReportData?regionId="+mid
+
+                }
+        $.ajax({
+            url: urls,
+            type: 'get',
+            dataType: "json",
+            success: function(res) {
+
+                var region = res.data.region
+                var list= res.data.cake//饼图
+                var baofei=res.data.columnar//柱状图
+                var tongji=res.data.broken//折线图
+                var time = res.data.date
+
+                status(list)
+                scrapped(baofei,time)
+                quanTity(tongji,time)
+                doresize(region)
+                var num = res.data.total
+                //
+                $(".deviceTotal").text(num.deviceTotal)
+                $(".roomTotal").html(num.roomTotal)
+                $(".rackTotal").html(num.rackTotal)
+                $(".deviceTypeTotal").html(num.deviceTypeTotal)
+                $(".orgTotal").html(num.orgTotal)
+                $(".level").html(num.level)
+
+
+
+                // doresize()
+            }
+        })
+
+    }
+    function ajaxnameDelay(mid) {
+        $.ajax({
+            url: ctxPath + "getReportData?regionId="+mid,
+            type: 'get',
+            dataType: "json",
+            success: function (res) {
+                var region = res.data.region
+                var list = res.data.cake //饼图
+                var baofei = res.data.columnar //柱状图
+                var tongji = res.data.broken //折线图
+                var time = res.data.date
+                status(list)
+                scrapped(baofei, time)
+                quanTity(tongji, time)
+                var num = res.data.total
+
+                $(".deviceTotal").text(num.deviceTotal)
+                $(".roomTotal").html(num.roomTotal)
+                $(".rackTotal").html(num.rackTotal)
+                $(".deviceTypeTotal").html(num.deviceTypeTotal)
+                $(".orgTotal").html(num.orgTotal)
+                $(".level").html(num.level)
+                // doresize()
+            }
+        })
+
+    }
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,929 @@
+package com.manage.idc.device.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.utils.*;
+import com.manage.idc.device.domain.Res;
+import com.manage.idc.device.domain.ResExt;
+import com.manage.idc.device.domain.ext.ResExtend;
+import com.manage.idc.device.domain.ext.ResQuery;
+import com.manage.idc.device.mapper.ResExtMapper;
+import com.manage.idc.device.mapper.ResMapper;
+import com.manage.idc.device.service.DeviceService;
+import com.manage.idc.system.domain.*;
+import com.manage.idc.system.mapper.*;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.*;
+
+/**
+ * @Author: WangZiFan
+ * @Date: 2019/10/17 9:47
+ * @Description:
+ */
+@Service
+public class DeviceServiceImpl implements DeviceService {
+    @Autowired
+    private ResMapper resMapper;
+
+    @Autowired
+    private ResExtCfgMapper resExtCfgMapper;
+
+    @Autowired
+    private ResExtMapper resExtMapper;
+
+    @Autowired
+    private ResExtGrpMapper resExtGrpMapper;
+
+
+    @Autowired
+    private ResTypeMapper resTypeMapper;
+
+
+    @Autowired
+    private RoomMapper roomMapper;
+
+    @Autowired
+    private RackMapper rackMapper;
+
+    @Autowired
+    private SysOrgMapper sysOrgMapper;
+
+
+    @Autowired
+    private LabelMapper labelMapper;
+
+    @Autowired
+    private SysParamMapper sysParamMapper;
+
+
+    @Override
+    @Transactional(readOnly = false)
+    public String appBindLabel(Res res) {
+
+        Res query = new Res();
+        query.setId(res.getId());
+        query = resMapper.selectOne(query);
+
+        if(StringUtils.isNotEmpty(query.getTid())){
+            return "该设备已绑定标签!";
+        }
+
+        String tid = res.getTid();
+
+        if(!StringUtils.isNotEmpty(tid)){
+            return "标签不能为空";
+        }
+
+
+        Label check = labelMapper.selectByTid(tid);
+        if(check != null && check.getIsBinding().equals(1)){
+            return "该标签已被绑定";
+        }
+
+
+        SysParam sysParam = new SysParam();
+        sysParam.setType("devStatus");
+        sysParam.setSysKey("On-line");
+        sysParam.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        sysParam = sysParamMapper.selectOne(sysParam);
+
+
+        res.setUpdatedTime(new Date());
+        res.setIsPasted(IdcConstant.SYSTEM_PASTED.PASTED.toString());
+        res.setStatus(sysParam.getSysValue());
+        resMapper.updateByPrimaryKey(res);
+
+
+        Label label = new Label();
+        label.setTid(res.getTid());
+        label.setIsBinding(IdcConstant.SYSTEM_ISBIND.BIND);
+        label.setIsPasted(IdcConstant.SYSTEM_PASTED.PASTED);
+        label.setUpdatedTime(new Date());
+        labelMapper.updateByTid(label);
+        return null;
+    }
+
+    /*
+     * @Description: 添加设备
+     * @Author: WangZiFan
+     * @Date: 2019/10/22 19:06
+     * @param res
+     * @return void
+     */
+    @Override
+    @Transactional
+    public void addDevice(Res res) {
+        res.setId(IdGen.getUUId());
+        res.setCreatedTime(new Date());
+        res.setUpdatedTime(new Date());
+        SysOrg sysOrg = new SysOrg();
+        sysOrg.setId(res.getOrgId());
+        sysOrg = sysOrgMapper.selectOne(sysOrg);
+        res.setAssetId(sysOrg.getFullCode()+"-"+res.getResTypeCode()+"-"+RandomUtile.getRandomString(8));
+        res.setRegionId(Long.parseLong(sysOrg.getRegionId()));
+
+
+        resMapper.insert(res);
+    }
+    /*
+     * @Description: 获取设备分页列表
+     * @Author: WangZiFan
+     * @Date: 2019/10/22 19:06
+     * @param res
+     * @param pageRequest
+     * @return com.github.pagehelper.PageInfo<com.manage.idc.device.domain.ext.ResExtend>
+     */
+    @Override
+    public PageInfo<Map<String,Object>> getDevicePage(ResQuery res, PageRequest pageRequest) {
+        ResExtCfg resExtCfg = new ResExtCfg();
+        resExtCfg.setResTypeCode("DEV");
+        List<ResExtCfg> resExtCfgs = resExtCfgMapper.selectAll(resExtCfg);
+        if(null != pageRequest && null != pageRequest.getPage() && null != pageRequest.getLimit()){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        Map<String, Object> map = DataSetUtile.setQueryMap(res, pageRequest, SessionUtil.getUser());
+
+
+        map.put("extColumn",resExtCfgs);
+        List<Map<String,Object>> list =resMapper.selectByCondition(map);
+        return new PageInfo<Map<String,Object>>(list);
+    }
+
+    /*
+     * @Description: 删除设备
+     * @Author: WangZiFan
+     * @Date: 2019/10/22 21:16
+     * @param id
+     * @return void
+     */
+    @Override
+    @Transactional
+    public void delDevice(Long id) {
+        //修改设备表
+        Res res = new Res();
+        res.setId(id);
+        Res res1 = resMapper.selectOne(res); //查询此设备是否有标签
+        if(res1.getTid()!=null){
+            Label label = new Label();
+            label.setTid(res1.getTid());
+            label.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+            label.setUpdatedTime(new Date());
+            labelMapper.updateByTid(label);
+        }
+        res.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        res.setUpdatedTime(new Date());
+        resMapper.updateByPrimaryKey(res);
+        //修改扩展信息表
+        ResExt resExt = new ResExt();
+        resExt.setResId(id);
+        resExt.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        resExtMapper.updateByResId(resExt);
+    }
+
+    /*
+     * @Description: TODO
+     * @Author: WangZiFan
+     * @Date: 2019/10/23 9:21
+     * @param null
+     * @return 
+     */
+    @Override
+    @Transactional
+    public void updateDevice(ResExtend res) {
+        res.setUpdatedTime(new Date());
+        resMapper.updateByPrimaryKey(res);
+        List<ResExt> resExts = res.getResExts();
+
+        resExtMapper.deleteByResId(res.getId());
+
+        for (ResExt resExt:
+        resExts) {
+            if(StringUtils.isNotEmpty(resExt.getItemValue())){
+                resExt.setResId(res.getId());
+                resExt.setId(IdGen.getUUId());
+                resExtMapper.insert(resExt);
+            }
+
+        }
+    }
+
+    /*
+     * @Description: 获取设备基本信息分页
+     * @Author: WangZiFan
+     * @Date: 2019/10/23 11:43
+     * @param res
+     * @param pageRequest
+     * @return com.github.pagehelper.PageInfo<com.manage.idc.device.domain.ext.ResExtend>
+     */
+    @Override
+    public PageInfo<ResExtend> getDeviceBaseInfoPage(ResExtend res, PageRequest pageRequest) {
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getLimit(),pageRequest.getPage());
+        }
+        List<ResExtend> list = resMapper.selecteBaseInfoByCondition(DataSetUtile.setQueryMap(res,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<ResExtend>(list);
+    }
+
+    /*
+     * @Description: 导出设备模板
+     * @Author: WangZiFan
+     * @Date: 2019/10/23 16:04
+     * @param response
+     * @return void
+     */
+    @Override
+    public void exportDeviceModel(HttpServletResponse response) throws IOException {
+        List<ResExtCfg> dev = resExtCfgMapper.selectByExtGrpCode("DEV");
+        String fileName = "设备导入模板";
+
+
+        String[] title={"所属机构","设备类型","设备名称","规格型号","所有人","机房名称","机架","机位"};
+
+        List<String> titles = new ArrayList<>(Arrays.asList(title)) ;
+
+
+        for (ResExtCfg resExtCfg:
+            dev) {
+            titles.add(resExtCfg.getItemName());
+        }
+
+        title = titles.toArray(title);
+
+
+
+        ExportPOIUtils.start_download(response,fileName,null,title,null);
+
+    }
+
+    /*
+     * @Description: 导入设备信息
+     * @Author: WangZiFan
+     * @Date: 2019/10/23 18:43
+     * @param labelFile
+     * @return void
+     */
+    @Override
+    public List<Map<String,Object>> importDevice(MultipartFile devFile) throws IOException {
+        List<ResExtCfg> dev = resExtCfgMapper.selectByExtGrpCode("DEV");
+
+        File file = FileToUtile.multipartFileToFile(devFile);
+
+        //String[] propertys={"barcode","epc","tid","uid"};
+
+        String[] title={"orgName","resTypeName","name","model","owner","roomName","rackName","sheft"};
+
+
+        String[] titleCheck={"所属机构","设备类型","设备名称","规格型号","所有人","机房名称","机架","机位"};
+
+        List<String> titles = new ArrayList<>(Arrays.asList(title)) ;
+        List<String> titleChecks = new ArrayList<>(Arrays.asList(titleCheck)) ;
+
+
+        for (ResExtCfg resExtCfg:
+                dev) {
+            titles.add(resExtCfg.getItemCode());
+            titleChecks.add(resExtCfg.getItemName());
+        }
+
+        List list = ImportExeclUtil.readExcelFirstSheet(file, titles, Map.class,titleChecks);
+
+        FileToUtile.deleteFile(file);
+
+        if(list == null){
+            return null;
+        }
+
+        //存储添加设备集合
+        List<Res> addList = new ArrayList<>();
+        //存储添加设备扩展属性
+        List<List<ResExt>> resExts1 = new ArrayList<>();
+        StringBuffer backInfo = new StringBuffer("");
+
+        List<Map<String,Object>> back = new ArrayList<>();
+
+        int row = 0;
+        for (Object bean:
+         list) {
+            row ++;
+            Res res = new Res();
+            res.setUpdatedTime(new Date());
+            res.setCreatedTime(new Date());
+            List<ResExt> resExts = new ArrayList<>();
+            Map<String,Object> map = (Map<String,Object>)bean;
+           res.setId(Long.parseLong(map.get("id").toString()));
+
+            Map<String,Object> maps = new HashMap<>();
+            maps.putAll(map);
+
+
+
+            //查询对应机构ID
+            String orgName = map.get("orgName").toString();
+            SysOrg sysOrg = new SysOrg();
+            sysOrg.setName(orgName);
+            sysOrg = sysOrgMapper.selectOne(sysOrg);
+            if(null != sysOrg){
+                res.setOrgId(sysOrg.getId());
+            }else{
+                maps = new HashMap<>();
+                maps.putAll(map);
+                maps.put("ps","[所属机构未找到]");
+                //backInfo.append("[设备类型未找到]");
+                back.add(maps);
+                continue;
+            }
+
+
+            //查询机架对应ID
+            String rackName = map.get("rackName").toString();
+
+            //查询机场对应id
+            String roomName = map.get("roomName").toString();
+
+            //查询设备类型对应ID
+           String resTypeName = map.get("resTypeName").toString();
+
+           //设备名称
+           String resName = map.get("name").toString();
+
+
+           ResType resType = new ResType();
+           resType.setResTypeName(resTypeName);
+           resType = resTypeMapper.selectOne(resType);
+
+
+           if(null != resType){
+               res.setResTypeCode(resType.getFullCode());
+           }else{
+               maps = new HashMap<>();
+               maps.putAll(map);
+               maps.put("ps","[设备类型未找到]");
+               //backInfo.append("[设备类型未找到]");
+               back.add(maps);
+               continue;
+           }
+
+
+            //生成资产编号“机构+设备类型+8位随机数”
+            res.setAssetId(sysOrg.getFullCode()+"-"+resType.getResTypeCode()+"-"+RandomUtile.getRandomString(8));
+
+
+            Room room = new Room();
+            room.setName(roomName);
+            room = roomMapper.selectOne(room);
+            if(null != room){
+                res.setRoomId(room.getId());
+            }else{
+                maps = new HashMap<>();
+                maps.putAll(map);
+                maps.put("ps","[机房未找到]");
+                back.add(maps);
+                continue;
+            }
+
+
+
+            Rack rack = new Rack();
+            rack.setName(rackName);
+            rack.setRoomId(room.getId());
+            rack = rackMapper.selectOne(rack);
+
+            //rack.setRoomAreaId(Long.parseLong("0"));
+
+            if(null != rack){
+                res.setRackId(rack.getId());
+                res.setRegionId(rack.getRegionId());
+            }else{
+                maps = new HashMap<>();
+                maps.putAll(map);
+                maps.put("ps","[机房未找到]");
+                back.add(maps);
+                continue;
+            }
+
+            map.remove("id");
+            map.remove("orgName");
+            map.remove("resTypeName");
+            map.remove("roomName");
+            map.remove("rackName");
+
+            //封装设备名称
+            res.setName(resName);
+            map.remove("name");
+
+            //封装规格参数
+            res.setModel(map.get("model").toString());
+            map.remove("model");
+
+            //封装所有者
+            res.setOwner(map.get("owner").toString());
+            map.remove("owner");
+
+            //封装机位
+            res.setSheft(map.get("sheft").toString());
+            map.remove("sheft");
+
+
+            boolean extFlag = true;
+            maps.put("ps","[扩展字段");
+
+
+            //封装扩展数据
+            for (String key:map.keySet()) {
+                String value = map.get(key).toString();
+
+                if(StringUtils.isNotEmpty(value)){
+                    ResExtCfg resExtCfg = new ResExtCfg();
+                    resExtCfg.setItemCode(key);
+                    resExtCfg.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+                    ResExtCfg query = resExtCfgMapper.selectOne(resExtCfg);
+
+                    String valType = query.getValType();
+
+                    SysParam sysParam = new SysParam();
+                    sysParam.setId(Long.parseLong(valType));
+                    sysParam.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+                    SysParam queryPram = sysParamMapper.selectOne(sysParam);
+                    String sysKey = queryPram.getSysKey();
+
+
+
+
+                    switch (sysKey){
+                        case "date":
+                            boolean dateTime = StringUtile.isDateTime(value);
+                            if(!dateTime){
+                                String ps = maps.get("ps").toString();
+                                ps += "["+query.getItemName()+"不符合日期规范(格式YYYY-MM-DD)]";
+                                maps.put("ps",ps);
+                                back.add(maps);
+                                extFlag = false;
+                            }
+                            break;
+                        case "number" :
+                            try {
+                                Integer.parseInt(value);
+                            }catch (NumberFormatException e){
+                                String ps = maps.get("ps").toString();
+                                ps += "["+query.getItemName()+"不符合数字规范]";
+                                maps.put("ps",ps);
+                                back.add(maps);
+                                extFlag = false;
+                            }
+                            break;
+                        case "money" :
+                            DecimalFormat  fnum =   new DecimalFormat("##0.00");
+                            try {
+                                value = fnum.format(value);
+                            }catch (Exception e){
+                                String ps = maps.get("ps").toString();
+                                ps += "["+query.getItemName()+"不符合金额规范]";
+                                maps.put("ps",ps);
+                                back.add(maps);
+                                extFlag = false;
+                            }
+                            break;
+                    }
+
+                    ResExt resExt = new ResExt();
+                    resExt.setId(IdGen.getUUId());
+                    resExt.setResId(res.getId());
+                    resExt.setItemCode(key);
+                    resExt.setItemValue(map.get(key).toString());
+                    resExts.add(resExt);
+                }
+            }
+            if(extFlag){
+                resExts1.add(resExts);
+                addList.add(res);
+            }
+        }
+
+        List<List> insertList = ListUtile.divisionList(addList);
+
+        for (List insert:
+            insertList) {
+            resMapper.batchInsert(insert);
+        }
+
+        for (List insert:
+            resExts1) {
+            if(null != insert && insert.size()>0){
+                resExtMapper.batchInsert(insert);
+            }
+        }
+
+        if(StringUtils.isNotEmpty(backInfo.toString())){
+            backInfo.append("。其余数据导入成功");
+        }else{
+            backInfo.append("导入成功");
+        }
+
+        return back;
+    }
+    /*
+     * @Description: 设备标签绑定
+     * @Author: WangZiFan
+     * @Date: 2019/10/24 14:05
+     * @param res
+     * @return void
+     */
+    @Override
+    @Transactional
+    public void bindLabel(Res res) {
+       /* SysParam sysParam = new SysParam();
+        sysParam.setType("devStatus");
+        sysParam.setSysKey("On-line");
+        sysParam.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        sysParam = sysParamMapper.selectOne(sysParam);*/
+
+        res.setUpdatedTime(new Date());
+        //res.setStatus(sysParam.getSysValue());
+        resMapper.updateByPrimaryKey(res);
+
+
+        Label label = new Label();
+        label.setTid(res.getTid());
+        label.setIsBinding(IdcConstant.SYSTEM_ISBIND.BIND);
+        label.setUpdatedTime(new Date());
+        labelMapper.updateByTid(label);
+    }
+
+    /*
+     * @Description: 获取设备贴标打印
+     * @Author: WangZiFan
+     * @Date: 2019/10/24 15:50
+     * @param pageRequest
+     * @return com.github.pagehelper.PageInfo<com.manage.idc.device.domain.ext.ResExtend>
+     */
+    @Override
+    public PageInfo<ResExtend> getDeviceLabelingPage(PageRequest pageRequest) {
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<ResExtend> list = resMapper.selectDeviceLabelingyByCondition(DataSetUtile.setQueryMap(null, pageRequest, SessionUtil.getUser()));
+        return new PageInfo<>(list);
+    }
+
+    /*
+     * @Description: 获取app端分页对象
+     * @Author: WangZiFan
+     * @Date: 2019/10/25 9:55
+     * @param queryStr
+     * @param pageRequest
+     * @return com.github.pagehelper.PageInfo<com.manage.idc.device.domain.ext.ResExtend>
+     */
+    @Override
+    public PageInfo<ResExtend> getAppDevicePage(ResQuery res, PageRequest pageRequest) {
+        if(null != pageRequest && null != pageRequest.getPage() && null != pageRequest.getLimit()){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<ResExtend> list = resMapper.selecteBaseInfoByCondition(DataSetUtile.setQueryMap(res,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<>(list);
+    }
+
+    @Override
+    public List<Map<String, Object>> getAppDeviceInfo(Long id) {
+
+        List<Map<String, Object>> backList = new ArrayList<>();
+
+        /*Res res = new Res();
+        res.setId(id);*/
+
+        Map<String, Object> queryMap1 = new HashMap<>();
+        queryMap1.put("id",id);
+        ResExtend resExtend = resMapper.selecteBaseInfoByCondition(DataSetUtile.setQueryMap(queryMap1, null, null)).get(0);
+        //Res res = resMapper.selectByPrimaryKey(id);
+
+        Map<String, Object> map = new HashMap<>();
+        //封装设备基本信息
+        map.put("title","设备信息");
+        List<Map<String, String>> list = new ArrayList<>();
+        String[] value = {"所在机房","所在机架","所在机位","设备类型","设备名称","资产编号","TID","所有人","设备状态"};
+        for (int i =0;i<value.length;i++){
+            Map<String, String> contentMap = new HashMap<>();
+            ResExt resExt = new ResExt();
+            contentMap.put("title",value[i]);
+            switch (i){
+                case 0:
+                    contentMap.put("value",resExtend.getRoomName()) ;break;
+
+                case 1:
+                    contentMap.put("value",resExtend.getRackName()); break;
+
+                case 2:
+                    contentMap.put("value",resExtend.getSheft()); break;
+
+                case 3:
+                    contentMap.put("value",resExtend.getResTypeName()); break;
+
+                case 4:
+                    contentMap.put("value",resExtend.getName()); break;
+
+                case 5:
+                    contentMap.put("value",resExtend.getAssetId()); break;
+
+                case 6:
+                    contentMap.put("value",resExtend.getTid()); break;
+
+                case 7:
+                    contentMap.put("value",resExtend.getOwner()); break;
+                case 8:
+                    contentMap.put("value",resExtend.getStatusName()); break;
+            }
+            list.add(contentMap);
+        }
+        map.put("valueList",list);
+
+        backList.add(map);
+
+        ResExtGrp resExtGrp = new ResExtGrp();
+        resExtGrp.setResTypeCode("DEV");
+
+        List<ResExtGrp> extGrps = resExtGrpMapper.selectOne(resExtGrp);
+
+        for (ResExtGrp extGrp:
+                extGrps) {
+            map = new HashMap<>();
+            map.put("title",extGrp.getExtGrpName());
+
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("devId",id);
+            queryMap.put("groupByCode",extGrp.getExtGrpCode());
+
+            List<Map<String,Object>> contentList = resExtMapper.selectDeviceExtInfoById(queryMap);
+            map.put("valueList",contentList);
+            backList.add(map);
+        }
+
+
+        return backList;
+    }
+    /*
+     * @Description: 设备解绑标签
+     * @Author: WangZiFan
+     * @Date: 2019/10/26 13:57
+     * @param res
+     * @return void
+     */
+    @Override
+    @Transactional
+    public void untyingLabel(Res res) {
+        String isPasted = res.getIsPasted();
+        res = resMapper.selectOne(res);
+        String tid = res.getTid();
+        res.setUpdatedTime(new Date());
+        res.setTid("");
+        res.setIsPasted(IdcConstant.SYSTEM_PASTED.NOT_PASTED+"");
+        res.setIsPrinted(IdcConstant.SYSTEM_PRINT.NOT_PRINT);
+
+        SysParam param = new SysParam();
+        param.setSysKey("unknown");
+        param.setType("devStatus");
+        param.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+
+        param = sysParamMapper.selectOne(param);
+        res.setStatus(param.getSysValue());
+
+        resMapper.untyingLabel(res);
+        Label label = new Label();
+        label.setTid(tid);
+        if("1".equals(isPasted)){
+            label.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+            label.setIsBinding(IdcConstant.SYSTEM_ISBIND.BIND);
+            label.setIsPasted(IdcConstant.SYSTEM_PASTED.PASTED);
+            label.setIsPrinted(IdcConstant.SYSTEM_PRINT.PRINT);
+        }else{
+            label.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+            label.setIsBinding(IdcConstant.SYSTEM_ISBIND.NOT_BIND);
+            label.setIsPasted(IdcConstant.SYSTEM_PASTED.NOT_PASTED);
+            label.setIsPrinted(IdcConstant.SYSTEM_PRINT.NOT_PRINT);
+        }
+        label.setUpdatedTime(new Date());
+        label.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        labelMapper.updateByTid(label);
+    }
+
+    /*
+     * @Description: TODO
+     * @Author: WangZiFan
+     * @Date: 2019/10/26 15:27
+     * @param id
+     * @return void
+     */
+    @Override
+    public void exportDevice(List<Long> id,HttpServletResponse response) throws IOException {
+        String[] titles = {"设备名称","设备分类","所属机构","机房","机架","机位","所有人","显示状态","标签编号"};
+        String[] propertis = {"name","resTypeName","orgName","roomName","rackName","sheft","owner","statusName","barcode"};
+        ResExtCfg cfg = new ResExtCfg();
+        cfg.setResTypeCode("DEV");
+        List<ResExtCfg> dev = resExtCfgMapper.selectAll(cfg);
+        //List<ResExtCfg> dev = resExtCfgMapper.selectByExtGrpCode("DEV");
+
+        List<String> titlesList = new ArrayList<>(Arrays.asList(titles));
+        List<String> propertisList = new ArrayList<>(Arrays.asList(propertis));
+
+
+        for (ResExtCfg resExtCfg:
+        dev) {
+            titlesList.add(resExtCfg.getItemName());
+            propertisList.add(resExtCfg.getItemCode());
+        }
+
+        ResQuery query = new ResQuery();
+        query.setIds(id);
+
+        Map<String, Object> map = DataSetUtile.setQueryMap(query, null, SessionUtil.getUser());
+
+
+        map.put("extColumn",dev);
+        List<Map<String,Object>> list =resMapper.selectByCondition(map);
+
+        ExportPOIUtils.start_download(response,"设备信息导出",list,titlesList.toArray(titles),propertisList.toArray(propertis));
+
+    }
+
+    /*
+     * @Description: 获取未绑定的设备
+     * @Author: WangZiFan
+     * @Date: 2019/10/31 13:31
+     * @param pageRequest
+     * @return com.github.pagehelper.PageInfo<com.manage.idc.device.domain.ext.ResExtend>
+     */
+    @Override
+    public PageInfo<ResExtend> getNotBindDevice(ResQuery resQuery,PageRequest pageRequest) {
+        if(null != pageRequest  && null != pageRequest.getPage() && null != pageRequest.getLimit()){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<ResExtend> list = resMapper.selectNotBindDeviceByCondition(DataSetUtile.setQueryMap(resQuery,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<>(list);
+    }
+
+    /*
+     * @Description: 批量删除
+     * @Author: WangZiFan
+     * @Date: 2019/11/4 13:30
+     * @param ids
+     * @return void
+     */
+    @Override
+    @Transactional
+    public void batchDelDevice(List<Long> ids) {
+        Res res =null;
+        for (int i = 0; i < ids.size(); i++) {
+            res = new Res();
+            res.setId(ids.get(i));
+            Res res1 = resMapper.selectOne(res); //查询此设备是否有标签
+            if(res1.getTid()!=null){
+                Label label = new Label();
+                label.setTid(res1.getTid());
+                label.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+                label.setUpdatedTime(new Date());
+                labelMapper.updateByTid(label);
+            }
+        }
+        resMapper.batchDelDevice(ids);
+    }
+
+    /*
+     * @Description: 打印
+     * @Author: WangZiFan
+     * @Date: 2019/11/12 12:39
+     * @param res
+     * @return void
+     */
+    @Override
+    @Transactional
+    public void print(Res res) {
+        res = resMapper.selectOne(res);
+        res.setIsPrinted(IdcConstant.SYSTEM_PRINT.PRINT);
+        res.setUpdatedTime(new Date());
+        resMapper.updateByPrimaryKey(res);
+
+
+        String tid = res.getTid();
+        if(StringUtils.isNotEmpty(tid)){
+            Label label = new Label();
+            label.setTid(tid);
+            label.setIsPrinted(IdcConstant.SYSTEM_PRINT.PRINT);
+            label.setUpdatedTime(new Date());
+            labelMapper.updateByTid(label);
+        }
+    }
+
+
+    @Override
+    @Transactional
+    public void confirm(Res res) {
+        SysParam sysParam = new SysParam();
+        sysParam.setType("devStatus");
+        sysParam.setSysKey("On-line");
+        sysParam.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        sysParam = sysParamMapper.selectOne(sysParam);
+
+
+        res = resMapper.selectOne(res);
+        res.setStatus(sysParam.getSysValue());
+        res.setIsPasted(IdcConstant.SYSTEM_PASTED.PASTED.toString());
+        res.setUpdatedTime(new Date());
+        resMapper.updateByPrimaryKey(res);
+
+
+        String tid = res.getTid();
+        if(StringUtils.isNotEmpty(tid)){
+            Label label = new Label();
+            label.setTid(tid);
+            label.setIsPrinted(IdcConstant.SYSTEM_PRINT.PRINT);
+            label.setUpdatedTime(new Date());
+            labelMapper.updateByTid(label);
+        }
+    }
+
+
+    @Override
+    public void bindPcExport(List<Long> ids, HttpServletResponse response) {
+        String[] titles = {"资产编号","设备名称","设备分类","机房","标签编号","状态"};
+
+        String[] propertis = {"assetId","name","resTypeName","roomName","barcode","isPrinted"};
+
+       /* ResExtCfg cfg = new ResExtCfg();
+        cfg.setResTypeCode("DEV");
+        List<ResExtCfg> dev = resExtCfgMapper.selectAll(cfg);*/
+        //List<ResExtCfg> dev = resExtCfgMapper.selectByExtGrpCode("DEV");
+
+        List<String> titlesList = new ArrayList<>(Arrays.asList(titles));
+        List<String> propertisList = new ArrayList<>(Arrays.asList(propertis));
+
+
+        /*for (ResExtCfg resExtCfg:
+                dev) {
+            titlesList.add(resExtCfg.getItemName());
+            propertisList.add(resExtCfg.getItemCode());
+        }*/
+
+        ResQuery query = new ResQuery();
+        query.setIds(ids);
+
+        Map<String, Object> map = DataSetUtile.setQueryMap(query, null, SessionUtil.getUser());
+
+
+        //map.put("extColumn",dev);
+        List<Map<String,Object>> list =resMapper.selectByCondition(map);
+
+        try {
+            ExportPOIUtils.start_download(response,"PC贴标设备信息",list,titlesList.toArray(titles),propertisList.toArray(propertis));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    @Override
+    public void bindPhoneExport(List<Long> ids, HttpServletResponse response) {
+        String[] titles = {"资产编号","设备名称","设备分类","机房","状态"};
+
+        String[] propertis = {"assetId","name","resTypeName","roomName","isPrinted"};
+
+       /* ResExtCfg cfg = new ResExtCfg();
+        cfg.setResTypeCode("DEV");
+        List<ResExtCfg> dev = resExtCfgMapper.selectAll(cfg);*/
+        //List<ResExtCfg> dev = resExtCfgMapper.selectByExtGrpCode("DEV");
+
+        List<String> titlesList = new ArrayList<>(Arrays.asList(titles));
+        List<String> propertisList = new ArrayList<>(Arrays.asList(propertis));
+
+
+        /*for (ResExtCfg resExtCfg:
+                dev) {
+            titlesList.add(resExtCfg.getItemName());
+            propertisList.add(resExtCfg.getItemCode());
+        }*/
+
+        ResQuery query = new ResQuery();
+        query.setIds(ids);
+
+        Map<String, Object> map = DataSetUtile.setQueryMap(query, null, SessionUtil.getUser());
+
+
+        //map.put("extColumn",dev);
+        List<Map<String,Object>> list =resMapper.selectByCondition(map);
+
+        try {
+            ExportPOIUtils.start_download(response,"手持机贴标设备信息",list,titlesList.toArray(titles),propertisList.toArray(propertis));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}

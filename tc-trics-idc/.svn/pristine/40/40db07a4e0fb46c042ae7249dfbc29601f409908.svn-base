@@ -1,0 +1,121 @@
+package com.manage.idc.task.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.annotation.Operation;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.task.domain.*;
+import com.manage.idc.task.domain.export.ScrapTaskDescExportBase;
+import com.manage.idc.task.service.ScrapTaskService;
+import com.wuwenze.poi.ExcelKit;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.PastOrPresent;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/22 20:19
+ **/
+@Api(tags = "报废任务")
+@RequestMapping("scrapTask")
+@RestController
+public class ScrapTaskController {
+    @Autowired
+    private ScrapTaskService scrapTaskService;
+    @RequestMapping("")
+    public ModelAndView scrapTaskIndex(ModelAndView modelAndView){
+        modelAndView.setViewName("task/scrapTask");
+        modelAndView.addObject("orgId", SessionUtil.getUser().getOrgId().toString());
+        return modelAndView;
+    }
+    @RequestMapping("toDesc")
+    public ModelAndView toDesc(ModelAndView modelAndView,String id){
+        modelAndView.setViewName("task/scrapTaskDesc");
+        modelAndView.addObject("id",id);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequiresPermissions("scrapTask:add")
+    @Operation(operation = "报废任务添加")
+    @ApiOperation(value = "报废任务添加", httpMethod = "POST")
+    public ResultResponse add(ScrapTask scrapTask) {
+        scrapTaskService.add(scrapTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequiresPermissions("scrapTask:delete")
+    @Operation(operation = "报废任务删除")
+    @ApiOperation(value = "报废任务删除", httpMethod = "POST")
+    public ResultResponse delete(ScrapTask scrapTask) {
+        scrapTaskService.delete(scrapTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    @GetMapping(value = "/desc")
+    @ApiOperation(value = "报废任务查看详情", httpMethod = "POST")
+    public ResultResponse desc(ScrapTask scrapTask,PageRequest pageRequest) {
+        PageInfo<ScrapTaskDesc> pageInfo  =scrapTaskService.desc(scrapTask,pageRequest);
+        return  DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+    @GetMapping("/export")
+    @RequiresPermissions("scrapTask:export")
+    @Operation(operation = "报废任务详情导出")
+    @ApiOperation(value = "报废任务详情导出", httpMethod = "GET", response = ResultResponse.class)
+    public void export(ScrapTask scrapTask, HttpServletResponse response) {
+        List<ScrapTaskDesc> list = scrapTaskService.export(scrapTask);
+        ExcelKit.$Export(ScrapTaskDescExportBase.class, response).downXlsx(list, false);
+    }
+
+    @RequestMapping("getPage")
+    @ResponseBody
+    @ApiOperation(value = "报废任务分页列表", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse getPage(ScrapTask scrapTask, PageRequest pageRequest) {
+        PageInfo<ScrapTask> pageInfo = scrapTaskService.getPage(scrapTask, pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+    @RequestMapping(value = "/updateState", method = RequestMethod.POST)
+    @ApiOperation(value = "报废任务状态变更", httpMethod = "POST")
+    public ResultResponse updateState(ScrapTask scrapTask) {
+        scrapTaskService.updateState(scrapTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    //***********************************手持机报废任务接口**************************************//
+    @PostMapping( value = "/app/addScrapTask")
+    @ApiOperation(value = "app端新建报废任务")
+    public ResultResponse addScrapTask(ScrapTask scrapTask) {
+        scrapTaskService.add(scrapTask);
+        return new ResultResponse().success();
+    }
+
+    @RequestMapping("/app/getScrapTaskPage")
+    @ResponseBody
+    @ApiOperation(value = "报废任务分页列表", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse getScrapTaskPage(ScrapTask scrapTask, PageRequest pageRequest) {
+        PageInfo<ScrapTask> pageInfo = scrapTaskService.getScrapTaskPage(scrapTask, pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+    @RequestMapping(value = "/app/getScrapTaskDesc", method = RequestMethod.POST)
+    @ApiOperation(value = "报废任务查看详情", httpMethod = "POST")
+    public ResultResponse getScrapTaskDesc(ScrapTaskDesc scrapTask) {
+        List<ScrapTaskDesc> list =scrapTaskService.getScrapTaskDesc(scrapTask);
+        return new ResultResponse().success().data(list);
+    }
+
+    //***********************************手持机报废任务接口**************************************//
+
+
+}

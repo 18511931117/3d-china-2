@@ -1,0 +1,44 @@
+package com.manage.idc.system.service.impl;
+
+import com.manage.idc.system.domain.SysUserRole;
+import com.manage.idc.system.mapper.SysUserRoleMapper;
+import com.manage.idc.system.service.SysUserRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/17 10:03
+ **/
+@Service
+public class SysUserRoleServiceImpl implements SysUserRoleService {
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
+
+    /**
+     * 添加用户角色关系
+     * @param sysUserRole
+     * @return
+     */
+    @Override
+    @Transactional
+    public int insert(SysUserRole sysUserRole) {
+        return sysUserRoleMapper.insert(sysUserRole);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserRolesByUserId(Long userId) {
+        sysUserRoleMapper.deleteUserRolesByUserId(userId);
+    }
+
+    @Override
+    @Transactional
+    public void updateUserRole(SysUserRole sysUserRole) {
+        sysUserRoleMapper.updateUserRole(sysUserRole);
+    }
+}

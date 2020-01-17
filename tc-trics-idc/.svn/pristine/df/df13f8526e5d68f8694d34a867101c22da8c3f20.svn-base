@@ -1,0 +1,127 @@
+layui.use('table', function(){
+    var table = layui.table;
+
+    table.render({
+        elem: '#test'
+        ,url:'/repairTask/getPage'
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'taskName', title: '任务名称'}
+            , {field: 'taskType', title: '任务类型',templet: function(d){
+                    var state=d.taskType;  //1-设备贴标,2-设备盘点,3-设备调拨,4-设备借用,5-设备维修
+                    switch (state) {
+                        case 1:
+                            return"设备贴标"
+                        case 2:
+                            return "设备盘点"
+                        case 3:
+                            return "设备调拨"
+                        case 4:
+                            return "设备借用"
+                        case 5:
+                            return "设备维修"
+                    }
+
+                }}
+            , {field: 'state', title: '任务状态',templet: function(d){
+                    var state=d.state;  //0-待执行,2-执行中,8-执行完毕
+                    switch (state) {
+                        case 0:
+                            return"待执行"
+                        case 1:
+                            return "进行中"
+                        case 2:
+                            return "已完成"
+                    }
+
+                }}
+            , {field: 'orgName', title: '所属机构'}
+            , {field: 'ownerName', title: '执行人'}
+            , {field: 'remark', title: '备注'}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+        ]]
+        ,page: true
+    });
+    table.render({
+        elem: '#test2'
+        // ,url:'/test/table/demo1.json'
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: '设备名称',width:"80", title: '设备名称'}
+            , {field: '设备类型',width:"80", title: '设备类型',}
+            , {field: '机房',width:"70", title: '机房'}
+            , {field: '机架',width:"70", title: '机架'}
+            , {field: '机位',width:"70", title: '机位'}
+            , {field: '所有人', width:"70",title: '所有人'}
+            , {field: '显示状态',width:"80", title: '显示状态'}
+            , {field: '标签编号', width:"80",title: '标签编号'}
+            , {field: '操作', title: '操作', toolbar: '#barDemo2'}
+        ]],
+        data: [
+            {
+                "id": 10000,
+                "设备名称": "user-0",
+                "设备类型": "user-0",
+                "机房": "user-0",
+                "机架": "user-0",
+                "机位": "user-0",
+                "所有人": "user-0",
+                "显示状态": "user-0",
+                "标签编号": "user-2",
+            },
+        ]
+        ,page: true
+    });
+    table.render({
+        elem: '#test3'
+        // ,url:'/test/table/demo1.json'
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: '设备名称',title: '设备名称'}
+            , {field: '设备类型', title: '设备类型',}
+            , {field: '机房', title: '机房'}
+            , {field: '机架', title: '机架'}
+            , {field: '机位', title: '机位'}
+            , {field: '所有人', title: '所有人'}
+            , {field: '显示状态', title: '显示状态'}
+            , {field: '标签编号', title: '标签编号'}
+            , {field: '操作', title: '操作', toolbar: '#barDemo2'}
+        ]],
+        data: [
+            {
+                "id": 10000,
+                "设备名称": "user-0",
+                "设备类型": "user-0",
+                "机房": "user-0",
+                "机架": "user-0",
+                "机位": "user-0",
+                "所有人": "user-0",
+                "显示状态": "user-0",
+                "标签编号": "user-2",
+            },
+        ]
+        ,page: true
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        //console.log(obj)
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+            });
+        } else if(obj.event === 'det'){
+            layer.msg("这是详情")
+        } else if(obj.event === "out"){
+            layer.msg("这是完成")
+        }
+    });
+});

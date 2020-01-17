@@ -1,0 +1,382 @@
+function updateModel(val) {
+    $.ajax({
+        url: ctxPath +"device/getDevicePage?id="+val,
+        type:'get',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                var obj = data.rows[0];
+                loadRoomSelect($("#updateForm").find(":input[name='roomId']"),obj.roomId,obj.orgId);
+                loadRackSelect($("#updateForm").find(":input[name='rackId']"),obj.roomId,obj.rackId);
+                feedBackVal($("#updateForm"),obj);
+                $("#updateModeButton").click();
+            }
+        }
+    })
+}
+
+
+
+function infoModel(val) {
+    $.ajax({
+        url: ctxPath +"device/getDevicePage?id="+val,
+        type:'get',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                feedBackVal($("#deviceInfo"),data.rows[0]);
+                $("#infoButton").click();
+            }
+        }
+    })
+
+
+}
+
+
+function del(val) {
+    if(confirm("是否确认删除该数据")){
+        $.ajax({
+            url: ctxPath +"device/delDevice/"+val,
+            type:'post',
+            //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+            success: function(data){
+                if(data.code = '0'){
+                    alert("删除成功");
+                    refreshfTable($("#demo"),'1');
+                }else{
+                    alert("删除失败!")
+                }
+            }
+        })
+    }
+}
+
+
+function untying(value){
+    if(confirm("是否确认解除绑定？")){
+        $.ajax({
+            url: ctxPath +"device/untyingLabel",
+            type:'post',
+            data:{'id':value},
+            //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+            success: function(data){
+                if(data.code = '0'){
+                    alert("解绑成功");
+                    refreshfTable($("#demo"),'1');
+                }else{
+                    alert("解绑失败!")
+                }
+            }
+        })
+    }
+}
+
+
+function getQuery () {
+    var data = $("#formTestFilter").serializeObject();
+    var index = 0;
+    $("#formTestFilter").find(".ext").each(function () {
+        data['resExts[' + index +'].itemCode'] = $(this).attr("name");
+        data['resExts[' + index +'].itemValue'] = $(this).val();
+        index++;
+    });
+    return data;
+}
+
+
+
+$(function () {
+    $("button[name='export_button']").click(function () {
+        var idlist = $('#demo').bootstrapTable('getAllSelections');
+        if(idlist.length == 0){
+            alert("至少选择一条信息!");
+            return false
+        }
+        for (var i = 0; i< idlist.length;i++){
+            $("#exportForm").append("<input type='hidden' name='ids' value='"+idlist[i].id+"'>");
+        }
+        $("#exportForm").submit();
+        $("#exportForm").html("");
+    });
+    
+    $("button[name='down_button']").click(function () {
+        $("#downModel").submit();
+    })
+
+
+    $("button[name='impl_button']").click(function () {
+        var fd = new FormData();
+        fd.append("devFile", $("#file-0")[0].files[0]);
+        $.ajax({
+            url: ctxPath+'device/importDevice',
+            type: 'post',
+            processData: false,
+            contentType: false,
+            data: fd,
+            success: function data() {
+                if(data.code == '0'){
+                    alert("导入成功!")
+                }else{
+                    alert("导入成功!")
+                }
+
+            }
+        })
+    })
+
+
+
+    function addFunctionAlty(value, row, index) {
+        var data = [
+            '<button id="bind" type="button" class="btn bg-yellow table-btn"  onclick="infoModel(&apos;'+value+'&apos;)">详情</button>',
+            '<button id="unbind" type="button" class="btn bg-yellow table-btn" onclick="updateModel(&apos;'+value+'&apos;)">编辑</button>',
+            '<button id="unbind" type="button" class="btn bg-bold table-btn" onclick="del(&apos;'+value+'&apos;)">删除</button>',
+        ];
+        if(row.tid != null && row.tid != '' && row.tid != undefined){
+            data.push('<button id="unbind" type="button" class="btn bg-bold table-btn" onclick="untying(&apos;'+value+'&apos;)">解绑</button>');
+        }
+        return data.join('');
+    }
+
+
+   var columns =  [
+        {checkbox: true,width: 50}
+        ,{field:'name',title: '设备名称', }
+        ,{field:'resTypeName', title: '设备分类'}
+        ,{field:'roomName', title: '机房', }
+        ,{field:'rackName', title: '机架'}
+        ,{field:'sheft', title: '机位',} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+        ,{field:'owner', title: '所有人', }
+        ,{field:'statusName', title: '状态', }
+        ,{field:'barcode', title: '标签编号'}
+        ,{field:'id', title: '操作',formatter: addFunctionAlty}
+    ];
+
+    loadTable($('#demo'),columns,ctxPath+'device/getDevicePage', getQuery());
+
+
+    loadDevTypeSelect($("select[name='resTypeCode']"));
+    loadDevStatus("status");
+
+
+
+    $("#addDevForm").find("select[name='roomId']").change(function () {
+        loadRackSelect("rackId",$(this).val(),"addDevForm");
+    })
+
+
+    $("#updateForm").find("select[name='roomId']").change(function () {
+        loadRackSelect("rackId",$(this).val(),"updateForm");
+    })
+
+
+    $.get(
+        ctxPath +"resExtCfg/getList",
+        {'resTypeCode':'DEV'},
+        function(data){
+            var ele = $("#queryRow");
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    var str = "<div class='form-group col-sm-2'>" +
+                                "  <label class=''>"+obj.itemName+"</label>" +
+                                "  <input type='text'  name='"+obj.itemCode+"' class='form-control' lay-verify='title' placeholder="+obj.itemName+">" +
+                                "</div>";
+                    ele.append(str);
+                }
+            }
+        })
+
+    $.get(
+        ctxPath +"resExtGrp/getList",
+        {'resTypeCode':'DEV'},
+        function(data){
+            var ele = $("#updateForm");
+            var infoele = $("#deviceInfo");
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    var str = "<div>" +
+                        "  <div class='row-fulid' style='margin: 15px 0'>" +
+                            "  <header style='padding: 5px;padding-left: 0px;border-bottom: 1px solid #8881AE'>"+obj.extGrpName+"</header>" +
+                        "  </div><div class='row'>";
+                    var resExtCfgList = obj.resExtCfgList;
+                    for (var j = 0;j<resExtCfgList.length;j++){
+                        str+= "<div class='form-group col-sm-2'>" +
+                            "  <label for=''>"+resExtCfgList[j].itemName+"</label>" +
+                            "  <input class='form-control ext'  name='"+resExtCfgList[j].itemCode+"'  placeholder='"+resExtCfgList[j].itemName+"'>" +
+                            "  </div>";
+                    }
+                    str+= "</div></div>";
+                    ele.append(str);
+                    infoele.append(str);
+                }
+                infoele.find(":input").attr("disabled",true);
+            }
+        })
+
+
+
+
+    var treePro = {
+        levels: 1,//设置初始化展开几级菜单
+         showBorder:true,                //是否显示边框
+        showCheckbox:false,              //是否显示多选框
+        data: [],
+        onNodeSelected:function  (event, node){
+            var orgId = node.id;
+            $("#addDevForm").find(":input[name='orgId']").val(orgId);
+            loadRoomSelect($("#addDevForm").find(":input[name='roomId']"),'',orgId);
+            $("#addDevForm").find(":input[name='rackId']").html("<option value=''>请先选择机房</option>");
+        },
+        onNodeUnselected :function (event, node) {
+            $("#addDevForm").find(":input[name='orgId']").val("");
+            $("#addDevForm").find(":input[name='roomId']").html("<option value=''>请先选择机构</option>");
+            $("#addDevForm").find(":input[name='rackId']").html("<option value=''>请先选择机房</option>");
+        }
+    };
+    loadOrgTree($("#addDevForm").find("[name='orgTree']"),'',treePro);
+    
+    
+    $("button[name='del_button']").click(function () {
+        var idlist = $('#demo').bootstrapTable('getAllSelections');
+        if(idlist.length == 0){
+            alert("至少选择一条信息!");
+            return false
+        }
+        if(confirm("是否确认删除选中项?")){
+            var ids = [];
+            for (var i = 0; i< idlist.length;i++){
+                ids.push(idlist[i].id)
+            }
+            $.ajax({
+                url: ctxPath +"device/batchDelDevice",
+                type:'post',
+                contentType:"application/json",
+                dataType:"json",
+                data:JSON.stringify(ids) ,
+                success: function (data) {
+                    if(data.code = '0'){
+                        alert("删除成功!");
+                        refreshfTable($("#demo"),'1',getQuery ());
+                    }else{
+                        alert("删除失败!");
+                    }
+                }
+            })
+        }
+    })
+
+
+    $("button[name='addButton']").click(function () {
+        var data = $("#addDevForm").serializeObject();
+        $.ajax({
+            url: ctxPath +"device/addDevice",
+            type:'post',
+            data:data ,
+            success: function (data) {
+                if(data.code = '0'){
+                    alert("添加成功!");
+                    refreshfTable($("#demo"),'1',getQuery ());
+                    $("#myModal").find("button[name='close']").click();
+                }else{
+                    alert("添加失败!");
+                }
+            }
+        })
+    })
+
+    $("button[name='search_btn']").click(function () {
+        refreshfTable($("#demo"),'1',getQuery ());
+        $("#openFilter").find("#close").click();
+    })
+
+
+    $("#content3814").find("button[name='commit_btn']").click(function () {
+        var data = $("#content3814").find("#updateForm").serializeObject();
+        var index = 0;
+        $("#content3814").find("#updateForm").find(".ext").each(function () {
+            data['resExts[' + index +'].itemCode'] = $(this).attr("name");
+            data['resExts[' + index +'].itemValue'] = $(this).val();
+            index++;
+        });
+        $.ajax({
+            url: ctxPath +"device/updateDevice",
+            type:'post',
+            data:data,
+            //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+            success: function(data){
+                if(data.code = '0'){
+                    alert("修改成功");
+                    $("#content3814").find("button[name='close']").click();
+                    refreshfTable($("#demo"),'1',getQuery ());
+                }else{
+                    alert("修改失败!")
+                }
+            }
+        })
+    })
+
+
+
+
+
+
+    /*var defaultData = [
+        {
+            text: 'Parent 1',
+            href: '#parent1',
+            tags: ['4'],
+            nodes: [
+                {
+                    text: 'Child 1',
+                    href: '#child1',
+                    tags: ['2'],
+                    nodes: [
+                        {
+                            text: 'Grandchild 1',
+                            href: '#grandchild1',
+                            tags: ['0']
+                        },
+                        {
+                            text: 'Grandchild 2',
+                            href: '#grandchild2',
+                            tags: ['0']
+                        }
+                    ]
+                },
+                {
+                    text: 'Child 2',
+                    href: '#child2',
+                    tags: ['0']
+                }
+            ]
+        },
+        {
+            text: 'Parent 2',
+            href: '#parent2',
+            tags: ['0']
+        },
+        {
+            text: 'Parent 3',
+            href: '#parent3',
+            tags: ['0']
+        },
+        {
+            text: 'Parent 4',
+            href: '#parent4',
+            tags: ['0']
+        },
+        {
+            text: 'Parent 5',
+            href: '#parent5'  ,
+            tags: ['0']
+        }
+    ];*/
+
+
+
+
+
+})

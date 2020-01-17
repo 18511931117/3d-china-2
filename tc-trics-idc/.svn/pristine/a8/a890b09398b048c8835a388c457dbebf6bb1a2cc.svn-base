@@ -1,0 +1,33 @@
+layui.use('table', function(){
+    var table = layui.table;
+
+    table.render({
+        elem: '#test'
+        ,url:'/sysLog/getPage'
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'userName', title: '操作者'}
+            , {field: 'orgName', title: '组织'}
+            , {field: 'ip', title: '操作IP'}
+            , {field: 'path', title: '操作路由'}
+            , {field: 'method', title: '操作方法'}
+            , {field: 'input', title: '操作内容'}
+            ,{field: 'createTime', title: '开始时间' ,templet: function(d){
+                    var dateee = new Date(d.createTime).toJSON();
+                    var date = new Date(+new Date(dateee)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
+                    return date;
+                }
+
+            }
+        ]]
+        ,page: true
+    });
+
+    $("#export").on('click',function () {
+        window.location.href='/sysLog/export'
+    })
+
+
+});

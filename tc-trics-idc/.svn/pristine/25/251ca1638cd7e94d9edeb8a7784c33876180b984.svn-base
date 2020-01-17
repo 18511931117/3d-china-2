@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>页面飞了</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        html,body{
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="box" style="width: 100%;height: 100%;">
+    <img src="./img/404错误页面.jpg" alt="404" style="width: 100%;height: 100%">
+</div>
+</body>
+</html>

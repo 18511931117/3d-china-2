@@ -1,0 +1,136 @@
+package com.manage.idc.task.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.annotation.Operation;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.task.domain.*;
+import com.manage.idc.task.domain.export.RepairTaskDescExportBase;
+import com.manage.idc.task.mapper.RepairTaskMapper;
+import com.manage.idc.task.service.RepairTaskService;
+import com.wuwenze.poi.ExcelKit;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/22 20:24
+ **/
+@RestController
+@Api(tags = "维修任务")
+@RequestMapping("repairTask")
+public class RepairTaskController {
+    @Autowired
+    private RepairTaskService repairTaskService;
+    @Autowired
+    private RepairTaskMapper repairTaskMapper;
+    @RequestMapping("")
+    public ModelAndView repairTaskIndex(ModelAndView modelAndView){
+        modelAndView.setViewName("task/repairTask");
+        modelAndView.addObject("orgId", SessionUtil.getUser().getOrgId().toString());
+        return modelAndView;
+    }
+    @RequestMapping("toDesc")
+    public ModelAndView toDesc(ModelAndView modelAndView,String id){
+        modelAndView.setViewName("task/repairTaskDesc");
+        modelAndView.addObject("id",id);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequiresPermissions("repairTask:add")
+    @Operation(operation = "维修任务添加")
+    @ApiOperation(value = "维修任务添加", httpMethod = "POST")
+    public ResultResponse add(RepairTask repairTask) {
+        repairTaskService.add(repairTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequiresPermissions("repairTask:delete")
+    @Operation(operation = "维修任务删除")
+    @ApiOperation(value = "维修任务删除", httpMethod = "POST")
+    public ResultResponse delete(RepairTask repairTask) {
+        repairTaskService.delete(repairTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    @GetMapping(value = "/desc")
+    @ApiOperation(value = "维修任务查看详情")
+    public ResultResponse desc(RepairTask repairTask,PageRequest pageRequest) {
+        PageInfo<RepairTaskDesc> pageInfo =repairTaskService.desc(repairTask,pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+    @GetMapping("/export")
+    @RequiresPermissions("repairTask:export")
+    @Operation(operation = "维修任务详情导出")
+    @ApiOperation(value = "维修任务详情导出", httpMethod = "GET", response = ResultResponse.class)
+    public void export(RepairTask repairTask, HttpServletResponse response) {
+        List<RepairTaskDesc> list = repairTaskService.export(repairTask);
+        ExcelKit.$Export(RepairTaskDescExportBase.class, response).downXlsx(list, false);
+    }
+
+    @RequestMapping("getPage")
+    @ResponseBody
+    @ApiOperation(value = "维修任务分页列表", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse getPage(RepairTask repairTask, PageRequest pageRequest) {
+        PageInfo<RepairTask> pageInfo = repairTaskService.getPage(repairTask, pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+    @RequestMapping(value = "/updateState", method = RequestMethod.POST)
+    @ApiOperation(value = "维修任务状态变更", httpMethod = "POST")
+    public ResultResponse updateState(RepairTask repairTask) {
+        repairTaskService.updateState(repairTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    //***********************************手持机维修任务接口**************************************//
+    @PostMapping( value = "/app/addRepairTask")
+    @ApiOperation(value = "app端新建维修任务")
+    public ResultResponse addRepairTaskTask(RepairTask repairTask) {
+        repairTaskService.add(repairTask);
+        return new ResultResponse().success();
+    }
+
+    @RequestMapping("/app/getRepairTaskPage")
+    @ResponseBody
+    @ApiOperation(value = "维修任务分页列表", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse getRepairTaskPage(RepairTask repairTask, PageRequest pageRequest) {
+        PageInfo<RepairTask> pageInfo = repairTaskService.getRepairTaskPage(repairTask, pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+    @RequestMapping(value = "/app/getRepairTaskDesc", method = RequestMethod.POST)
+    @ApiOperation(value = "维修任务查看详情", httpMethod = "POST")
+    public ResultResponse getScrapTaskDesc(RepairTaskDesc repairTask) {
+        //查询任务相关部门信息
+        RepairTask repairTask1 = new RepairTask();
+        repairTask1.setId(repairTask.getTaskId());
+        RepairTask byTask = repairTaskMapper.getByTask(repairTask1);
+        List<RepairTaskDesc> list =repairTaskService.getRepairTaskDesc(repairTask);
+        //封装数据
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("orgDesc",byTask);
+        objectObjectHashMap.put("taskDesc",list);
+        return new ResultResponse().success().data(objectObjectHashMap);
+    }
+    @RequestMapping(value = "/app/updateRepairTaskState", method = RequestMethod.POST)
+    @ApiOperation(value = "维修任务状态变更", httpMethod = "POST")
+    public ResultResponse updateAppRepairTaskState(RepairTask repairTask) {
+        repairTaskService.updateState(repairTask);
+        return DataSetUtile.setSuccessResult(null);
+    }
+    //***********************************手持机维修任务接口**************************************//
+
+}

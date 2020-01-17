@@ -1,0 +1,66 @@
+package com.manage.idc.task.domain;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.Date;
+import lombok.Data;
+
+/**
+ * check_task
+ * @author 
+ */
+@Data
+@ApiModel("盘点任务表")
+public class    CheckTask extends TaskQueryVO implements Serializable {
+    @JsonSerialize(using= ToStringSerializer.class)
+    private Long id;
+
+    /**
+     * 任务名称
+     */
+    @ApiModelProperty("任务名称")
+    private String name;
+
+    /**
+     * 任务类型 1-设备贴标,2-设备盘点,3-设备调拨,4-设备借用,5-设备维修,11-线缆贴标
+     */
+    @ApiModelProperty("任务类型 1-设备贴标,2-设备盘点,3-设备调拨,4-设备借用,5-设备维修,11-线缆贴标")
+    private Integer taskType;
+
+    /**
+     * 0-待执行,2-执行中,8-执行完毕
+     */
+    @ApiModelProperty("0-待执行,2-执行中,8-执行完毕")
+    private Integer state;
+    @JsonSerialize(using= ToStringSerializer.class)
+    private Long orgId;
+
+    /**
+     * 任务备注
+     */
+    @ApiModelProperty("任务备注")
+    private String remark;
+
+    /**
+     * 时间
+     */
+    @ApiModelProperty("时间")
+    private Date createTime;
+
+    /**
+     * 1:删除 0：未删除
+     */
+    @ApiModelProperty("1:删除 0：未删除")
+    private Integer isDel;
+
+    /**
+     * 盘点责任人id
+     */
+    private Long userId;
+
+
+    private static final long serialVersionUID = 1L;
+}

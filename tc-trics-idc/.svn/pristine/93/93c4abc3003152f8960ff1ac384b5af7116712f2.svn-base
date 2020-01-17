@@ -1,0 +1,128 @@
+/*
+
+
+layui.use('table', function(){
+    var table = layui.table;
+   table.render({
+        elem: '#test'
+        ,url:ctxPath + 'cable/getPage'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'assetId', title: '线缆编号'}
+            , {field: 'cableType', title: '线缆分类',}
+            , {field: 'serveInfo', title: '业务信息'}
+            , {field: 'res1Name', title: '源端设备'}
+            , {field: 'res2Name', title: '宿端设备'}
+            , {field: 'barcode1', title: '源端标签编号'}
+            , {field: 'barcode2', title: '宿端标签编号'}
+            , {field: 'isPasted', title: '状态'}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+        ]]
+        ,page: true,
+        where:{
+            'isBind':'1'
+        }
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+            });
+        } else if(obj.event === 'print'){
+            Print('#wrap', {
+                onStart: function () {
+                    console.log('onStart', new Date())
+                },
+                onEnd: function () {
+                    console.log('onEnd', new Date())
+                }
+            })
+        }
+    });
+
+
+
+
+
+});
+
+
+layui.use('table', function(){
+    var table = layui.table;
+
+    table.render({
+        elem: '#test2'
+        ,url:'/cable/getPage'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'assetId', title: '线缆编号'}
+            , {field: 'cableType', title: '线缆分类',}
+            , {field: 'serveInfo', title: '业务信息'}
+            , {field: 'res1Name', title: '源端设备'}
+            , {field: 'res2Name', title: '宿端设备'}
+            , {field: 'barcode1', title: '源端标签编号'}
+            , {field: 'barcode2', title: '宿端标签编号'}
+            , {field: 'isPasted', title: '状态'}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo2'}
+        ]]
+        ,page: true,
+        where:{
+            'isBind':'1'
+        }
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        //console.log(obj)
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+            });
+        }
+    });
+});*/
+
+
+$(function () {
+    
+    
+    function getQuery() {
+        return null;
+    }
+
+
+    function addFunctionAlty(value, row, index) {
+        return [
+            '<button id="bind" type="button" class="btn bg-yellow table-btn">详情</button>',
+            '<button id="unbind" type="button" class="btn bg-yellow table-btn">编辑</button>',
+            '<button id="unbind" type="button" class="btn bg-bold table-btn">删除</button>',
+            '<button id="unbind" type="button" class="btn bg-bold table-btn">解绑</button>',
+
+        ].join('');
+    }
+
+    var columns =  [
+        {checkbox: true,width: 50}
+        , {field: 'assetId', title: '线缆编号'}
+        , {field: 'cableType', title: '线缆分类',}
+        , {field: 'serveInfo', title: '业务信息'}
+        , {field: 'res1Name', title: '源端设备'}
+        , {field: 'res2Name', title: '宿端设备'}
+        , {field: 'barcode1', title: '源端标签编号'}
+        , {field: 'barcode2', title: '宿端标签编号'}
+        , {field: 'isPasted', title: '状态'}
+        ,{field:'id', title: '操作',formatter: addFunctionAlty}
+    ];
+
+    loadTable($('#test'),columns,ctxPath + 'cable/getPage', getQuery());
+
+    loadTable($('#test2'),columns,ctxPath + 'cable/getPage', getQuery());
+})

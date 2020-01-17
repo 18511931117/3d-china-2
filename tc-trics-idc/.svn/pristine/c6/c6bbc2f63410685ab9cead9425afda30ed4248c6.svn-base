@@ -1,0 +1,357 @@
+/*jeDate("#test01",{
+    format: "YYYY-DD-MM"
+});
+jeDate("#test02",{
+    format: "YYYY-DD-MM"
+});
+jeDate("#test03",{
+    format: "YYYY-DD-MM"
+});
+jeDate("#test04",{
+    format: "YYYY-DD-MM"
+});
+jeDate("#test05",{
+    format: "YYYY-DD-MM"
+});
+jeDate("#test06",{
+    format: "YYYY-DD-MM"
+});
+jeDate("#test07",{
+    format: "YYYY-DD-MM"
+});
+jeDate("#test08",{
+    format: "YYYY-DD-MM"
+});
+
+jeDate("#test09",{
+    format: "YYYY-DD-MM"
+});
+
+jeDate("#test10",{
+    format: "YYYY-DD-MM"
+});
+
+jeDate("#test11",{
+    format: "YYYY-DD-MM"
+});
+jeDate("#test12",{
+    format: "YYYY-DD-MM"
+});
+jeDate("#test13",{
+    format: "YYYY-DD-MM"
+});
+jeDate("#test14",{
+    format: "YYYY-DD-MM"
+});*/
+
+// 添加任务
+function task_submit() {
+    var check_data = []
+    var i = 0
+    $.each($("input:checkbox"),function () {
+        if(this.checked){
+            check_data[i] = $(this).val()
+            i = i+1
+            chref = "create.html?res_id=" + check_data;
+            window.location.href = chref;
+        }
+
+    })
+}
+// 加入任务
+function addtask_submit() {
+    var check_data = []
+    var i = 0
+    $.each($("input:checkbox"),function () {
+        if(this.checked){
+            check_data[i] = $(this).val()
+            i = i+1
+
+        }
+        chref = "add_task.html?res_id=" + check_data;
+        window.location.href = chref;
+    })
+}
+
+//批量删除
+function del_more() {
+    var check_data = [];
+    var i = 0;
+    var data1 = "";
+    $.each($('input:checkbox'), function () {
+        if (this.checked) {
+            check_data[i] = $(this).val();
+            i = i + 1;
+            data1 += $(this).val();
+            data1 += ",";
+        }
+    });
+    console.log(check_data)
+}
+
+
+layui.use('table', function(){
+    var table = layui.table;
+    table.render({
+        elem: '#demo'
+        ,url: ctxPath+'device/getDevicePage'
+        ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+        ,cols: [[
+             {type:'checkbox'}
+            ,{field:'name',title: '设备名称', }
+            ,{field:'resTypeName', title: '设备分类'}
+            ,{field:'roomName', title: '机房', }
+            ,{field:'rackName', title: '机架'}
+            ,{field:'sheft', title: '机位',} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+            ,{field:'owner', title: '所有人', }
+            ,{field:'statusName', title: '显示状态', }
+            ,{field:'barcode', title: '标签编号'}
+            ,{field:'操作', title: '操作',width:240, toolbar: '#barDemo'}
+        ]]
+        ,page: true
+    });
+
+    table.on('checkbox(demo)', function(obj){
+
+    });
+    //监听工具条
+    table.on('tool(demo)', function(obj){
+        var data = obj.data;
+        console.log(obj.event)
+        if(obj.event === 'detail'){
+            layer.msg('ID：'+ data.id + ' 的查看操作');
+        } else if(obj.event === 'del'){
+            layer.confirm('确认删除该设备吗?', function(index){
+                $.ajax({
+                    url: ctxPath +"device/delDevice/"+data.id,
+                    type:'post',
+                    //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+                    success: function(data){
+                        if(data.code = '0'){
+                            layui.layer.msg("删除成功");
+                            refreshTable();
+                            layui.layer.close(index);
+                        }else{
+                            layui.layer.error("删除失败!")
+                        }
+                    }
+                })
+                //layer.close(index);
+            });
+        } else if(obj.event === 'edit'){
+            layer.open({
+                //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                type:2,
+                title:"修改用户信息",
+                area: ['80%','80%'],
+                content: ctxPath+'device/toEdit/'+data.id
+                ,btn: ['保存','关闭']
+                ,yes: function(index, layero){
+                    var body = layui.layer.getChildFrame('body', index);
+                    var data = body.find("#updateForm").serializeObject();
+                    var array = [];
+                    var index = 0;
+                    body.find("#updateForm").find(".ext").each(function () {
+                        data['resExts[' + index +'].itemCode'] = $(this).attr("name");
+                        data['resExts[' + index +'].itemValue'] = $(this).val();
+                        index++;
+                    });
+
+
+                     $.ajax({
+                            url: ctxPath +"device/updateDevice",
+                            type:'post',
+                            data:data,
+                            //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+                            success: function(data){
+                                if(data.code = '0'){
+                                    layui.layer.msg("修改成功");
+                                    refreshTable();
+                                    layui.layer.close(index);
+                                }else{
+                                    layui.layer.error("修改失败!")
+                                }
+                            }
+                        })
+                }
+                ,btn2: function(index, layero){
+                    layui.layer.close(index);
+                }
+            });
+            //setFormValue(data);//动态向表单赋值
+            // layer.alert('编辑行：<br>'+ JSON.stringify(data))
+        } else if(obj.event === 'fang'){
+            $.ajax({
+                url: ctxPath +"device/untyingLabel",
+                type:'post',
+                data:{'id':data.id},
+                //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+                success: function(data){
+                    if(data.code = '0'){
+                        layui.layer.msg("解绑成功");
+                        refreshTable();
+                    }else{
+                        layui.layer.error("解绑失败!")
+                    }
+                }
+            })
+        }
+    });
+
+    $("button[name='addButton']").click(function () {
+        var ref = $('[name="orgSelectTree"]').jstree(true);
+        var sel = ref.get_selected(false);
+        var totalSel = sel.toString();
+
+        var data = $("#addDevForm").serializeObject();
+        data.orgId = totalSel;
+
+        $.ajax({
+            url: ctxPath +"device/addDevice",
+            type:'post',
+            data: data,
+            //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+            success: function(data){
+                if(data.code = '0'){
+                    layui.layer.msg("删除成功");
+                    $("#myModal").find("button[name='close']").click();
+                    refreshTable();
+                }else{
+                    layui.layer.error("修改失败!");
+                }
+            }
+        })
+    })
+
+
+    $("button[name='export_button']").click(function () {
+        var checkStatus = table.checkStatus('demo');
+        if(checkStatus.data.length == 0){
+            layui.layer.msg("至少选择一条信息!");
+            return false
+        }
+        for (var i = 0; i< checkStatus.data.length;i++){
+            $("#exportForm").append("<input type='hidden' name='ids' value='"+checkStatus.data[i].id+"'>");
+        }
+        $("#exportForm").submit();
+        $("#exportForm").html("");
+    })
+    $("button[name='del_button']").click(function () {
+        var checkStatus = table.checkStatus('demo');
+        if(checkStatus.data.length == 0){
+            layui.layer.msg("至少选择一条信息!");
+            return false
+        }
+
+    })
+
+
+    $("button[name='search_btn']").click(function () {
+        refreshTable();
+    })
+
+
+    function refreshTable() {
+
+        var data = $("#formTestFilter").serializeObject();
+        var index = 0;
+        $("#formTestFilter").find(".ext").each(function () {
+            data['resExts[' + index +'].itemCode'] = $(this).attr("name");
+            data['resExts[' + index +'].itemValue'] = $(this).val();
+            index++;
+        });
+
+        table.reload("demo",{
+            page: {
+                curr: 1 //重新从第 1 页开始
+            },
+            where: data
+        });
+
+        $("#openFilter").find("#close").click();
+    }
+});
+
+
+$(function () {
+    loadRoomSelect("roomId");
+    loadDevTypeSelect("resTypeCode");
+    loadDevStatus("status");
+
+    loadOrgTree("orgSelectTree");
+
+    $("#myModal").find("select[name='roomId']").change(function () {
+        loadRackSelect("rackId",$(this).val(),"myModal");
+    })
+    $("#formTestFilter").find("select[name='roomId']").change(function () {
+        loadRackSelect("rackId",$(this).val(),"formTestFilter");
+    })
+
+
+    $.get(
+        ctxPath +"resExtCfg/getList",
+        {'resTypeCode':'DEV'},
+        function(data){
+            var ele = $("#queryRow");
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    var str = "<div class='form-group col-sm-2'>" +
+                        "  <label class=''>"+obj.itemName+"</label>" +
+                        "  <input type='text'  name='"+obj.itemCode+"' class='form-control' lay-verify='title' placeholder="+obj.itemName+">" +
+                        "</div>";
+                    ele.append(str);
+                }
+            }
+        })
+
+    $.get(
+        ctxPath +"resExtGrp/getList",
+        {'resTypeCode':'DEV'},
+        function(data){
+            var ele = $("#updateRow");
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    var str = "<div>" +
+                        "  <div class='row-fulid' style='background: #00a6b2;margin: 15px 0'>" +
+                            "  <header style='color: #fff;padding: 5px';>"+obj.extGrpName+"</header>" +
+                        "  </div><div class='row'>";
+                    var resExtCfgList = obj.resExtCfgList;
+                    for (var j = 0;j<resExtCfgList.length;j++){
+                        str+= "<div class='form-group col-sm-2'>" +
+                            "  <label for=''>"+resExtCfgList[j].itemName+"</label>" +
+                            "  <input class='form-control' name='"+resExtCfgList[j].itemName+"'  placeholder='"+resExtCfgList[j].itemName+"'>" +
+                            "  </div>";
+                    }
+                    str+= "</div></div>";
+                    ele.append(str);
+                }
+            }
+        })
+    
+
+
+
+
+
+})
+
+
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+

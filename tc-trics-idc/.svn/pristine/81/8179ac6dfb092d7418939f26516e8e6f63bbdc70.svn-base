@@ -1,0 +1,89 @@
+package com.manage.idc.log.domain;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.Date;
+import lombok.Data;
+
+/**
+ * alarms_log
+ * @author 
+ */
+@Data
+@ApiModel("告警日志")
+public class AlarmsTaskLog implements Serializable {
+    @JsonSerialize(using= ToStringSerializer.class)
+    private Long id;
+
+    /**
+     * 资源id （设备id）
+     */
+    @ApiModelProperty("资源id （设备id）")
+    private Long resId;
+
+    /**
+     * 机房id
+     */
+    @ApiModelProperty("机房id")
+    private Long roomId;
+
+    /**
+     * 组织机构id
+     */
+    @ApiModelProperty("组织机构id")
+    private Long orgId;
+
+    /**
+     * 用户id （操作者）
+     */
+    @ApiModelProperty("用户id （操作者）")
+    private Long userId;
+
+    /**
+     * 状态 0：解除 1：未解除
+     */
+    @ApiModelProperty("状态 0：解除 1：未解除")
+    private Integer state;
+
+    /**
+     * 域名
+     */
+    @ApiModelProperty("域名")
+    private String realmName;
+
+    /**
+     * 创建时间
+     */
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+
+    /**
+     * 机构名称
+     */
+    private String orgName;
+
+    /**
+     * 用户名称
+     */
+    private  String userName;
+
+    /**
+     * 设备名称
+     */
+    private String resName;
+
+    /**
+     * 机房名称
+     */
+    private String roomName;
+
+    /**
+     * 所有者
+     */
+    private String personName;
+
+    private static final long serialVersionUID = 1L;
+}

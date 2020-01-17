@@ -1,0 +1,195 @@
+package com.manage.idc.system.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.annotation.Operation;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.enums.UserType;
+import com.manage.idc.common.utils.Base64Utils;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.MD5Util;
+import com.manage.idc.readdev.domain.SysDevUser;
+import com.manage.idc.readdev.mapper.SysDevUserMapper;
+import com.manage.idc.system.domain.*;
+import com.manage.idc.system.mapper.SysUserRoleMapper;
+import com.manage.idc.system.service.SysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+
+/**
+ * @Description 用户管理
+ * @Author lyq_j
+ * @DATE 2019/10/14 9:31
+ **/
+@Controller
+@Api(tags = "用户管理")
+@RequestMapping("/user")
+public class SysUserController {
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
+    @Autowired
+    private SysUserService sysUserService;
+    @Autowired
+    private SysDevUserMapper sysDevUserMapper;
+    @RequestMapping("")
+    public ModelAndView userIdex(ModelAndView model,String state){
+        model.setViewName("system/user");
+        model.addObject("state",state);
+        return model;
+    }
+    @RequestMapping("toAddUser")
+    public ModelAndView toAddUser(ModelAndView model){
+        model.setViewName("system/addUser");
+        return model ;
+    }
+    @GetMapping("toEditUser")
+    public ModelAndView toEditUser(ModelAndView model,SysUser sysUser){
+         model.setViewName("system/editUser");
+         sysUser =sysUserService.selectUserById(sysUser);
+        SysUserRole userRole = sysUserRoleMapper.getUserByRoleId(sysUser.getId());
+        model.addObject("user",sysUser);
+        model.addObject("roleId",userRole.getRoleId());
+        return model ;
+    }
+
+    @RequestMapping("getPage")
+    @ResponseBody
+    @ApiOperation(value = "获取用户分页列表", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getPage(SysUser sysUser, PageRequest pageRequest){
+        PageInfo<SysUser> pageInfo = sysUserService.getPage(sysUser,pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequiresPermissions("user:add")
+    @Operation(operation = "用户添加")
+    @ApiOperation(value = "用户添加", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse add(SysUser user) {
+        //校验用户名是否存在
+        SysUser byName = sysUserService.findByName(user.getUsername(), UserType.USER_PC.getState());
+        if (byName == null) {
+            sysUserService.createUser(user);
+            return DataSetUtile.setSuccessResult(null);
+        }
+        return new ResultResponse().fail().message("用户名已存在！");
+
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequiresPermissions("user:delete")
+    @Operation(operation = "用户删除")
+    @ApiOperation(value = "用户删除", httpMethod = "GET")
+    @ResponseBody
+    public ResultResponse delete(@NotBlank(message = "{required}") String userIds) {
+        sysUserService.deleteUser(userIds);
+         return DataSetUtile.setSuccessResult(null);
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequiresPermissions("user:update")
+    @Operation(operation = "用户修改")
+    @ApiOperation(value = "用户修改", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse update(SysUser user) {
+        sysUserService.updateUser(user);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    /**
+     * 根据部门ID获取所有用户
+     */
+    @GetMapping(value = "/getUserByOrgId")
+    @ResponseBody
+    public ResultResponse getUserByOrgId(SysUser sysUser) {
+        List<SysUser> list =sysUserService.getUserByOrgId(sysUser);
+        return DataSetUtile.setSuccessResult(list);
+    }
+    /**
+     * 获取部门下所有的用户
+     */
+    @GetMapping(value = "/getOrgCurrentUser")
+    @ResponseBody
+    public ResultResponse getOrgCurrentUser(SysUser sysUser) {
+        List<SysUser> list =sysUserService.getOrgCurrentUser(sysUser);
+        return DataSetUtile.setSuccessResult(list);
+    }
+
+
+
+    /**
+     * 个人中心修改密码
+     * @param sysUser
+     * @return
+     */
+    @PostMapping(value = "/editUserPassword")
+    @ResponseBody
+    public ResultResponse editUserPassword(SysUser sysUser) {
+        SysUser syUser = new SysUser();
+        syUser.setId(sysUser.getId());
+        String password = MD5Util.encrypt(sysUser.getUsername().toLowerCase(),  Base64Utils.encode(sysUser.getOldPassword()));
+        syUser.setPassword(password);
+        SysUser sysUser1 = sysUserService.selectUserById(syUser);
+        if (sysUser1==null){
+            return DataSetUtile.setErrorResultMessage("旧密码输入错误..");
+        }
+        sysUser.setPassword(MD5Util.encrypt(sysUser.getUsername().toLowerCase(),  Base64Utils.encode(sysUser.getPassword())));
+        sysUserService.editUserPassword(sysUser);
+        return DataSetUtile.setSuccessResult(null);
+    }
+//**********************************************读写器用户************************************************//
+    @RequestMapping("getDXQPage")
+    @ResponseBody
+    @ApiOperation(value = "获取用户分页列表", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getDXQPage(SysDevUser sysDevUser, PageRequest pageRequest){
+        PageInfo<SysDevUser> pageInfo = sysUserService.getDXQPage(sysDevUser,pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+
+    @RequestMapping(value = "/addDXQ", method = RequestMethod.POST)
+    @ApiOperation(value = "读写器用户添加", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse addDXQ(SysDevUser sysDevUser) {
+        //校验用户名是否存在
+        SysDevUser sysDevUser2 = new SysDevUser();
+        sysDevUser2.setUsername(sysDevUser.getUsername());
+        SysDevUser sysDevUser1 = sysDevUserMapper.selectOne(sysDevUser2);
+        if (sysDevUser1 == null) {
+            sysUserService.addDXQUser(sysDevUser);
+            return DataSetUtile.setSuccessResult(null);
+        }
+        return new ResultResponse().fail().message("用户名账号已存在！");
+    }
+
+
+    @RequestMapping(value = "/updateDXQUser", method = RequestMethod.POST)
+    @Operation(operation = "读写器用户修改")
+    @ApiOperation(value = "读写器用户修改", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse updateDXQUser(SysDevUser sysDevUser) {
+        sysUserService.updateDXQUser(sysDevUser);
+        return DataSetUtile.setSuccessResult(null);
+    }
+    @RequestMapping(value = "/deleteDXQUser", method = RequestMethod.POST)
+    @Operation(operation = "读写器用户删除")
+    @ApiOperation(value = "读写器用户删除", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse deleteDXQUser(SysDevUser sysDevUser) {
+        sysUserService.deleteDXQUser(sysDevUser);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+
+
+
+    //**********************************************读写器用户************************************************//
+}

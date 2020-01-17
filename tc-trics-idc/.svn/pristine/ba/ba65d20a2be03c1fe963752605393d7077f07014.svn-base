@@ -1,0 +1,367 @@
+$("#addModel").on("show.bs.modal",function(){
+    alert("nihao")
+    loadOrg($("#orgSelect"));
+    loadRole("roleSelect")
+})
+//搜索
+$("#queryUser").on("click",function () {
+    $("#test").bootstrapTable("refresh", {
+        silent: true //静态刷新
+    });
+})
+
+//表单提交校验
+    $("#addUser").click(function(){
+        var name =  $("#name").val();
+        if(name==""){
+          //  layer.msg("请输入姓名！！")
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请输入姓名",
+                // btn:["关闭","确定"],
+                // callBack1:function () {
+                //     console.log("取消")
+                // },
+                // callBack2:function () {
+                //     // console.log("确定")
+                //     $('.msg-layer-bg').css('display','none')
+                //     $('.msg-layer').css('display','none')
+                //     refreshfTable($("#demo"),'1');
+                // },
+            };
+            method.msg_layer(obj);
+            $("#name").focus();
+            return;
+        }
+        var username =  $("#username").val();
+        if(username==""){
+           // layer.msg("请输入账号！！")
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请输入账号",
+                // btn:["关闭","确定"],
+                // callBack1:function () {
+                //     console.log("取消")
+                // },
+                // callBack2:function () {
+                //     // console.log("确定")
+                //     $('.msg-layer-bg').css('display','none')
+                //     $('.msg-layer').css('display','none')
+                //     refreshfTable($("#demo"),'1');
+                // },
+            };
+            method.msg_layer(obj);
+            $("#username").focus();
+            return;
+        }
+        var email =  $("#email").val();
+        var reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+        if(email==""){
+           // layer.msg("请输入邮箱！！")
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请输入邮箱",
+                // btn:["关闭","确定"],
+                // callBack1:function () {
+                //     console.log("取消")
+                // },
+                // callBack2:function () {
+                //     // console.log("确定")
+                //     $('.msg-layer-bg').css('display','none')
+                //     $('.msg-layer').css('display','none')
+                //     refreshfTable($("#demo"),'1');
+                // },
+            };
+            method.msg_layer(obj);
+            $("#email").focus()
+            return;
+        }
+        if(!reg.test(email)){
+          //  layer.msg("请输入正确的邮箱地址！！");
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请输入正确的邮箱地址",
+                // btn:["关闭","确定"],
+                // callBack1:function () {
+                //     console.log("取消")
+                // },
+                // callBack2:function () {
+                //     // console.log("确定")
+                //     $('.msg-layer-bg').css('display','none')
+                //     $('.msg-layer').css('display','none')
+                //     refreshfTable($("#demo"),'1');
+                // },
+            };
+            method.msg_layer(obj);
+            return;
+        }
+        var workNum =$("#workNum").val()
+        if(workNum==""){
+         //   layer.msg("请输入工号！！！")
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请输入工号",
+                // btn:["关闭","确定"],
+                // callBack1:function () {
+                //     console.log("取消")
+                // },
+                // callBack2:function () {
+                //     // console.log("确定")
+                //     $('.msg-layer-bg').css('display','none')
+                //     $('.msg-layer').css('display','none')
+                //     refreshfTable($("#demo"),'1');
+                // },
+            };
+            method.msg_layer(obj);
+            $("#workNum").focus()
+            return;
+        }
+
+        var orgId = $("#orgSelect option:selected").val(); //组织机构
+
+        if(orgId==""){
+          //  layer.msg("请选择机构！！")
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请选择机构",
+                // btn:["关闭","确定"],
+                // callBack1:function () {
+                //     console.log("取消")
+                // },
+                // callBack2:function () {
+                //     // console.log("确定")
+                //     $('.msg-layer-bg').css('display','none')
+                //     $('.msg-layer').css('display','none')
+                //     refreshfTable($("#demo"),'1');
+                // },
+            };
+            method.msg_layer(obj);
+            $("#orgSelect").focus()
+            return;
+        }
+
+        var roleId = $("#role option:selected").val(); //角色
+        if(roleId==""){
+         //   layer.msg("请选择角色！！")
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请选择角色",
+                // btn:["关闭","确定"],
+                // callBack1:function () {
+                //     console.log("取消")
+                // },
+                // callBack2:function () {
+                //     // console.log("确定")
+                //     $('.msg-layer-bg').css('display','none')
+                //     $('.msg-layer').css('display','none')
+                //     refreshfTable($("#demo"),'1');
+                // },
+            };
+            method.msg_layer(obj);
+            $("#role").focus();
+            return;
+        }
+
+
+        var password =$("#password").val()
+        if(password==""){
+           // layer.msg("请输入密码！！");
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"请输入密码",
+                // btn:["关闭","确定"],
+                // callBack1:function () {
+                //     console.log("取消")
+                // },
+                // callBack2:function () {
+                //     // console.log("确定")
+                //     $('.msg-layer-bg').css('display','none')
+                //     $('.msg-layer').css('display','none')
+                //     refreshfTable($("#demo"),'1');
+                // },
+            };
+            method.msg_layer(obj);
+            $("#password").focus()
+            return;
+        }
+        var isQuit =$("input[type='radio']:checked").val();
+
+        $.ajax({
+            url:  "/user/add",
+            type: "POST",
+            data:{
+                name:name,
+                username:username,
+                email:email,
+                workNum:workNum,
+                orgId:orgId,
+                roleId:roleId,
+                password:password,
+                isQuit:isQuit
+            },
+            cache:false,
+            dataType: "json",
+            success: function(data){
+                alert(data.message);
+                if(data.code=="0"){
+                    setTimeout("javascript:location.href='/user'", 1500);
+                }
+            },
+            error:function(err){
+                layer.msg("服务器内部错误！")
+            }
+        });
+    });
+
+
+
+
+window.operateEvents = {
+    // 用户修改
+    'click #edit': function (e, value, row, index) {
+        window.location.href = ctxPath+"user/toEditUser?id="+row.id
+    },
+    // 用户删除
+    'click #del': function (e, value, row, index) {
+        $.ajax({
+            url:  "/user/delete",
+            type: "POST",
+            data:{
+                userIds:row.id
+            },
+            cache:false,
+            dataType: "json",
+            success: function(data){
+               // alert(data.message);
+                var obj={
+                    type:"showSweetAlert",
+                    title:"提示",
+                    content:"<div>是否删除这条数据",
+                    btn:["关闭","确定"],
+                    callBack1:function () {
+                        console.log("取消")
+                    },
+                    callBack2:function () {
+                        // console.log("确定")
+                        $('.msg-layer-bg').css('display','none')
+                        $('.msg-layer').css('display','none')
+                        refreshfTable($("#demo"),'1');
+                    },
+                };
+                method.msg_layer(obj);
+                if(data.code=="0"){
+                    //layer.close(index);
+                    setTimeout("javascript:location.href='/user'", 1500);
+                }
+            },
+            error:function(err){
+               // layer.msg("服务器内部错误！")
+                var obj={
+                    type:"showSweetAlert",
+                    title:"提示",
+                    content:"服务器内部错误",
+                    // btn:["关闭","确定"],
+                    // callBack1:function () {
+                    //     console.log("取消")
+                    // },
+                    // callBack2:function () {
+                    //     // console.log("确定")
+                    //     $('.msg-layer-bg').css('display','none')
+                    //     $('.msg-layer').css('display','none')
+                    //     refreshfTable($("#demo"),'1');
+                    // },
+                };
+                method.msg_layer(obj);
+            }
+        });
+    }
+};
+
+function addFunctionAlty(value, row, index) {
+    return [
+        '<button id="edit" type="button" class="btn bg-bold table-btn">编辑</button>',
+        '<button id="del" type="button" class="btn bg-bold table-btn">删除</button>'
+    ].join('');
+}
+
+$('#test').bootstrapTable({
+    url: ctxPath+'user/getPage',
+    method: 'GET',
+    uniqueId: 'id',                        // 绑定ID，不显示
+    striped: false,                         //是否显示行间隔色
+    cache: false,                          //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+    sortable: true,                        //是否启用排序
+    sidePagination: "server",              //分页方式：client客户端分页，server服务端分页（*）
+    undefinedText: '--',
+    strictSearch: true,
+    clickToSelect: true,                   // 点击选中行
+    pagination: true,                      //是否显示分页
+    pageNumber:1,                          //初始化加载第一页，默认第一页,并记录
+    pageSize:10,//每页显示的数量
+    pageList: [ 10, 20, 50, 100],//设置每页显示的数量
+    paginationPreText:"上一页",
+    paginationNextText:"下一页",
+    paginationLoop:false,
+    //得到查询的参数
+    queryParams : function (params) {
+        //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+        var temp = {
+            limit: params.limit,                         //页面大小
+            page: (params.offset / params.limit) + 1,   //页码
+            sort: params.sort,      //排序列名
+            sortOrder: params.order, //排位命令（desc，asc）
+            name: $("#queryName").val(),
+        };
+        return temp;
+    },
+    columns:
+        [{checkbox: true,width: 50}
+            ,{field:'id',title: 'ID', }
+            ,{field:'name',title: '姓名', }
+            ,{field:'username', title: '账号'}
+            ,{field:'orgName', title: '机构'}
+            ,{field:'email', title: '邮箱'}
+            ,{field:'isQuit', title: '是否离职',formatter:function (value, row, index) {
+                if (row.isQuit==0){
+                return '在职'
+                }else if(row.isQuit==1){
+                return '离职'
+                }
+            }}
+            ,{field:'createTime', title: '创建时间', formatter:function (value,row,index) {
+                return date(row.createTime)
+            }}
+            ,{field:'barcode', title: '操作',events: operateEvents,formatter: addFunctionAlty, }//表格中增加按钮
+        ]
+});
+
+//           {type: 'checkbox'},
+//             {field: 'id', title: 'ID',}
+//             , {field: 'name', title: '姓名'}
+//             , {field: 'username', title: '账号',}
+//             , {field: 'orgName', title: '机构'}
+//             , {field: 'email', title: '邮箱'}
+//             , {field: 'isQuit', title: '是否离职',templet: function(d){
+//                     var isQ=d.isQuit;
+//                     if(isQ==0){
+//                         return "在职";
+//                     }else{
+//                         return "离职"
+//                     }
+//                 }}
+//             , {field: 'createTime', title: '创建时间' ,templet: function(d){
+//                     var dateee = new Date(d.createTime).toJSON();
+//                     var date = new Date(+new Date(dateee)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
+//                     return date;
+//                 }
+//
+//             },
+//             {field: 'adg', title: '操作', width: 240, toolbar: '#barDemo'}

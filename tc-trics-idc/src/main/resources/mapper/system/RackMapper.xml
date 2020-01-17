@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.system.mapper.RackMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.Rack" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="room_id" property="roomId" jdbcType="INTEGER" />
+    <result column="room_area_id" property="roomAreaId" jdbcType="INTEGER" />
+    <result column="_row" property="row" jdbcType="INTEGER" />
+    <result column="_column" property="column" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="asset_id" property="assetId" jdbcType="VARCHAR" />
+    <result column="tid" property="tid" jdbcType="INTEGER" />
+    <result column="_width" property="width" jdbcType="VARCHAR" />
+    <result column="_height" property="height" jdbcType="VARCHAR" />
+    <result column="_capacity" property="capacity" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="region_id" property="regionId" jdbcType="INTEGER" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <resultMap id="extResultMap" type="com.manage.idc.system.domain.ext.RackExt" extends="BaseResultMap">
+      <result column="orgName" property="orgName" jdbcType="VARCHAR" />
+      <result column="roomName" property="roomName" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="allColumn">
+        r.id,
+        r.is_valid,
+        r.room_id,
+        r.room_area_id,
+        r._row,
+        r._column,
+        r.name,
+        r.asset_id,
+        r.tid,
+        r._width,
+        r._height,
+        r._capacity,
+        r.remark,
+        r.org_id,
+        r.region_id,
+        r.created_time,
+        r.updated_time
+  </sql>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from rack
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.manage.idc.system.domain.Rack" >
+    insert into rack (
+        id,
+        room_id,
+        room_area_id,
+        _row,
+        _column,
+        name,
+        asset_id,
+        tid,
+        _width,
+        _height,
+        _capacity,
+        remark,
+        org_id,
+        region_id
+        )
+    values (
+        #{id,jdbcType=BIGINT},
+        #{roomId,jdbcType=INTEGER},
+        #{roomAreaId,jdbcType=INTEGER},
+        #{row,jdbcType=INTEGER},
+        #{column,jdbcType=INTEGER},
+        #{name,jdbcType=VARCHAR},
+        #{assetId,jdbcType=VARCHAR},
+        #{tid,jdbcType=INTEGER},
+        #{width,jdbcType=VARCHAR},
+        #{height,jdbcType=VARCHAR},
+        #{capacity,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR},
+        #{orgId,jdbcType=INTEGER},
+        #{regionId,jdbcType=INTEGER}
+    )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.system.domain.Rack" >
+    update rack
+        set
+        <if test="isValid != null and isValid != ''">
+            is_valid = #{isValid,jdbcType=INTEGER},
+        </if>
+        <if test="roomId != null and roomId != ''">
+            room_id = #{roomId,jdbcType=INTEGER},
+        </if>
+        <if test="roomAreaId != null and roomAreaId != ''">
+          room_area_id = #{roomAreaId,jdbcType=INTEGER},
+        </if>
+        <if test="row != null and row != ''">
+          _row = #{row,jdbcType=INTEGER},
+        </if>
+        <if test="column != null and column != ''">
+          _column = #{column,jdbcType=INTEGER},
+        </if>
+        <if test="name != null and name != ''">
+          name = #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="assetId != null and assetId != ''">
+          asset_id = #{assetId,jdbcType=VARCHAR},
+        </if>
+        <if test="tid != null and tid != ''">
+          tid = #{tid,jdbcType=INTEGER},
+        </if>
+        <if test="width != null and width != ''">
+          _width = #{width,jdbcType=VARCHAR},
+        </if>
+        <if test="height != null and height != ''">
+          _height = #{height,jdbcType=VARCHAR},
+        </if>
+        <if test="capacity != null and capacity != ''">
+          _capacity = #{capacity,jdbcType=VARCHAR},
+        </if>
+        <if test="remark != null and remark != ''">
+          remark = #{remark,jdbcType=VARCHAR},
+        </if>
+        <if test="orgId != null and orgId != ''">
+          org_id = #{orgId,jdbcType=INTEGER},
+        </if>
+        <if test="regionId != null and regionId != ''">
+            region_id = #{regionId,jdbcType=INTEGER},
+        </if>
+      <if test="isDel != null and isDel != ''">
+          is_del = #{isDel,jdbcType=INTEGER},
+      </if>
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+        <include refid="allColumn"/>
+    from rack r
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+        <include refid="allColumn"/>
+    from rack r
+    where is_del = '0'
+  </select>
+
+  <select id="selectByCondition" parameterType="map" resultMap="extResultMap">
+    select
+        <include refid="allColumn"/>,so.name as orgName,ro.name as roomName
+    from rack r
+    LEFT JOIN
+        (select * from sys_org soz where soz.is_del = 0) so on r.org_id = so.id
+    LEFT JOIN
+        (select * from room roz where roz.is_del = 0) ro on r.room_id = ro.id
+    <where>
+        <if test="data.id != null and data.id != ''"> and r.id = #{data.id}</if>
+        <if test="data.roomId != null and data.isValid != ''"> and r.room_id = #{data.roomId}</if>
+        <if test="data.name != null and data.name != ''"> and r.name like concat('%',#{data.name},'%')</if>
+        <if test="fullCode != null">
+            and so.full_code like concat('',#{fullCode},'%')
+        </if>
+         and r.is_del = '0'
+    </where>
+  </select>
+
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select
+        <include refid="allColumn"/>
+        from rack r
+        <where>
+            <if test="id != null and id != ''">
+                AND r.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="isValid != null and isValid != ''">
+               AND r.is_valid = #{isValid,jdbcType=INTEGER}
+            </if>
+            <if test="roomId != null and roomId != ''">
+                AND r.room_id = #{roomId,jdbcType=INTEGER}
+            </if>
+            <if test="roomAreaId != null and roomAreaId != ''">
+                AND r.room_area_id = #{roomAreaId,jdbcType=INTEGER}
+            </if>
+            <if test="row != null and row != ''">
+                AND r._row = #{row,jdbcType=INTEGER}
+            </if>
+            <if test="column != null and column != ''">
+                AND r._column = #{column,jdbcType=INTEGER}
+            </if>
+            <if test="name != null and name != ''">
+                AND r.name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="assetId != null and assetId != ''">
+                AND r.asset_id = #{assetId,jdbcType=VARCHAR}
+            </if>
+            <if test="tid != null and tid != ''">
+                AND r.tid = #{tid,jdbcType=INTEGER}
+            </if>
+            <if test="width != null and width != ''">
+                AND r._width = #{width,jdbcType=VARCHAR}
+            </if>
+            <if test="height != null and height != ''">
+                AND r._height = #{height,jdbcType=VARCHAR}
+            </if>
+            <if test="capacity != null and capacity != ''">
+                AND r._capacity = #{capacity,jdbcType=VARCHAR}
+            </if>
+            <if test="remark != null and remark != ''">
+                AND r.remark = #{remark,jdbcType=VARCHAR}
+            </if>
+            <if test="orgId != null and orgId != ''">
+                AND r.org_id = #{orgId,jdbcType=INTEGER}
+            </if>
+            <if test="regionId != null and regionId != ''">
+                AND r.region_id = #{regionId,jdbcType=INTEGER}
+            </if>
+            AND r.is_del = '0'
+        </where>
+    </select>
+</mapper>

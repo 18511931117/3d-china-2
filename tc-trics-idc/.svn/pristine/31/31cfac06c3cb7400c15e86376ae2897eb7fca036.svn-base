@@ -1,0 +1,104 @@
+package com.manage.idc.log.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.config.socket.WebSocketServer;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.log.domain.AlarmsTaskLog;
+import com.manage.idc.log.mapper.AlarmsLogMapper;
+import com.manage.idc.log.service.AlarmTaskLogService;
+import com.manage.idc.system.domain.AlarmsLogRole;
+import com.manage.idc.system.mapper.AlarmsLogRoleMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.websocket.Session;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/22 20:30
+ **/
+@Service
+@Transactional
+public class AlarmTaskLogServiceImpl implements AlarmTaskLogService {
+    @Autowired
+    private AlarmsLogMapper alarmsLogMapper;
+
+    @Autowired
+    private AlarmsLogRoleMapper alarmsLogRoleMapper;
+
+    @Override
+    public void add(AlarmsTaskLog alarmsLog) {
+        alarmsLog.setCreateTime(new Date());
+        alarmsLog.setId(IdGen.getUUId());
+        alarmsLogMapper.insertSelective(alarmsLog);
+    }
+
+    @Override
+    public PageInfo<AlarmsTaskLog> getPage(AlarmsTaskLog alarmsLog, PageRequest pageRequest) {
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        alarmsLog.setOrgId(SessionUtil.getUser().getOrgId());
+        List<AlarmsTaskLog> list = alarmsLogMapper.selectByCondition(DataSetUtile.setQueryMap(alarmsLog,pageRequest,null));
+        return new PageInfo<>(list);
+    }
+
+    @Override
+    public List<AlarmsTaskLog> export(AlarmsTaskLog alarmsLog) {
+        return null;
+    }
+
+
+    @Override
+    @Async("asyncWarningExecutor")
+    public void warningPush(String userId, Session session) {
+        Integer count = alarmsLogMapper.selectWarningCountByUserId(userId);
+        if(null != count && count > 0){
+            WebSocketServer.SendMessage(session,count+"");
+        }else{
+            WebSocketServer.SendMessage(session,"0");
+        }
+    }
+
+
+    @Override
+    public List<Long> findUserRoleByOrg(AlarmsLogRole alarmsLog) {
+        return alarmsLogRoleMapper.selectRoleIdByOrgId(alarmsLog.getOrgId());
+    }
+
+
+    @Override
+    public void addLogRole(Long orgId,String roleIds) {
+        alarmsLogRoleMapper.deleteByOrgId(orgId);
+        String[] split = roleIds.split(",");
+        for (String ids:
+        split) {
+            AlarmsLogRole alarmsLogRole = new AlarmsLogRole();
+            alarmsLogRole.setId(IdGen.getUUId());
+            alarmsLogRole.setCreatedTime(new Date());
+            alarmsLogRole.setOrgId(orgId);
+            alarmsLogRole.setRoleId(Long.parseLong(ids));
+            alarmsLogRoleMapper.insert(alarmsLogRole);
+        }
+
+    }
+
+
+    @Override
+    public PageInfo<AlarmsTaskLog> getResInfoLog(AlarmsTaskLog alarmsLog, PageRequest pageRequest) {
+        if(null != pageRequest && null != pageRequest.getPage() && null != pageRequest.getLimit()){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List <AlarmsTaskLog> list = alarmsLogMapper.selectList(DataSetUtile.setQueryMap(alarmsLog,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<>(list);
+    }
+}

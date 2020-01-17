@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" style="border: none;background: none">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+
+    <title>任务日志管理</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{css/bootstrap-reset.css}" rel="stylesheet">
+
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+
+    <script th:src="@{/js/html5shiv.js}"></script>
+    <script th:src="@{js/respond.min.js}"></script>
+</head>
+<div id="operateDiv" style="display: none;">
+    <shiro:hasPermission name="allocationTask:desc">
+        <button id="bind" type="button" class="btn bg-yellow table-btn">详情</button>
+    </shiro:hasPermission>
+
+    <shiro:hasPermission name="allocationTask:delete">
+        <button id="unbind" type="button" class="btn bg-bold table-btn">撤销</button>
+    </shiro:hasPermission>
+</div>
+<body style="border: none;background: none">
+            <!-- page start-->
+            <div class="row">
+                <div class="col-lg-12">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            <span class="tab-o">日志管理</span><b style="color: #00a6b2"> > </b><span class="tab-er">调拨日志管理</span>
+                        </header>
+
+                    </section>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="layui-hide" id="test" lay-filter="test"></table>
+                    <script type="text/html" id="barDemo">
+                        <a class="layui-btn layui-btn-xs" lay-event="export">导出</a>
+                    </script>
+                </div>
+            </div>
+
+            <script type="text/javascript" th:inline="javascript">
+                ctxPath = /*[[@{/}]]*/ '';
+            </script>
+            <!-- js placed at the end of the document so the pages load faster -->
+            <script th:src="@{/js/jquery.js}"></script>
+            <script th:src="@{/js/bootstrap.min.js}"></script>
+            <link rel="stylesheet" th:href="@{/3rd/bootstrap-table/bootstrap-table.css}">
+            <script th:src="@{/3rd/bootstrap-table/bootstrap-table.js}"></script>
+            <script th:inline="javascript" th:src="@{/pagejs/log/allocationLog.js}"></script>
+            <script th:inline="javascript" th:src="@{/pagejs/common/util.js}"></script>
+
+
+</body>
+</html>

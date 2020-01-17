@@ -1,0 +1,101 @@
+package com.manage.idc.App.controller;
+
+import com.manage.idc.App.domain.SysAppFeedback;
+import com.manage.idc.App.mapper.SysAppFeedbackMapper;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.utils.Base64Utils;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.MD5Util;
+import com.manage.idc.system.domain.Room;
+import com.manage.idc.system.domain.SysOrg;
+import com.manage.idc.system.domain.SysUser;
+import com.manage.idc.system.service.RoomService;
+import com.manage.idc.system.service.SysOrgService;
+import com.manage.idc.system.service.SysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/11/25 15:42
+ **/
+@RestController
+@RequestMapping("/data/app/")
+public class AppDataController {
+    @Autowired
+    private SysOrgService sysOrgService;
+    @Autowired
+    private SysUserService sysUserService;
+    @Autowired
+    private RoomService roomService;
+    @Autowired
+    private SysAppFeedbackMapper sysAppFeedbackMapper;
+    /**
+     * 获取所有部门
+     */
+    @GetMapping(value = "getOrgAll")
+    public ResultResponse getOrgAll(SysOrg sysOrg) {
+        List<SysOrg> list =sysOrgService.getOrgAll(sysOrg);
+        return DataSetUtile.setSuccessResult(list);
+    }
+
+    /**
+     * 个人中心修改密码
+     * @param sysUser
+     * @return
+     */
+    @PostMapping(value = "editUserPassword")
+    @ResponseBody
+    public ResultResponse editUserPassword(SysUser sysUser) {
+        SysUser syUser = new SysUser();
+        syUser.setId(sysUser.getId());
+        String password = MD5Util.encrypt(sysUser.getUsername().toLowerCase(),  Base64Utils.encode(sysUser.getOldPassword()));
+        syUser.setPassword(password);
+        SysUser sysUser1 = sysUserService.selectUserById(syUser);
+        if (sysUser1==null){
+            return DataSetUtile.setErrorResultMessage("旧密码输入错误..");
+        }
+        sysUser.setPassword(MD5Util.encrypt(sysUser.getUsername().toLowerCase(),  Base64Utils.encode(sysUser.getPassword())));
+        sysUserService.editUserPassword(sysUser);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    /**
+     * 根据部门获取所有用户 默认是当前用户所在部门的所有的用户
+     */
+    @GetMapping(value = "getUserByOrgId")
+    @ResponseBody
+    public ResultResponse getUserByOrgId(SysUser sysUser) {
+        List<SysUser> list =sysUserService.getUserByOrgId(sysUser);
+        return DataSetUtile.setSuccessResult(list);
+    }
+
+    /**
+     * 根据部门获取所有机房 默认是当前用户所在部门的所有的机房
+     */
+    @GetMapping(value = "getRoomByOrgId")
+    @ResponseBody
+    public ResultResponse getUserByOrgId(Room room) {
+        List<Room> list =roomService.getRoomByOrgId(room);
+        return new ResultResponse().success().data(list);
+    }
+
+    /**
+     * 添加反馈信息
+     */
+    @PostMapping(value = "addFeedBack")
+    @ResponseBody
+    public ResultResponse addFeedBack(SysAppFeedback sysAppFeedback) {
+        sysAppFeedback.setId(IdGen.getUUId());
+        sysAppFeedback.setCreateTime(new Date());
+        sysAppFeedback.setUpdateTime(new Date());
+        sysAppFeedbackMapper.insertSelective(sysAppFeedback);
+        return new ResultResponse().success();
+    }
+
+}

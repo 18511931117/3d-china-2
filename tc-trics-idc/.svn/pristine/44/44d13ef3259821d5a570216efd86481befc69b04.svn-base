@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.system.mapper.RoomMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.Room" >
+    <result column="id" property="id" jdbcType="BIGINT" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="region_id" property="regionId" jdbcType="BIGINT" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="domain" property="domain" jdbcType="VARCHAR" />
+  </resultMap>
+
+    <resultMap id="extResultMap" type="com.manage.idc.system.domain.ext.RoomExt" extends="BaseResultMap">
+        <result column="orgName" property="orgName" jdbcType="VARCHAR" />
+    </resultMap>
+
+   <sql id="allColumn">
+    r.id,
+    r.is_valid,
+    r.org_id,
+    r.name,
+    r.region_id,
+    r.created_time,
+    r.updated_time,
+    r.domain
+   </sql>
+  <insert id="insert" parameterType="com.manage.idc.system.domain.Room" >
+    insert into room (
+        id,
+        org_id,
+        name,
+        region_id,
+        domain
+      )
+    values (
+        #{id,jdbcType=BIGINT},
+        #{orgId,jdbcType=BIGINT},
+        #{name,jdbcType=VARCHAR},
+        #{regionId,jdbcType=BIGINT},
+        #{domain,jdbcType=VARCHAR}
+      )
+  </insert>
+  <select id="getRoomByOrgId" resultMap="BaseResultMap" >
+    select
+        <include refid="allColumn"/>
+    from room r
+      <where>
+          <if test="id != null and id != ''">
+              and r.id=#{id}
+          </if>
+          <if test="isValid != null and isValid != ''">
+              and r.is_valid=#{isValid}
+          </if>
+          <if test="orgId != null and orgId != ''">
+              and r.org_id=#{orgId}
+          </if>
+          <if test="name != null and name != ''">
+              and r.name=#{name}
+          </if>
+          <if test="regionId != null and regionId != ''">
+              and r.region_id=#{regionId}
+          </if>
+          <if test="domain != null and domain != ''">
+              and r.domain=#{domain}
+          </if>
+          and r.is_del= '0'
+      </where>
+  </select>
+
+
+  <update id="updateRoom" parameterType="com.manage.idc.system.domain.Room">
+    UPDATE room SET
+        <if test="isValid != null and isValid != ''">
+          is_valid=#{isValid},
+        </if>
+        <if test="orgId != null and orgId != ''">
+          org_id=#{orgId},
+        </if>
+        <if test="name != null and name != ''">
+          name=#{name},
+        </if>
+        <if test="regionId != null and regionId != ''">
+          region_id=#{regionId},
+        </if>
+          <if test="domain != null and domain != ''">
+              domain=#{domain},
+          </if>
+        <if test="isDel != null and isDel != ''">
+          is_del=#{isDel},
+        </if>
+        updated_time = #{updatedTime}
+        where id = #{id}
+  </update>
+
+    <select id="selectByCondition" resultMap="extResultMap" parameterType="map">
+        select
+            <include refid="allColumn"/>,so.name orgName
+        from room r
+            left join
+        (select * from sys_org soz where soz.is_del = 0) so on r.org_id = so.id
+
+        <where>
+            <if test="data.name != null and data.name != ''">
+               and r.name like concat('%',#{data.name},'%')
+            </if>
+
+            <if test="userOrgId != null"> and (so.parent_id = #{userOrgId} or so.id = #{userOrgId})</if>
+        </where>
+    </select>
+
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select
+        <include refid="allColumn"/>
+        from room r
+        <where>
+            <if test="id != null and id != ''">
+                and r.id=#{id}
+            </if>
+            <if test="isValid != null and isValid != ''">
+               and r.is_valid=#{isValid}
+            </if>
+            <if test="orgId != null and orgId != ''">
+                and r.org_id=#{orgId}
+            </if>
+            <if test="name != null and name != ''">
+                and r.name=#{name}
+            </if>
+            <if test="regionId != null and regionId != ''">
+                and r.region_id=#{regionId}
+            </if>
+            <if test="domain != null and domain != ''">
+                and r.domain=#{domain}
+            </if>
+                and r.is_del= '0'
+        </where>
+        limit 1
+    </select>
+</mapper>

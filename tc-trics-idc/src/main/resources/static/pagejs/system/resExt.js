@@ -1,0 +1,250 @@
+$(function () {
+
+    loadExtTypeSelect($("#addExtForm").find(":input[name='valType']"));
+
+
+    $("button[name='addExt_btn']").click(function (id) {
+        var data = $("#addExtForm").serializeObject();
+        if(checkNull($("#addExtForm"),data)){
+            var buttonEle = $(this);
+            buttonEle.attr("disabled",true).attr("readonly",true);
+            $.ajax({
+                url: ctxPath +"resExtCfg/addResExtCfg",
+                type:'post',
+                data:data,
+                //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+                success: function(data){
+                    if(data.code = '0'){
+                       // alert("添加成功");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:'添加成功',
+                        };
+                        flush();
+                        method.msg_layer(obj);
+
+                    }else{
+                       // alert("添加失败!");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:'添加失败',
+
+                        };
+                        method.msg_layer(obj);
+                    }
+                    buttonEle.removeAttr("disabled").removeAttr("readonly");
+                }
+            })
+        }
+    })
+
+
+    $("button[name='commit_btn']").click(function () {
+        var data = $("#updateForm").serializeObject();
+        if(checkNull($("#updateForm"),data)){
+            var buttonEle = $(this);
+            buttonEle.attr("disabled",true).attr("readonly",true);
+            $.ajax({
+                url: ctxPath +"resExtCfg/updateResExtCfg",
+                type:'post',
+                data:data,
+                //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+                success: function(data){
+                    if(data.code = '0'){
+                     //   alert("修改成功");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:'修改成功',
+
+                        };
+
+                        flush();
+                        method.msg_layer(obj);
+                    }else{
+                       // alert("修改失败!");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:'修改失败',
+
+                        };
+                        method.msg_layer(obj);
+                    }
+                    buttonEle.removeAttr("disabled").removeAttr("readonly");
+                }
+            })
+        }
+
+    })
+
+    $.ajax({
+        url: ctxPath +"resExtGrp/getList",
+        type:'get',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                var dat = data.data;
+                for(var i = 0;i<dat.length;i++){
+                    var url = ctxPath +"resExtCfg/toResExtAdd/"+dat[i].extGrpCode;
+                    var str = "<div class='widbox' style='margin: 15px 0;box-shadow: 0px 0px 15px 0px rgba(50,48,87,0.1);\n" +
+                        "    border-radius: 10px!important;\n" +
+                        "    border: 2px solid rgba(48,35,174,1);;padding: 5px'>" +
+                                    "<div style='display: flex;padding: 15px 0'>" +
+                                        "<div style='flex: 1;'>" +
+                                            "<p class='' style='font-size: 16px;color: #fff; padding-left: 15px'>"+dat[i].extGrpName+"</p>" +
+                                        "</div>" +
+                                        "<div style='flex: 1;text-align: right'>";
+                                        if($("#addFlag").text() != null && $("#addFlag").text() != '' && $("#addFlag").text() != undefined){
+                                            str +=  "<button class='btn bg-yellow'><a href='javascript:addExt(&apos;"+dat[i].extGrpCode+"&apos;)' style='color: #fff'>增加条目</a></button>" ;
+                                        }
+
+                                    str +="</div>" +
+                                    "</div>" +
+                                "<div>" +
+                                    "<table id='"+dat[i].id+"'></table>" +
+                                "</div>" +
+                             "</div>";
+                    $("#tableDiv").append(str);
+                    createTable(dat[i].resExtCfgList,dat[i].id)
+                }
+            }
+        }
+    })
+
+    $("button[name='commit_button']").click(function () {
+        var data = $("#add").serializeObject();
+        if(checkNull($("#add"),data)){
+            var buttonEle = $(this);
+            buttonEle.attr("disabled",true).attr("readonly",true);
+            $.ajax({
+                url: ctxPath +"resExtGrp/addResExtGrp",
+                type:'post',
+                data:data,
+                //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+                success: function(data){
+                    if(data.code = '0'){
+                       // alert("添加成功");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:'添加成功',
+
+                        };
+
+                        method.msg_layer(obj);
+                        flush();
+                    }else{
+                      //  alert("添加失败!")
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:'添加失败',
+
+                        };
+                        method.msg_layer(obj);
+                    }
+                    buttonEle.removeAttr("disabled").removeAttr("readonly");
+                }
+            })
+        }
+    })
+})
+
+
+function del(val) {
+    // if(confirm("是否确认删除该数据")){
+    var obj={
+        type:"showSweetAlert",
+        title:"提示",
+        content:'是否确认删除该数据',
+        btn:["关闭","确定"],
+        callBack1:function () {
+            console.log("取消")
+        },
+        callBack2:function () {
+            $.post(
+                ctxPath +"resExtCfg/delResExtCfg/"+val,
+                function(data){
+                    if(data.code == '0'){
+                        // alert("删除成功!");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:'删除成功',
+
+                        };
+                        method.msg_layer(obj);
+                        flush();
+                    }else{
+                        // alert("删除失败!");
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:'删除失败',
+
+                        };
+                        method.msg_layer(obj);
+                    }
+                }
+            )
+        }
+    };
+    method.msg_layer(obj);
+
+    // }
+}
+
+
+function addExt(val) {
+    $("#addExtForm").find(":input[name='extGrpCode']").val(val);
+    $("#addExtButton").click();
+}
+
+function updateModel(val) {
+    $.ajax({
+        url: ctxPath +"resExtCfg/getResExt/"+val,
+        type:'get',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                var obj = data.data;
+                feedBackVal($("#updateForm"),obj);
+                loadExtTypeSelect($("#updateForm").find(":input[name='valType']"),obj.valType+"");
+                $("#updateModeButton").click();
+            }
+        }
+    })
+}
+
+
+function addFunctionAlty(value, row, index) {
+    var data = [];
+    if($("#editFlag").text() != null && $("#editFlag").text() != '' && $("#editFlag").text() != undefined){
+        data.push('<button id="unbind" type="button" class="btn bg-yellow table-btn" onclick="updateModel(&apos;'+value+'&apos;)">编辑</button>');
+    }
+    if($("#delFlag").text() != null && $("#delFlag").text() != '' && $("#delFlag").text() != undefined){
+        data.push( '<button id="unbind" type="button" class="btn bg-bold table-btn" onclick="del(&apos;'+value+'&apos;)">删除</button>');
+    }
+
+    return data.join('');
+}
+
+
+function createTable(data,id) {
+   var columns = [
+        {field: 'itemName', title: '条目名称',}
+        , {field: 'itemCode', title: '条目编码'}
+        , {field: 'valTypeName', title: '值类型',}
+        , {field: 'seq', title: '显示顺序'}
+        ,{field:'id', title: '操作',formatter: addFunctionAlty,width:145}
+    ];
+    setDataloadTable($("#"+id),columns,data);
+}
+
+
+function flush() {
+    location.reload();
+}

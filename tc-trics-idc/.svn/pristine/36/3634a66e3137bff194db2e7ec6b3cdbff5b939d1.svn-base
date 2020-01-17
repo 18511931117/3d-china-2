@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.device.mapper.ResMapper" >
+
+  <resultMap id="BaseResultMap" type="com.manage.idc.device.domain.Res" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="res_type_code" property="resTypeCode" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="region_id" property="regionId" jdbcType="INTEGER" />
+    <result column="room_id" property="roomId" jdbcType="INTEGER" />
+    <result column="room_area_id" property="roomAreaId" jdbcType="INTEGER" />
+    <result column="rack_id" property="rackId" jdbcType="INTEGER" />
+    <result column="sheft" property="sheft" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="asset_id" property="assetId" jdbcType="VARCHAR" />
+    <result column="model" property="model" jdbcType="VARCHAR" />
+    <result column="tid" property="tid" jdbcType="VARCHAR" />
+    <result column="owner" property="owner" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="is_pasted" property="isPasted" jdbcType="VARCHAR" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+
+    <resultMap id="extResultMap" type="com.manage.idc.device.domain.ext.ResExtend" extends="BaseResultMap">
+        <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+        <result column="isPrinted" property="isPrinted" jdbcType="VARCHAR" />
+        <result column="rackName" property="rackName" jdbcType="VARCHAR" />
+        <result column="orgName" property="orgName" jdbcType="VARCHAR" />
+        <result column="roomName" property="roomName" jdbcType="VARCHAR" />
+        <result column="resTypeName" property="resTypeName" jdbcType="VARCHAR" />
+        <result column="statusName" property="statusName" jdbcType="VARCHAR" />
+    </resultMap>
+  
+  <sql id="selectAllColumn">
+    r.id,
+    r.is_valid,
+    r.res_type_code,
+    r.org_id,
+    r.region_id,
+    r.room_id,
+    r.room_area_id,
+    r.rack_id,
+    r.sheft,
+    r.name,
+    r.asset_id,
+    r.model,
+    r.tid,
+    r.owner,
+    r.operator,
+    r.status,
+    r.is_pasted,
+    r.created_time,
+    r.updated_time
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from res
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.manage.idc.device.domain.Res" >
+    insert into res (
+            <trim prefixOverrides="," suffixOverrides=",">
+                <if test="id != null and id != ''">
+                    id,
+                </if>
+                <if test="resTypeCode != null and resTypeCode != ''">
+                  res_type_code,
+                </if>
+                <if test="orgId != null and orgId != ''">
+                  org_id,
+                </if>
+                <if test="regionId != null and regionId != ''">
+                  region_id,
+                </if>
+                <if test="roomId != null and roomId != ''">
+                  room_id,
+                </if>
+                <if test="roomAreaId != null and roomAreaId != ''">
+                  room_area_id,
+                </if>
+                <if test="rackId != null and rackId != ''">
+                  rack_id,
+                </if>
+                <if test="sheft != null and sheft != ''">
+                  sheft,
+                </if>
+                <if test="name != null and name != ''">
+                  name,
+                </if>
+                <if test="assetId != null and assetId != ''">
+                  asset_id,
+                </if>
+                <if test="model != null and model != ''">
+                  model,
+                </if>
+                <if test="tid != null and tid != ''">
+                  tid,
+                </if>
+                <if test="owner != null and owner != ''">
+                  owner,
+                </if>
+                <if test="operator != null and operator != ''">
+                  operator
+                </if>
+            </trim>
+        )
+    values (
+            <trim prefixOverrides="," suffixOverrides=",">
+              <if test="id != null and id != ''">
+                  #{id,jdbcType=INTEGER},
+              </if>
+              <if test="resTypeCode != null and resTypeCode != ''">
+                  #{resTypeCode,jdbcType=VARCHAR},
+              </if>
+              <if test="orgId != null and orgId != ''">
+                  #{orgId,jdbcType=INTEGER},
+              </if>
+              <if test="regionId != null and regionId != ''">
+                  #{regionId,jdbcType=INTEGER},
+              </if>
+              <if test="roomId != null and roomId != ''">
+                  #{roomId,jdbcType=INTEGER},
+              </if>
+              <if test="roomAreaId != null and roomAreaId != ''">
+                  #{roomAreaId,jdbcType=INTEGER},
+              </if>
+              <if test="rackId != null and rackId != ''">
+                  #{rackId,jdbcType=INTEGER},
+              </if>
+              <if test="sheft != null and sheft != ''">
+                  #{sheft,jdbcType=VARCHAR},
+              </if>
+              <if test="name != null and name != ''">
+                  #{name,jdbcType=VARCHAR},
+              </if>
+              <if test="assetId != null and assetId != ''">
+                  #{assetId,jdbcType=VARCHAR},
+              </if>
+              <if test="model != null and model != ''">
+                  #{model,jdbcType=VARCHAR},
+              </if>
+              <if test="tid != null and tid != ''">
+                  #{tid,jdbcType=VARCHAR},
+              </if>
+              <if test="owner != null and owner != ''">
+                  #{owner,jdbcType=VARCHAR},
+              </if>
+              <if test="operator != null and operator != ''">
+                  #{operator,jdbcType=VARCHAR}
+              </if>
+            </trim>
+        )
+  </insert>
+
+
+
+    <insert id="batchInsert" parameterType="list" >
+        insert into res (
+              id,
+              res_type_code,
+              org_id,
+              region_id,
+              room_id,
+              rack_id,
+              sheft,
+              name,
+              asset_id,
+              model,
+              tid,
+              owner,
+              operator
+            )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.id,jdbcType=INTEGER},
+                #{item.resTypeCode,jdbcType=VARCHAR},
+                #{item.orgId,jdbcType=INTEGER},
+                #{item.regionId,jdbcType=INTEGER},
+                #{item.roomId,jdbcType=INTEGER},
+                #{item.rackId,jdbcType=INTEGER},
+                #{item.sheft,jdbcType=VARCHAR},
+                #{item.name,jdbcType=VARCHAR},
+                #{item.assetId,jdbcType=VARCHAR},
+                #{item.model,jdbcType=VARCHAR},
+                #{item.tid,jdbcType=VARCHAR},
+                #{item.owner,jdbcType=VARCHAR},
+                #{item.operator,jdbcType=VARCHAR}
+            )
+    </foreach>
+
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.device.domain.Res" >
+    update res
+    set
+    <if test="name != null and name != ''">
+      name = #{name,jdbcType=VARCHAR},
+    </if>
+    <if test="isValid != null and isValid != ''">
+      is_valid = #{isValid,jdbcType=INTEGER},
+    </if>
+    <if test="resTypeCode != null and resTypeCode != ''">
+      res_type_code = #{resTypeCode,jdbcType=VARCHAR},
+    </if>
+    <if test="orgId != null and orgId != ''">
+      org_id = #{orgId,jdbcType=INTEGER},
+    </if>
+    <if test="regionId != null and regionId != ''">
+      region_id = #{regionId,jdbcType=INTEGER},
+    </if>
+    <if test="roomId != null and roomId != ''">
+      room_id = #{roomId,jdbcType=INTEGER},
+    </if>
+    <if test="roomAreaId != null and roomAreaId != ''">
+      room_area_id = #{roomAreaId,jdbcType=INTEGER},
+    </if>
+    <if test="rackId != null and rackId != ''">
+      rack_id = #{rackId,jdbcType=INTEGER},
+    </if>
+    <if test="sheft != null and sheft != ''">
+      sheft = #{sheft,jdbcType=VARCHAR},
+    </if>
+    <if test="assetId != null and assetId != ''">
+      asset_id = #{assetId,jdbcType=VARCHAR},
+    </if>
+    <if test="model != null and model != ''">
+      model = #{model,jdbcType=VARCHAR},
+    </if>
+    <if test="tid != null and tid != ''">
+      tid = #{tid,jdbcType=VARCHAR},
+    </if>
+
+    <if test="owner != null and owner != ''">
+      owner = #{owner,jdbcType=VARCHAR},
+    </if>
+    <if test="operator != null and operator != ''">
+      operator = #{operator,jdbcType=VARCHAR},
+    </if>
+    <if test="status != null and status != ''">
+      status = #{status,jdbcType=VARCHAR},
+    </if>
+    <if test="isPasted != null and isPasted != ''">
+      is_pasted = #{isPasted,jdbcType=VARCHAR},
+    </if>
+    <if test="isDel != null and isDel != ''">
+      is_del = #{isDel,jdbcType=VARCHAR},
+    </if>
+    <if test="isAppBind != null and isAppBind != ''">
+      is_appBind = #{isAppBind,jdbcType=INTEGER},
+    </if>
+    <if test="isPrinted != null and isPrinted != ''">
+        is_printed = #{isPrinted,jdbcType=INTEGER},
+    </if>
+    updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+
+
+    <update id="untyingLabel" parameterType="com.manage.idc.device.domain.Res" >
+        update res
+        set
+        tid = null ,
+        status = #{status} ,
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+    select
+        <include refid="selectAllColumn"/>
+    from res r
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+        <include refid="selectAllColumn"/>
+    from res r
+  </select>
+
+
+    <select id="selectByCondition" resultType="map" parameterType="map">
+        select
+            r.id,
+            r.is_valid isValid,
+            r.res_type_code resTypeCode,
+            r.org_id orgId,
+            r.region_id regionId,
+            r.room_id roomId,
+            r.room_area_id roomAreaId,
+            r.rack_id rackId,
+            r.sheft,
+            r.name,
+            r.asset_id assetId,
+            r.model,
+            r.tid,
+            r.owner,
+            r.operator,
+            r.status,
+            r.is_pasted isPasted,
+            r.is_printed isPrinted,
+            r.created_time createdTime,
+            r.updated_time updatedTime,
+            rm.name roomName,
+            ra.name rackName,
+            l.barcode barcode,
+            rt.res_type_name resTypeName,
+            sp.sys_name statusName,
+            so.name orgName
+            <if  test="extColumn != null and extColumn.size() > 0">
+                ,res.*
+            </if>
+        from res r
+        <if test="extColumn != null and extColumn.size() > 0">
+            left join
+            (
+                select
+                    ret.res_id,
+                    <foreach collection="extColumn" separator="," item="item">
+                        MAX(CASE ret.item_code WHEN #{item.itemCode} THEN ret.item_value ELSE '' END ) ${item.itemCode}
+                    </foreach>
+                 from
+                res_ext ret
+                WHERE ret.is_del='0'
+                group by ret.res_id
+            ) res on r.id = res.res_id
+        </if>
+        LEFT JOIN room rm on r.room_id = rm.id
+        LEFT JOIN sys_org so on r.org_id = so.id
+        LEFT JOIN rack ra on r.rack_id = ra.id
+        LEFT JOIN label l on r.tid = l.tid
+        LEFT JOIN res_type rt on r.res_type_code = rt.full_code
+        LEFT JOIN (select * from sys_param where type = 'devStatus') sp on r.status = sp.sys_value
+        <where>
+            <if test="data.id != null and data.id != ''">
+                AND r.id = #{data.id,jdbcType=INTEGER}
+            </if>
+
+            <if test="data.ids != null and  data.ids.size() > 0">
+               AND r.id in
+                <foreach collection="data.ids" item="item" separator="," open="(" close=")">
+                    #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+            <if test="data.name != null and data.name != ''">
+                AND r.name Like concat('%',#{data.name,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="data.isValid != null and data.isValid != ''">
+                AND r.is_valid = #{data.isValid,jdbcType=INTEGER}
+            </if>
+            <if test="data.resTypeCode != null and data.resTypeCode != ''">
+                AND r.res_type_code = #{data.resTypeCode,jdbcType=VARCHAR}
+            </if>
+            <if test="fullCode != null">
+                and so.full_code like concat('',#{fullCode},'%')
+            </if>
+            <if test="data.regionId != null and data.regionId != ''">
+                AND r.region_id = #{data.regionId,jdbcType=INTEGER}
+            </if>
+            <if test="data.roomId != null and data.roomId != ''">
+                AND r.room_id = #{data.roomId,jdbcType=INTEGER}
+            </if>
+            <if test="data.roomAreaId != null and data.roomAreaId != ''">
+                AND r.room_area_id = #{data.roomAreaId,jdbcType=INTEGER}
+            </if>
+            <if test="data.rackId != null and data.rackId != ''">
+                AND r.rack_id = #{data.rackId,jdbcType=INTEGER}
+            </if>
+            <if test="data.sheft != null and data.sheft != ''">
+                AND r.sheft like concat('%',#{data.sheft,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="data.assetId != null and data.assetId != ''">
+                AND r.asset_id = #{data.assetId,jdbcType=VARCHAR}
+            </if>
+            <if test="data.model != null and data.model != ''">
+                AND r.model = #{data.model,jdbcType=VARCHAR}
+            </if>
+            <if test="data.tid != null and data.tid != ''">
+                AND r.tid = #{data.tid,jdbcType=VARCHAR}
+            </if>
+            <if test="data.owner != null and data.owner != ''">
+                AND r.owner Like concat ('%',#{data.owner,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="data.operator != null and data.operator != ''">
+                AND r.operator Like concat('%',#{data.operator,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="data.status != null and data.status != ''">
+                AND r.status = #{data.status,jdbcType=VARCHAR}
+            </if>
+            <if test="data.isPasted != null and data.isPasted != ''">
+                AND r.is_pasted = #{data.isPasted,jdbcType=VARCHAR}
+            </if>
+                AND r.is_del = '0'
+            <if test="data.resExts != null">
+                <foreach collection="data.resExts" item="item" >
+                    <if test="item.itemCode != null and item.itemCode != '' and item.itemValue != null and item.itemValue != ''">
+                        AND res.${item.itemCode} Like concat('%',#{item.itemValue},'%')
+                    </if>
+                </foreach>
+            </if>
+            <if test='data.isBind != null and data.isBind == "1".toString()'>
+                AND r.tid is not null
+            </if>
+
+            <if test='data.isBind != null and data.isBind == "0".toString()'>
+                AND r.tid is null
+            </if>
+        </where>
+
+        order by r.created_time desc,r.id
+    </select>
+
+
+    <select id="selecteBaseInfoByCondition" resultMap="extResultMap" parameterType="map">
+        select
+        <include refid="selectAllColumn"/>,so.name orgName,rm.name roomName,rk.name rackName,rt.res_type_name resTypeName,sp.sys_name statusName
+        from res r
+        left join res_type rt on r.res_type_code = rt.full_code
+        left join sys_org so on r.org_id = so.id
+        left join room rm on r.room_id = rm.id
+        left join rack rk on r.rack_id = rk.id
+        left join (select * from sys_param where type='devStatus') sp on r.status = sp.sys_value
+
+        <where>
+            <if test="data.id != null and data.id != ''">
+                AND r.id = #{data.id}
+            </if>
+            <if test="fullCode != null">
+                and so.full_code like concat('',#{fullCode},'%')
+            </if>
+            <if test="data.isValid != null and data.isValid != ''">
+                AND r.is_valid = #{data.isValid,jdbcType=INTEGER}
+            </if>
+            <if test="data.resTypeCode != null and data.resTypeCode != ''">
+                AND r.res_type_code = #{data.resTypeCode,jdbcType=VARCHAR}
+            </if>
+            <if test="data.orgId != null and data.orgId != ''">
+                AND r.org_id = #{data.orgId,jdbcType=INTEGER}
+            </if>
+            <if test="data.regionId != null and data.regionId != ''">
+                AND r.region_id = #{data.regionId,jdbcType=INTEGER}
+            </if>
+            <if test="data.roomId != null and data.roomId != ''">
+                AND r.room_id = #{data.roomId,jdbcType=INTEGER}
+            </if>
+            <if test="data.roomAreaId != null and data.roomAreaId != ''">
+                AND r.room_area_id = #{data.roomAreaId,jdbcType=INTEGER}
+            </if>
+            <if test="data.rackId != null and data.rackId != ''">
+                AND r.rack_id = #{data.rackId,jdbcType=INTEGER}
+            </if>
+            <if test="data.sheft != null and data.sheft != ''">
+                AND r.sheft = #{data.sheft,jdbcType=VARCHAR}
+            </if>
+            <if test="data.assetId != null and data.assetId != ''">
+                AND r.asset_id = #{data.assetId,jdbcType=VARCHAR}
+            </if>
+            <if test="data.model != null and data.model != ''">
+                AND r.model = #{data.model,jdbcType=VARCHAR}
+            </if>
+            <if test="data.tid != null and data.tid != ''">
+                AND r.tid = #{data.tid,jdbcType=VARCHAR}
+            </if>
+            <if test="data.owner != null and data.owner != ''">
+                AND r.owner = #{data.owner,jdbcType=VARCHAR}
+            </if>
+            <if test="data.operator != null and data.operator != ''">
+                AND r.operator = #{data.operator,jdbcType=VARCHAR}
+            </if>
+            <if test="data.status != null and data.status != ''">
+                AND r.status = #{data.status,jdbcType=VARCHAR}
+            </if>
+            <if test="data.isPasted != null and data.isPasted != ''">
+                AND r.is_pasted = #{data.isPasted,jdbcType=VARCHAR}
+            </if>
+            <if test="data.queryStr != null and data.queryStr != ''">
+                AND
+                (
+                    r.asset_id Like concat('%',#{data.queryStr,jdbcType=VARCHAR},'%')
+                    OR r.name Like concat('%',#{data.queryStr,jdbcType=VARCHAR},'%')
+                    OR r.model Like concat('%',#{data.queryStr,jdbcType=VARCHAR},'%')
+                )
+            </if>
+
+            <if test="data.orgId != null and data.orgId != ''">
+                AND r.org_id = #{data.orgId}
+            </if>
+
+            <if test="data.orgIds !=null and data.orgIds.size>0">
+                AND r.org_id  not in
+                <foreach collection="data.orgIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="data.roomIds !=null and data.roomIds.size>0">
+                AND r.room_id  not in
+                <foreach collection="data.roomIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="data.ids !=null and data.ids.size>0">
+                AND r.id  in
+                <foreach collection="data.ids" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+                AND r.is_del = '0'
+        </where>
+    </select>
+
+    <select id="selectDeviceLabelingyByCondition" resultMap="extResultMap" parameterType="map">
+        select
+        <include refid="selectAllColumn"/>,lb.barcode barcode,so.name orgName,rm.name roomName,rk.name rackName,rt.res_type_name resTypeName,lb.is_printed isPrinted
+        from res r
+        left join label lb on r.tid = lb.tid
+        left join res_type rt on r.res_type_code = rt.full_code
+        left join sys_org so on r.org_id = so.id
+        left join room rm on r.room_id = rm.id
+        left join rack rk on r.rack_id = rk.id
+
+        <where>
+            AND r.tid is not null
+            and r.is_pasted = '0'
+            AND r.is_del = '0'
+        </where>
+    </select>
+
+    <select id="selectNotBindDeviceByCondition" resultMap="extResultMap" parameterType="map">
+        select
+            <include refid="selectAllColumn"/>,so.name orgName,rm.name roomName,rk.name rackName,rt.res_type_name resTypeName
+        from res r
+        left join res_type rt on r.res_type_code = rt.res_type_code
+        left join sys_org so on r.org_id = so.id
+        left join room rm on r.room_id = rm.id
+        left join rack rk on r.rack_id = rk.id
+
+        <where>
+            AND r.tid is null
+            AND r.is_del = '0'
+        </where>
+    </select>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select
+        <include refid="selectAllColumn"/>
+        from res r
+
+        <where>
+            <if test="id != null and id != ''">
+                AND r.id = #{id}
+            </if>
+            <if test="isValid != null and isValid != ''">
+                AND r.is_valid = #{isValid,jdbcType=INTEGER}
+            </if>
+            <if test="resTypeCode != null and resTypeCode != ''">
+                AND r.res_type_code = #{resTypeCode,jdbcType=VARCHAR}
+            </if>
+            <if test="orgId != null and orgId != ''">
+                AND r.org_id = #{orgId,jdbcType=INTEGER}
+            </if>
+            <if test="regionId != null and regionId != ''">
+                AND r.region_id = #{regionId,jdbcType=INTEGER}
+            </if>
+            <if test="roomId != null and roomId != ''">
+                AND r.room_id = #{roomId,jdbcType=INTEGER}
+            </if>
+            <if test="roomAreaId != null and roomAreaId != ''">
+                AND r.room_area_id = #{roomAreaId,jdbcType=INTEGER}
+            </if>
+            <if test="rackId != null and rackId != ''">
+                AND r.rack_id = #{rackId,jdbcType=INTEGER}
+            </if>
+            <if test="sheft != null and sheft != ''">
+                AND r.sheft = #{sheft,jdbcType=VARCHAR}
+            </if>
+            <if test="assetId != null and assetId != ''">
+                AND r.asset_id = #{assetId,jdbcType=VARCHAR}
+            </if>
+            <if test="model != null and model != ''">
+                AND r.model = #{model,jdbcType=VARCHAR}
+            </if>
+            <if test="tid != null and tid != ''">
+                AND r.tid = #{tid,jdbcType=VARCHAR}
+            </if>
+            <if test="owner != null and owner != ''">
+                AND r.owner = #{owner,jdbcType=VARCHAR}
+            </if>
+            <if test="operator != null and operator != ''">
+                AND r.operator = #{operator,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status != ''">
+                AND r.status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="isPasted != null and isPasted != ''">
+                AND r.is_pasted = #{isPasted,jdbcType=VARCHAR}
+            </if>
+            AND r.is_del = '0'
+        </where>
+        limit 1
+    </select>
+
+    <update id="batchDelDevice" parameterType="list">
+        update res set is_del = '1' where id in (
+            <foreach collection="list" separator="," item="item">
+                #{item}
+            </foreach>
+        )
+    </update>
+
+
+
+    <!--<update id="updateByPrimaryKey" parameterType="com.manage.idc.device.domain.Res" >
+        update res
+        set
+            tid = #{tid,jdbcType=VARCHAR},
+            updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+
+        where id = #{id,jdbcType=INTEGER}
+    </update>-->
+
+</mapper>

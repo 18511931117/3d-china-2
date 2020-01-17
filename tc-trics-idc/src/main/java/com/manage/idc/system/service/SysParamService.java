@@ -1,0 +1,21 @@
+package com.manage.idc.system.service;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.system.domain.SysParam;
+import com.manage.idc.system.domain.SysUser;
+
+public interface SysParamService {
+
+    void add(SysParam sysParam);
+
+    void delete(SysParam sysParam);
+
+    void update(SysParam sysParam);
+
+    PageInfo<SysParam> getPage(SysParam sysParam, PageRequest pageRequest);
+
+    SysParam getParamById(SysParam sysParam);
+
+    SysParam selectOne(SysParam sysParam);
+}

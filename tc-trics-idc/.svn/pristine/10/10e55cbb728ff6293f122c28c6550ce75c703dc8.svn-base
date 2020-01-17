@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" style="border: none;background: none">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" href="../img/favicon.html">
+
+    <title>江苏有线三网融合扭曲中心数据中心-设备线缆管理系统</title>
+
+    <script th:inline="javascript" th:src="@{/js/jquery.js}"></script>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-reset.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+    <style>
+        /*table tr th,table tr th td{*/
+        /*    text-align: center;*/
+        /*}*/
+    </style>
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+</head>
+<script type="text/javascript" th:inline="javascript">
+    ctxPath = /*[[@{/}]]*/ '';
+</script>
+<body style="border: none;background: none">
+            <div class="row-fluid row-top" style="margin-bottom: 15px">
+                <div class="col-sm-12">
+                    <button type="button" class="btn bg-yellow">编辑账号</button>
+                </div>
+
+            </div>
+            <div class="row-fluid">
+                <div class="col-lg-12">
+                    <section class="panel" style="padding: 15px">
+                        <div class="panel-body" style="margin-top: 15px">
+                            <form class="form-horizontal tasi-form" method="get">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">姓名</label>
+                                    <div class="col-sm-10">
+                                        <input type="hidden" th:value="${user.id}" id="userId"/>
+                                        <input type="text" id="name" class="form-control" th:value="${user.name}" placeholder="姓名">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">账号</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="username" class="form-control" th:value="${user.username}" placeholder="账号">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">邮箱</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="email" class="form-control" th:value="${user.email}" placeholder="邮箱">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">工号</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="workNum" class="form-control" th:value="${user.workNum}" placeholder="工号">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">机构</label>
+                                    <div class="col-sm-10">
+                                        <input type="hidden" th:value="${user.getOrgId()}" id="orgId"/>
+                                        <select class="form-control" id="org" name="upOrgSelect">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">角色</label>
+                                    <div class="col-sm-10">
+                                        <input type="hidden" th:value="${roleId}" id="roleId"/>
+                                        <select class="form-control" id="role" name="upRoleSelect">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">密码</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="password" placeholder="密码">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">离职</label>
+                                    <div class="radio" style="float:left;">
+                                        <label style="vertical-align: middle">
+                                            <input type="radio" style="margin-left: 0" name="optionsRadios" id="optionsRadios2" value="0" checked>
+                                            否
+                                        </label>
+                                    </div>
+                                    <div class="radio" style="float:left;">
+
+                                        <label style="vertical-align: middle">
+                                            <input type="radio" style="margin-left: 0" name="optionsRadios" id="optionsRadios1" value="1" >
+                                            是
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="row-fluid col-sm-2 col-sm-offset-10">
+                <button type="button" class="btn bg-yellow" id="edit">确认修改</button>
+
+                <button type="button" class="btn bg-yellow" id="back">返回</button>
+            </div>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+            <script  th:inline="javascript" th:src="@{/3rd/layui/layui.js}"></script>
+            <script th:inline="javascript" th:src="@{/pagejs/system/editUser.js}"></script>
+            <script th:inline="javascript" th:src="@{/pagejs/system/user.js}"></script>
+
+</body>
+</html>

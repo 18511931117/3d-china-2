@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.App.mapper.SysAppFeedbackMapper">
+  <resultMap id="BaseResultMap" type="com.manage.idc.App.domain.SysAppFeedback">
+    <id column="sys_app_feedback_id" jdbcType="BIGINT" property="id" />
+    <result column="sys_app_feedback_user_id" jdbcType="BIGINT" property="userId" />
+    <result column="sys_app_feedback_org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="sys_app_feedback_create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="sys_app_feedback_update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.manage.idc.App.domain.SysAppFeedback">
+    <result column="sys_app_feedback_feedback" jdbcType="LONGVARCHAR" property="feedback" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    sys_app_feedback.id as sys_app_feedback_id, sys_app_feedback.user_id as sys_app_feedback_user_id, 
+    sys_app_feedback.org_id as sys_app_feedback_org_id, sys_app_feedback.create_time as sys_app_feedback_create_time, 
+    sys_app_feedback.update_time as sys_app_feedback_update_time
+  </sql>
+  <sql id="Blob_Column_List">
+    sys_app_feedback.feedback as sys_app_feedback_feedback
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_app_feedback sys_app_feedback
+    where sys_app_feedback.id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sys_app_feedback
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.App.domain.SysAppFeedback" useGeneratedKeys="true">
+    insert into sys_app_feedback (user_id, org_id, create_time, 
+      update_time, feedback)
+    values (#{userId,jdbcType=BIGINT}, #{orgId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{feedback,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.App.domain.SysAppFeedback" useGeneratedKeys="true">
+    insert into sys_app_feedback
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="feedback != null">
+        feedback,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="feedback != null">
+        #{feedback,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.manage.idc.App.domain.SysAppFeedback">
+    update sys_app_feedback
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="feedback != null">
+        feedback = #{feedback,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.manage.idc.App.domain.SysAppFeedback">
+    update sys_app_feedback
+    set user_id = #{userId,jdbcType=BIGINT},
+      org_id = #{orgId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      feedback = #{feedback,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.App.domain.SysAppFeedback">
+    update sys_app_feedback
+    set user_id = #{userId,jdbcType=BIGINT},
+      org_id = #{orgId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,83 @@
+package com.manage.idc.system.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.system.domain.SysRegion;
+import com.manage.idc.system.mapper.SysRegionMapper;
+import com.manage.idc.system.service.SysRegionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/21 13:48
+ **/
+@Service
+public class SysRegionServiceImpl implements SysRegionService {
+
+    @Autowired
+    private SysRegionMapper sysRegionMapper;
+
+    /**
+     * 获取城市字典列表
+     * @param sysRegion
+     * @param pageRequest
+     * @return
+     */
+    @Override
+    public PageInfo<SysRegion> getPage(SysRegion sysRegion, PageRequest pageRequest) {
+        sysRegion.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        if(null != pageRequest && null != pageRequest.getPage() && null != pageRequest.getLimit()){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<SysRegion> list = sysRegionMapper.selectByCondition(DataSetUtile.setQueryMap(sysRegion,pageRequest,null));
+        return new PageInfo<SysRegion>(list);
+    }
+
+    @Override
+    @Transactional
+    public void add(SysRegion sysRegion) {
+        sysRegion.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        sysRegion.setId(IdGen.getUUId());
+        sysRegion.setCreateTime(new Date());
+        sysRegion.setUpdateTime(new Date());
+        sysRegionMapper.insert(sysRegion);
+    }
+
+    @Override
+    @Transactional
+    public void delete(String regionIds) {
+        ArrayList<Long> idList = new ArrayList<>();
+        SysRegion sysRegion = new SysRegion();
+        List<String> strings = Arrays.asList(regionIds.split(","));
+        for (String id :strings ){
+            sysRegion.setId(Long.parseLong(id));
+            sysRegion.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+            sysRegionMapper.updateByPrimaryKeySelective(sysRegion);
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public void update(SysRegion sysRegion) {
+        sysRegion.setUpdateTime(new Date());
+        sysRegionMapper.updateByPrimaryKeySelective(sysRegion);
+    }
+
+    @Override
+    public List<SysRegion> getList(SysRegion sysRegion) {
+        return sysRegionMapper.getList(sysRegion);
+    }
+}

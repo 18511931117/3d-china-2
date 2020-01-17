@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" href="../img/favicon.html">
+
+    <title>设备信息管理</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-reset.css" rel="stylesheet">
+    <!--external css-->
+    <link href="../assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="../assets/gritter/css/jquery.gritter.css" />
+    <!-- Custom styles for this template -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/style-responsive.css" rel="stylesheet" />
+      <link rel="stylesheet" href="../js/data/jeDate-test.css">
+      <link rel="stylesheet" href="../js/data/jedate.css">
+      <link rel="stylesheet" href="https://www.layuicdn.com/layui/css/layui.css">
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+  <section id="container" class="">
+      <!--header start-->
+      <header class="header white-bg">
+          <div class="sidebar-toggle-box">
+              <div data-original-title="Toggle Navigation" data-placement="right" class="icon-reorder tooltips"></div>
+          </div>
+          <!--logo start-->
+          <a href="#" class="logo" >江苏有线</a>
+          <!--logo end-->
+          <div class="top-nav ">
+              <ul class="nav pull-right top-menu">
+                  <li>
+                      <input type="text" class="form-control search" placeholder="Search">
+                  </li>
+                  <!-- user login dropdown start-->
+                  <li class="dropdown">
+                      <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                          <img alt="" src="../img/avatar1_small.jpg">
+                          <span class="username">Jhon Doue</span>
+                          <b class="caret"></b>
+                      </a>
+                      <ul class="dropdown-menu extended logout">
+                          <div class="log-arrow-up"></div>
+
+                          <li><a href="../login.html"><i class="icon-key"></i> Log Out</a></li>
+                      </ul>
+                  </li>
+                  <!-- user login dropdown end -->
+              </ul>
+          </div>
+      </header>
+      <!--header end-->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu">
+                  <li class="">
+                      <a class="" href="../index.html">
+                          <i class="icon-dashboard"></i>
+                          <span>首页</span>
+                      </a>
+                  </li>
+                  <li class="sub-menu active">
+                      <a href="javascript:;" class="">
+                          <i class="icon-book"></i>
+                          <span>设备管理</span>
+                          <span class="arrow"></span>
+                      </a>
+                      <ul class="sub">
+                          <li class="active"><a class="" href="general.html">设备信息管理</a></li>
+                          <li><a class="" href="buttons.html">设备标签绑定</a></li>
+                          <li><a class="" href="widget.html">设备贴标</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon-cogs"></i>
+                          <span>线缆管理</span>
+                          <span class="arrow"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="../label2/grids.html">线缆信息管理</a></li>
+                          <li><a class="" href="../label2/calendar.html">线缆标签绑定</a></li>
+                          <li><a class="" href="../label2/charts.html">线缆贴标</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon-tasks"></i>
+                          <span>任务管理</span>
+                          <span class="arrow"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="../task/form_component.html">盘点任务</a></li>
+                          <li><a class="" href="../task/form_wizard.html">调拨任务</a></li>
+                          <li><a class="" href="../task/form_validation.html">借用任务</a></li>
+                          <li><a class="" href="../task/form_task.html">维修任务</a></li>
+                          <li><a class="" href="../task/tabledetail.html">报废任务</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon-th"></i>
+                          <span>日志管理</span>
+                          <span class="arrow"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="../log/basic_table.html">盘点任务日志</a></li>
+                          <li><a class="" href="../log/basic_table2.html">调拨任务日志</a></li>
+                          <li><a class="" href="../log/basic_table3.html">借用任务日志</a></li>
+                          <li><a class="" href="../log/basic_table4.html">维修任务日志</a></li>
+                          <li><a class="" href="../log/basic_table5.html">操作日志</a></li>
+                          <li><a class="" href="../log/basic_table6.html">告警日志</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon-glass"></i>
+                          <span>系统管理</span>
+                          <span class="arrow"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="" href="../system/user.html">账号管理</a></li>
+                          <li><a class="" href="../system/role.html">角色管理</a></li>
+                          <li><a class="" href="../system/menu.html">菜单管理</a></li>
+                          <li><a class="" href="../system/profile.html">机构管理</a></li>
+                          <li><a class="" href="../system/invoice.html">机房管理</a></li>
+                          <li><a class="" href="../system/jjmangt.html">机架管理</a></li>
+                          <li><a class="" href="../system/fenclass.html">设备分类管理</a></li>
+                          <li><a class="" href="../system/lablemangt.html">标签管理</a></li>
+                          <li><a class="" href="../system/3djfang.html">3D机房</a></li>
+                          <li><a class="" href="../404.html">404 Error</a></li>
+                          <li><a class="" href="../500.html">500 Error</a></li>
+                      </ul>
+                  </li>
+                  <li>
+                      <a class="" href="../login.html">
+                          <i class="icon-user"></i>
+                          <span>Login Page</span>
+                      </a>
+                  </li>
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+              <div class="row">
+                  <div class="col-lg-12">
+                      <section class="panel">
+                          <header class="panel-heading">
+                              设备信息管理
+                          </header>
+                      </section>
+
+                  </div>
+              </div>
+              <div class="row" style="margin-bottom: 15px">
+                <div class="col-sm-10">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">添加设备</button>
+                    <button type="button" class="btn btn-info"><a href="./import.html" style="color: #fff">批量导入</a> </button>
+<!--                    <button type="button" class="btn btn-info" onclick="task_submit()">添加任务</button>-->
+<!--                    <button type="button" class="btn btn-info" onclick="addtask_submit()">加入任务</button>-->
+                    <button type="button" class="btn btn-info" >批量导出</button>
+                    <button type="button" class="btn btn-info" onclick="del_more()">批量删除</button>
+                </div>
+                  <div class="col-sm-2">
+                      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#openFilter">打开筛选</button>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="row-fulid">
+                      <div class="col-lg-12">
+                          <section class="panel">
+                              <table class="layui-hide" id="demo" lay-filter="demo"></table>
+                              <script type="text/html" id="barDemo">
+                                  <a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>
+                                  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                                  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                                  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="fang">解绑</a>
+                              </script>
+                          </section>
+
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+
+      </section>
+      <!--main content end-->
+<!--      弹出层-->
+      <section>
+<!--          添加设备弹出层-->
+          <div id="content3814" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                      <div style="padding: 15px">
+                          <div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">所在机房</label>
+                                      <div class="">
+                                          <select class="form-control">
+                                              <option>M2机房</option>
+                                          </select>
+                                      </div>
+
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">所在机架</label>
+                                      <input type="email" class="form-control" id="" placeholder="所在机架">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">机位</label>
+                                      <input type="email" class="form-control" id="" placeholder="机位">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">设备类型</label>
+                                      <input type="email" class="form-control" id="" placeholder="设备类型">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">设备名称</label>
+                                      <input type="email" class="form-control" id="" placeholder="设备名称">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">资产编号</label>
+                                      <input type="email" class="form-control" id="" placeholder="资产编号">
+                                  </div>
+                              </div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">tid</label>
+                                      <input type="email" class="form-control" id="" placeholder="tid">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">所有人</label>
+                                      <input type="email" class="form-control" id="" placeholder="所有人">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">操作员</label>
+                                      <input type="email" class="form-control" id="" placeholder="操作员">
+                                  </div>
+                              </div>
+                          </div>
+                          <div>
+                              <div class="row-fulid" style="background: #00a6b2;margin: 15px 0">
+                                  <header style="color: #fff;padding: 5px";>基本信息</header>
+                              </div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">采购单位</label>
+                                      <input type="email" class="form-control" id="" placeholder="采购单位">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">使用单位</label>
+                                      <input type="email" class="form-control" id="" placeholder="使用单位">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">采购日期</label>
+                                      <input type="email" class="form-control" id="" placeholder="采购日期">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">项目编号</label>
+                                      <input type="email" class="form-control" id="" placeholder="项目编号">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">项目名称</label>
+                                      <input type="email" class="form-control" id="" placeholder="项目名称">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">合同编号/订单编号</label>
+                                      <input type="email" class="form-control" id="" placeholder="合同编号/订单编号">
+                                  </div>
+                              </div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">合同名称</label>
+                                      <input type="email" class="form-control" id="" placeholder="合同名称">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">合同金额</label>
+                                      <input type="email" class="form-control" id="" placeholder="合同金额">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">出厂日期</label>
+                                      <input type="email" class="form-control" id="" placeholder="出厂日期">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">到货日期</label>
+                                      <input type="email" class="form-control" id="" placeholder="到货日期">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">初验日期</label>
+                                      <input type="email" class="form-control" id="" placeholder="初验日期">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">终验日期</label>
+                                      <input type="email" class="form-control" id="" placeholder="终验日期">
+                                  </div>
+                              </div>
+                          </div>
+                          <div>
+                              <div class="row-fulid" style="background: #00a6b2;margin: 15px 0">
+                                  <header style="color: #fff;padding: 5px";>状态信息</header>
+                              </div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">使用状态</label>
+                                      <input type="email" class="form-control" id="" placeholder="使用状态">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">位置信息-地址</label>
+                                      <input type="email" class="form-control" id="" placeholder="位置信息-地址">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">位置信息-楼宇编号</label>
+                                      <input type="email" class="form-control" id="" placeholder="位置信息-楼宇编号">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">位置信息-楼层编号</label>
+                                      <input type="email" class="form-control" id="" placeholder="位置信息-楼层编号">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">位置信息-槽位ID</label>
+                                      <input type="email" class="form-control" id="" placeholder="位置信息-槽位ID">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">业务信息</label>
+                                      <input type="email" class="form-control" id="" placeholder="业务信息">
+                                  </div>
+                              </div>
+                          </div>
+                          <div>
+                              <div class="row-fulid" style="background: #00a6b2;margin: 15px 0">
+                                  <header style="color: #fff;padding: 5px";>硬件规格</header>
+                              </div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">板卡槽位</label>
+                                      <input type="email" class="form-control" id="" placeholder="板卡槽位">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">板卡类型</label>
+                                      <input type="email" class="form-control" id="" placeholder="板卡类型">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">端口类型1</label>
+                                      <input type="email" class="form-control" id="" placeholder="端口类型1">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">端口数量1</label>
+                                      <input type="email" class="form-control" id="" placeholder="端口数量1">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">端口类型2</label>
+                                      <input type="email" class="form-control" id="" placeholder="端口类型2">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">端口数量2</label>
+                                      <input type="email" class="form-control" id="" placeholder="端口数量2">
+                                  </div>
+                              </div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">端口类型3</label>
+                                      <input type="email" class="form-control" id="" placeholder="端口类型3">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">端口数量3</label>
+                                      <input type="email" class="form-control" id="" placeholder="端口数量3">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">端口类型4</label>
+                                      <input type="email" class="form-control" id="" placeholder="端口类型4">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">端口数量4</label>
+                                      <input type="email" class="form-control" id="" placeholder="端口数量4">
+                                  </div>
+                              </div>
+                          </div>
+                          <div>
+                              <div class="row-fulid" style="background: #00a6b2;margin: 15px 0">
+                                  <header style="color: #fff;padding: 5px";>使用信息</header>
+                              </div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">维保状态</label>
+                                      <div class="">
+                                          <select class="form-control">
+                                              <option>M2机房</option>
+                                              <option>M2机房</option>
+                                          </select>
+                                      </div>
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">维保到期时间</label>
+                                      <input type="email" class="form-control" id="" placeholder="维保到期时间">
+                                  </div>
+                              </div>
+                          </div>
+                          <div>
+                              <div class="row-fulid" style="background: #00a6b2;margin: 15px 0">
+                                  <header style="color: #fff;padding: 5px";>财务信息</header>
+                              </div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">财务入账日期</label>
+                                      <input type="email" class="form-control" id="" placeholder="财务入账日期">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">资产原值</label>
+                                      <input type="email" class="form-control" id="" placeholder="资产原值">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">已折旧期间数</label>
+                                      <input type="email" class="form-control" id="" placeholder="已折旧期间数">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">预计使用期间数</label>
+                                      <input type="email" class="form-control" id="" placeholder="预计使用期间数">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">本期实提折旧额</label>
+                                      <input type="email" class="form-control" id="" placeholder="本期实提折旧额">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">累计折旧</label>
+                                      <input type="email" class="form-control" id="" placeholder="累计折旧">
+                                  </div>
+                              </div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">本年累计折旧</label>
+                                      <input type="email" class="form-control" id="" placeholder="本年累计折旧">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">净值</label>
+                                      <input type="email" class="form-control" id="" placeholder="净值">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">折旧方法</label>
+                                      <input type="email" class="form-control" id="" placeholder="折旧方法">
+                                  </div>
+                              </div>
+                          </div>
+                          <div>
+                              <div class="row-fulid" style="background: #00a6b2;margin: 15px 0">
+                                  <header style="color: #fff;padding: 5px";>测试信息</header>
+                              </div>
+                              <div class="row">
+                                  <div class="form-group col-sm-2">
+                                      <label for="">财务入账日期</label>
+                                      <input type="email" class="form-control" id="" placeholder="财务入账日期">
+                                  </div>
+                              </div>
+                          </div>
+                          <div style="width: 100%;text-align: center">
+                              <button type="button" class="btn btn-info">完成筛选</button>
+                          </div>
+                      </div>
+          </div>
+          <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog" style="width: 60%">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                              &times;
+                          </button>
+                          <h4 class="modal-title" id="myModalLabel">
+                              添加设备
+                          </h4>
+                      </div>
+                      <div class="modal-body">
+                          <form class="form-horizontal tasi-form" method="get">
+                              <div class="form-group">
+                                  <label class="control-label col-lg-2">所在机房</label>
+                                  <div class="col-lg-10">
+                                      <select class="form-control">
+                                          <option>江苏有线</option>
+                                          <option>播控中心</option>
+                                          <option>科室一</option>
+                                          <option>IT部</option>
+                                          <option>运维中心</option>
+                                          <option>南京分公司</option>
+                                          <option>播控运维中心</option>
+                                          <option>科室二</option>
+                                          <option>扬州有线</option>
+                                      </select>
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label class="control-label col-lg-2">所在机架</label>
+                                  <div class="col-lg-10">
+                                      <select class="form-control">
+                                          <option>GUc0101</option>
+                                      </select>
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label class="col-sm-2 control-label">机位</label>
+                                  <div class="col-sm-10">
+                                      <input type="text" class="form-control" placeholder="机位">
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label class="control-label col-lg-2">设备类型</label>
+                                  <div class="col-lg-10">
+                                      <select class="form-control">
+                                          <option>服务器</option>
+                                          <option>播控中心</option>
+                                          <option>科室一</option>
+                                          <option>IT部</option>
+                                          <option>运维中心</option>
+                                          <option>南京分公司</option>
+                                          <option>播控运维中心</option>
+                                          <option>科室二</option>
+                                          <option>扬州有线</option>
+                                      </select>
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label class="col-sm-2 control-label">设备名称</label>
+                                  <div class="col-sm-10">
+                                      <input type="text" class="form-control" placeholder="设备名称">
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label class="col-sm-2 control-label">资产编号</label>
+                                  <div class="col-sm-10">
+                                      <input type="text" class="form-control" placeholder="资产编号">
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label class="col-sm-2 control-label">tid</label>
+                                  <div class="col-sm-10">
+                                      <input type="text" class="form-control" placeholder="tid">
+                                  </div>
+                              </div>
+
+                              <div class="form-group">
+                                  <label class="col-sm-2 control-label">所有人</label>
+                                  <div class="col-sm-10">
+                                      <input type="text" class="form-control" placeholder="所有人">
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <label class="col-sm-2 control-label">操作员</label>
+                                  <div class="col-sm-10">
+                                      <input type="text" class="form-control" placeholder="操作员">
+                                  </div>
+                              </div>
+                          </form>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                          </button>
+                          <button type="button" class="btn btn-primary">
+                              提交更改
+                          </button>
+                      </div>
+                  </div><!-- /.modal-content -->
+              </div><!-- /.modal -->
+          </div>
+          <div class="modal fade" id="openFilter" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog" style="width: 90%">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                              &times;
+                          </button>
+                          <h4 class="modal-title">
+                              筛选详情
+                          </h4>
+                      </div>
+                      <form id="formTestFilter" form class="layui-form modal-body" lay-filter="example">
+                              <div class="row">
+                                  <div class="layui-form-item form-group col-sm-2">
+                                      <label class="" >设备名称</label>
+                                      <input type="text"  name="shebei" class="layui-input form-control" lay-verify="title" placeholder="设备名称">
+                                  </div>
+                                  <!-- <div class="">
+                                    <label class="layui-form-label">设备名称</label>
+                                    <div class="layui-input-block">
+                                      <input type="text" name="shebei" lay-verify="title"  placeholder="设备名称" class="layui-input">
+                                    </div>
+                                  </div> -->
+                                  <div class=" form-group col-sm-2">
+                                      <label for="">机房</label>
+                                      <div class="">
+                                          <select class="form-control" name="jifang">
+                                              <option value="男">男</option>
+                                              <option value="女">女</option>
+                                          </select>
+                                      </div>
+                                  </div>
+                                  <div class=" form-group col-sm-2">
+                                      <label for="">设备类型</label>
+                                      <div class="">
+                                          <select class="form-control">
+                                              <option value="1">M2机房</option>
+                                          </select>
+                                      </div>
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">采购单位</label>
+                                      <input type="text" name="caigoudanwei" class="form-control" id="" placeholder="采购单位">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">使用单位</label>
+                                      <input type="email" class="form-control" id="" placeholder="使用单位">
+                                  </div>
+                                  <div class="form-group col-sm-2">
+                                      <label for="">品牌/制造商</label>
+                                      <input type="email" class="form-control" id="" placeholder="品牌/制造商">
+                                  </div>
+                              </div>
+                            <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">代理/供货商</label>
+                                  <input type="email" class="form-control" id="" placeholder="代理/供货商">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">型号</label>
+                                  <input type="email" class="form-control" id="" placeholder="型号">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">状态</label>
+                                  <div class="">
+                                      <select class="form-control">
+                                          <option>在线</option>
+                                      </select>
+                                  </div>
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">地址</label>
+                                  <input type="email" class="form-control" id="" placeholder="地址">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">楼宇编号</label>
+                                  <input type="email" class="form-control" id="" placeholder="楼宇编号">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">楼层编号</label>
+                                  <input type="email" class="form-control" id="" placeholder="楼层编号">
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">机架</label>
+                                  <input type="email" class="form-control" id="" placeholder="机架">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">机柜U位</label>
+                                  <input type="email" class="form-control" id="" placeholder="机柜U位">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">业务信息</label>
+                                  <input type="email" class="form-control" id="" placeholder="业务信息">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">资产编号</label>
+                                  <input type="email" class="form-control" id="" placeholder="资产编号">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">维保状态</label>
+                                  <div class="">
+                                      <select class="form-control">
+                                          <option>在线</option>
+                                      </select>
+                                  </div>
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">TID</label>
+                                  <input type="email" class="form-control" id="" placeholder="TID">
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">所有人</label>
+                                  <input type="email" class="form-control" id="" placeholder="所有人">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">操作员</label>
+                                  <input type="email" class="form-control" id="" placeholder="操作员">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">采购单位</label>
+                                  <input type="email" class="form-control" id="" placeholder="采购单位">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">使用单位</label>
+                                  <input type="email" class="form-control" id="" placeholder="使用单位">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">项目编号</label>
+                                  <input type="email" class="form-control" id="" placeholder="项目编号">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">项目名称</label>
+                                  <input type="email" class="form-control" id="" placeholder="项目名称">
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">合同编号/订单编号</label>
+                                  <input type="email" class="form-control" id="" placeholder="合同编号/订单编号">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">合同名称</label>
+                                  <input type="email" class="form-control" id="" placeholder="合同名称">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">合同金额</label>
+                                  <input type="email" class="form-control" id="" placeholder="合同金额">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">使用状态</label>
+                                  <input type="email" class="form-control" id="" placeholder="使用状态">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">板卡槽位</label>
+                                  <input type="email" class="form-control" id="" placeholder="板卡槽位">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">板卡类型</label>
+                                  <input type="email" class="form-control" id="" placeholder="板卡类型">
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">端口类型</label>
+                                  <input type="email" class="form-control" id="" placeholder="端口类型">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">端口数量</label>
+                                  <input type="email" class="form-control" id="" placeholder="端口数量">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">项目名称</label>
+                                  <input type="email" class="form-control" id="" placeholder="项目名称">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">资产原值</label>
+                                  <input type="email" class="form-control" id="" placeholder="资产原值">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">已折旧期间数</label>
+                                  <input type="email" class="form-control" id="" placeholder="已折旧期间数">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">预计使用期间数</label>
+                                  <input type="email" class="form-control" id="" placeholder="预计使用期间数">
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="form-group col-sm-2">
+                                  <label for="">本期实提折旧额</label>
+                                  <input type="email" class="form-control" id="" placeholder="本期实提折旧额">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">累计折旧</label>
+                                  <input type="email" class="form-control" id="" placeholder="累计折旧">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">本年累计折旧</label>
+                                  <input type="email" class="form-control" id="" placeholder="本年累计折旧">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">净值</label>
+                                  <input type="email" class="form-control" id="" placeholder="净值">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">折旧方法</label>
+                                  <input type="email" class="form-control" id="" placeholder="折旧方法">
+                              </div>
+                              <div class="form-group col-sm-2">
+                                  <label for="">标签编号</label>
+                                  <input type="email" class="form-control" id="" placeholder="标签编号">
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-sm-4">
+                                  <label class="jelabel" style="display: block;text-align: left;float:none;">出厂日期</label>
+                                  <div class="jeinpbox">
+                                      <input type="text" class="jeinput" id="test01" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block;">-
+                                      <input type="text" class="jeinput" id="test02" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block">
+                                  </div>
+
+                              </div>
+                              <div class="col-sm-4">
+                                  <label class="jelabel" style="display: block;text-align: left;float:none;">采购日期</label>
+                                  <div class="jeinpbox">
+                                      <input type="text" class="jeinput" id="test03" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block;">-
+                                      <input type="text" class="jeinput" id="test04" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block">
+                                  </div>
+
+                              </div>
+                              <div class="col-sm-4">
+                                  <label class="jelabel" style="display: block;text-align: left;float:none;">到货日期</label>
+                                  <div class="jeinpbox">
+                                      <input type="text" class="jeinput" id="test05" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block;">-
+                                      <input type="text" class="jeinput" id="test06" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block">
+                                  </div>
+
+                              </div>
+
+                          </div>
+                          <div class="row">
+                              <div class="col-sm-4">
+                                  <label class="jelabel" style="display: block;text-align: left;float:none;">初验日期</label>
+                                  <div class="jeinpbox">
+                                      <input type="text" class="jeinput" id="test07" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block;">-
+                                      <input type="text" class="jeinput" id="test08" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block">
+                                  </div>
+
+                              </div>
+                              <div class="col-sm-4">
+                                  <label class="jelabel" style="display: block;text-align: left;float:none;">终验日期</label>
+                                  <div class="jeinpbox">
+                                      <input type="text" class="jeinput" id="test09" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block;">-
+                                      <input type="text" class="jeinput" id="test10" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block">
+                                  </div>
+
+                              </div>
+                              <div class="col-sm-4">
+                                  <label class="jelabel" style="display: block;text-align: left;float:none;">维保到期</label>
+                                  <div class="jeinpbox">
+                                      <input type="text" class="jeinput" id="test11" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block;">-
+                                      <input type="text" class="jeinput" id="test12" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block">
+                                  </div>
+
+                              </div>
+
+                          </div>
+                          <div class="row">
+                              <div class="col-sm-4">
+                                  <label class="jelabel" style="display: block;text-align: left;float:none;">财务入账日期</label>
+                                  <div class="jeinpbox">
+                                      <input type="text" class="jeinput" id="test13" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block;">-
+                                      <input type="text" class="jeinput" id="test14" placeholder="YYYY-MM-DD" style="width: 110px;display: inline-block">
+                                  </div>
+
+                              </div>
+                          </div>
+                        </form>
+                      <div class="data">
+
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                          </button>
+                          <button type="button" class="btn btn-primary">
+                              确认筛选
+                          </button>
+                      </div>
+                  </div><!-- /.modal-content -->
+              </div><!-- /.modal -->
+          </div>
+      </section>
+  </section>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="../js/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.scrollTo.min.js"></script>
+    <script src="../js/jquery.nicescroll.js" type="text/javascript"></script>
+<!--    <script type="text/javascript" src="../assets/gritter/js/jquery.gritter.js"></script>-->
+
+  <script type="text/javascript" src="../assets/data-tables/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="../assets/data-tables/DT_bootstrap.js"></script>
+
+  <!--common script for all pages-->
+  <script src="../js/common-scripts.js"></script>
+
+    <script src="../js/data/jedate.js"></script>
+    <script src="https://www.layuicdn.com/layui/layui.js"></script>
+
+    <script>
+        jeDate("#test01",{
+            //onClose:false,
+            format: "YYYY-DD-MM"
+        });
+        jeDate("#test02",{
+            //onClose:false,
+            format: "YYYY-DD-MM"
+        });
+        jeDate("#test03",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+        jeDate("#test04",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+        jeDate("#test05",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+        jeDate("#test06",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+        jeDate("#test07",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+        jeDate("#test08",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+
+        jeDate("#test09",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+
+        jeDate("#test10",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+
+        jeDate("#test11",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+        jeDate("#test12",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+        jeDate("#test13",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+        jeDate("#test14",{
+            //onClose:false,
+
+            format: "YYYY-DD-MM"
+        });
+
+    // 添加任务
+        function task_submit() {
+            var check_data = []
+            var i = 0
+            $.each($("input:checkbox"),function () {
+                if(this.checked){
+                    check_data[i] = $(this).val()
+                    i = i+1
+                    chref = "create.html?res_id=" + check_data;
+                    window.location.href = chref;
+                }
+
+            })
+        }
+    // 加入任务
+        function addtask_submit() {
+            var check_data = []
+            var i = 0
+            $.each($("input:checkbox"),function () {
+                if(this.checked){
+                    check_data[i] = $(this).val()
+                    i = i+1
+
+                }
+                chref = "add_task.html?res_id=" + check_data;
+                window.location.href = chref;
+            })
+        }
+
+        //批量删除
+        function del_more() {
+            var check_data = [];
+            var i = 0;
+            var data1 = "";
+            $.each($('input:checkbox'), function () {
+                if (this.checked) {
+                    check_data[i] = $(this).val();
+                    i = i + 1;
+                    data1 += $(this).val();
+                    data1 += ",";
+                }
+            });
+            console.log(check_data)
+        }
+
+            //alert(check_data);
+
+        layui.use('table', function(){
+            var table = layui.table;
+
+            table.render({
+                elem: '#demo'
+                // ,url:'table.json'
+                ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                ,cols: [[
+                    {type:'checkbox'},
+                    {field:'设备名称',title: '设备名称', }
+                    ,{field:'设备分类', title: '设备分类'}
+                    ,{field:'机房', title: '机房', }
+                    ,{field:'机架', title: '机架'}
+                    ,{field:'机位', title: '机位',} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                    ,{field:'所有人', title: '所有人', }
+                    ,{field:'显示状态', title: '显示状态', }
+                    ,{field:'标签编号', title: '标签编号'}
+                    ,{field:'操作', title: '操作',width:240, toolbar: '#barDemo'}
+                ]],
+                data:[
+                    {
+                        "设备名称":10000,
+                        "设备分类":"user-0",
+                        "机房":"女",
+                        "机架":"城市-0",
+                        "机位":"签名-0",
+                        "所有人":255,
+                        "显示状态":24,
+                        "标签编号":82830700,
+                    },
+                    {
+                        "设备名称":10000,
+                        "设备分类":"user-0",
+                        "机房":"女",
+                        "机架":"城市-0",
+                        "机位":"签名-0",
+                        "所有人":255,
+                        "显示状态":24,
+                        "标签编号":82830700,
+                    },
+                    {
+                        "设备名称":10000,
+                        "设备分类":"user-0",
+                        "机房":"女",
+                        "机架":"城市-0",
+                        "机位":"签名-0",
+                        "所有人":255,
+                        "显示状态":24,
+                        "标签编号":82830700,
+                    },
+                    {
+                        "设备名称":10000,
+                        "设备分类":"user-0",
+                        "机房":"女",
+                        "机架":"城市-0",
+                        "机位":"签名-0",
+                        "所有人":255,
+                        "显示状态":24,
+                        "标签编号":82830700,
+                    },
+                    {
+                        "设备名称":10000,
+                        "设备分类":"user-0",
+                        "机房":"女",
+                        "机架":"城市-0",
+                        "机位":"签名-0",
+                        "所有人":255,
+                        "显示状态":24,
+                        "标签编号":82830700,
+                    },
+                    {
+                        "设备名称":10000,
+                        "设备分类":"user-0",
+                        "机房":"女",
+                        "机架":"城市-0",
+                        "机位":"签名-0",
+                        "所有人":255,
+                        "显示状态":24,
+                        "标签编号":82830700,
+                    },
+                    {
+                        "设备名称":10000,
+                        "设备分类":"user-0",
+                        "机房":"女",
+                        "机架":"城市-0",
+                        "机位":"签名-0",
+                        "所有人":255,
+                        "显示状态":24,
+                        "标签编号":82830700,
+                    },
+                    {
+                        "设备名称":10000,
+                        "设备分类":"user-0",
+                        "机房":"女",
+                        "机架":"城市-0",
+                        "机位":"签名-0",
+                        "所有人":255,
+                        "显示状态":24,
+                        "标签编号":82830700,
+                    },
+                    {
+                        "设备名称":10000,
+                        "设备分类":"user-0",
+                        "机房":"女",
+                        "机架":"城市-0",
+                        "机位":"签名-0",
+                        "所有人":255,
+                        "显示状态":24,
+                        "标签编号":82830700,
+                    },
+                    {
+                        "设备名称":10000,
+                        "设备分类":"user-0",
+                        "机房":"女",
+                        "机架":"城市-0",
+                        "机位":"签名-0",
+                        "所有人":255,
+                        "显示状态":24,
+                        "标签编号":82830700,
+                    }
+                ]
+                ,page: true
+            });
+
+            table.on('checkbox(demo)', function(obj){
+                console.log(obj)
+            });
+            //监听工具条
+            table.on('tool(demo)', function(obj){
+                var data = obj.data;
+                console.log(obj.event)
+                if(obj.event === 'detail'){
+                    layer.msg('ID：'+ data.id + ' 的查看操作');
+                } else if(obj.event === 'del'){
+                    layer.confirm('真的删除行么', function(index){
+                        obj.del();
+                        layer.close(index);
+                    });
+                } else if(obj.event === 'edit'){
+                        layer.open({
+                        //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                        type:1,
+                        title:"修改用户信息",
+                        area: ['80%','80%'],
+                        content:$("#content3814").html()
+                    });
+                    setFormValue(data);//动态向表单赋值
+                        console.log("123123")
+                    // layer.alert('编辑行：<br>'+ JSON.stringify(data))
+                }
+            });
+        });
+     
+        function setFormValue(data){
+            layui.use(['form', 'layedit', 'laydate'], function(){
+                var form = layui.form
+                console.log(data)
+                form.val('example', {
+                    "shebei": data.设备名称// "name": "value"
+                    ,"password": "123456"
+                    ,"interest": 1
+                    ,"caigoudanwei": data.标签编号 //复选框选中状态
+                    ,"close": true //开关状态
+                    ,"sex": "女"
+                    ,"desc": "我爱 layui"
+                });
+                form.render(null,'example')
+            })
+           
+ 
+ 
+  		}
+
+    </script>
+  <!--script for this page only-->
+<!--  <script src="../js/dynamic-table.js"></script>-->
+
+    <!--common script for all pages-->
+
+    <!--script for this page only-->
+<!--    <script src="../js/gritter.js" type="text/javascript"></script>-->
+
+  </body>
+</html>

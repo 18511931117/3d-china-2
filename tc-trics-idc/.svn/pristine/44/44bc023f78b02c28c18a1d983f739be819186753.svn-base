@@ -1,0 +1,324 @@
+// layui.use('table', function(){
+//     var table = layui.table;
+//
+//     table.render({
+//         elem: '#test'
+//         ,url:'/alarmLog/getPage'
+//         ,title: '用户数据表'
+//         ,cols: [[
+//             {type: 'checkbox'},
+//             {field: 'id', title: 'ID',}
+//             , {field: 'resName', title: '资源'}
+//             , {field: 'roomName', title: '机房',}
+//             , {field: 'orgName', title: '组织'}
+//             , {field: 'realmName', title: '域名'}
+//             , {field: 'userName', title: '所有者'}
+//             , {field: 'userName', title: '操作者'}
+//             , {field: 'state', title: '状态'}
+//             ,{field: 'createTime', title: '开始时间' ,templet: function(d){
+//                     var dateee = new Date(d.createTime).toJSON();
+//                     var date = new Date(+new Date(dateee)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
+//                     return date;
+//                 }
+//
+//             }
+//             , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+//         ]]
+//         ,page: true
+//     });
+//
+//     //监听行工具事件
+//     table.on('tool(test)', function(obj){
+//         var data = obj.data;
+//         //console.log(obj)
+//         if(obj.event === 'export') {
+//             layer.msg("这是导出")
+//         }
+//     });
+// });
+
+
+
+function infoModel(resId) {
+
+    var columns = [
+        {field: 'state', title: '状态',formatter:function (value, row, index) {
+                if(row.state==0){
+                    return '解除'
+                }else if(row.state==1){
+                    return '未解除'
+                }else{
+                   return '正常'
+                }
+            }}
+        , {field: 'orgName', title: '设备所属机构'}
+        , {field: 'roomName', title: '告警机房'}
+        , {field: 'resName', title: '告警设备'}
+        , {field: 'resRoomName', title: '设备所属机房'}
+        , {field: 'remark', title: '告警信息'}
+        ,{field: 'createTime', title: '告警时间' ,formatter: function(value, row, index){
+                return date(row.createTime);
+            }
+        }
+    ];
+    $('#infoTable').bootstrapTable('destroy');
+    loadTable($('#infoTable'),columns,ctxPath+'alarmLog/getResInfoLog?resId='+resId+"&state="+$(":input[name='state']").val());
+    $("#infoButton").click();
+
+}
+
+
+function handleModel (id,roomCount){
+    var str = "";
+    $.get(
+        ctxPath+'alarmLog/checkLogTask?id='+id,
+        function (data) {
+            if(data.code == '0'){
+                $(":input[name='hanleState']").html("");
+                if(roomCount > 1 && data.data != 1){
+                    str = "<option value=''>请选择</option>" +
+                        "<option value='0'>调拨</option>" +
+                        "<option value='1'>借调</option>" +
+                       /* "<option value='2'>报废</option>" +
+                        "<option value='3'>维修</option>" +*/
+                        "<option value='4'>其他</option>";
+                }else{
+                    str = "<option value=''>请选择</option>" +
+                        "<option value='4'>其他</option>";
+                }
+                $(":input[name='hanleState']").append(str);
+                $(":input[name='hanleState']").selectpicker('refresh');
+                $("#handleForm").find(":input[name='logId']").val(id)
+                $("#handleButton").click();
+            }
+
+        }
+    )
+
+
+}
+
+$(function () {
+   /* loadRole("roleIds");
+    $('#role').selectpicker({
+        'selectedText': 'cat'
+    });
+*/
+
+    
+    /*$("button[name='add_button']").click(function () {
+        var ids = $("#role").val();
+        $.post(
+            ctxPath +"alarmLog/addLogRole",
+            {'orgId':$(":input[name='orgId']").val(),'ids':ids.toString()},
+            function(data) {
+                if(data.code == '0'){
+                    alert("添加成功!");
+                    $("#importModel").find("button[name='close']").click();
+                }else{
+                    alert("添加失败!");
+                }
+            })
+    })
+*/
+
+   /* $.get(
+        ctxPath +"org/getOrgSelectTree",
+        function(data) {
+            var bean = data.data;
+            if (data.code == '200') {
+                $("#add").find("[name='orgTree']").treeview({
+                    showCheckbox: false,
+                    data: bean,
+                    onNodeSelected: function (event, node) {
+                        var orgId = node.id;
+                        $(":input[name='orgId']").val(orgId);
+                        /!*$("#addDevForm").find(":input[name='orgId']").val(orgId);
+                        loadRoomSelect($("#addDevForm").find(":input[name='roomId']"), '', orgId);
+                        $("#addDevForm").find(":input[name='rackId']").html("<option value=''>请先选择机房</option>");*!/
+                        $.get(
+                            ctxPath +"alarmLog/findUserRoleByOrg?orgId="+orgId,
+                            function(data) {
+                                if(data.code == '0'){
+                                    var list = data.data;
+                                    var values = "";
+                                    for (var i = 0;i<list.length;i++){
+                                        values += "," + list[i];
+                                    }
+                                    values.substring(1);
+                                    $("#role").selectpicker("val",values.split(','));
+                                }
+                            }
+                        )
+                    },
+                    onNodeUnselected: function (event, node) {
+                        $("#addDevForm").find(":input[name='orgId']").val("");
+                        $("#addDevForm").find(":input[name='roomId']").html("<option value=''>请先选择机构</option>");
+                        $("#addDevForm").find(":input[name='rackId']").html("<option value=''>请先选择机房</option>");
+                    }
+                })
+            }
+        })*/
+
+    function getQuery () {
+        var data = {'state':$("select[name='state']").val(),'action':$("select[name='action']").val()}
+        return data;
+    }
+
+    
+    $("button[name='commit_button']").click(function () {
+        var data = $("#handleForm").serializeObject();
+        if(checkNull($("#handleForm"),data)){
+            $.post(
+                ctxPath+'alarmLog/handleLog',
+                data,
+                function (data) {
+                    if(data.code == '0'){
+                        alert("处理成功");
+                        $("#handleModel").find("button[name='close']").click();
+                        $("button[name='search_btn']").click();
+                    }else{
+                        alert("处理失败");
+                    }
+                }
+            )
+        }
+
+        //if(checkNull($("#handleForm"),data)){
+
+        //}
+    })
+
+
+
+    function addFunctionAlty(value, row, index) {
+        var data = [
+            '<button id="info" type="button" class="btn bg-yellow table-btn"  onclick="infoModel(&apos;'+value+'&apos;)">详情</button>'
+        ];
+        if(row.state == '1' && row.resOrgId == $("#orgId").text()){
+            data.push('<button id="edit" type="button" class="btn bg-yellow table-btn" onclick="handleModel(&apos;'+row.id+'&apos;,&apos;'+row.roomCount+'&apos;)">处理</button>');
+        }
+        return data.join('');
+    }
+    
+    
+
+
+
+    var columns = [
+        {field: 'state', title: '状态',formatter:function (value, row, index) {
+                if(row.state==0){
+                    return '解除'
+                }else if(row.state==1){
+                    return '未解除'
+                }else{
+                    return '正常'
+                }
+            }}
+        , {field: 'orgName', title: '设备所属机构'}
+        , {field: 'resRoomName', title: '设备所属机房'}
+        , {field: 'remark', title: '告警信息',formatter: function(value, row, index){
+                return "["+row.resName+"]设备被检测到异常信息";
+            }}
+        ,{field:'resId', title: '操作',formatter: addFunctionAlty, }
+    ];
+
+
+    $("button[name='search_btn']").click(function () {
+        var colum ;
+        if($("select[name='state']").val() == '0'){
+            colum = [
+                {field: 'state', title: '状态',formatter:function (value, row, index) {
+                        if(row.state==0){
+                            return '解除'
+                        }else if(row.state==1){
+                            return '未解除'
+                        }else{
+                            return '正常'
+                        }
+                    }}
+                , {field: 'orgName', title: '设备所属机构'}
+                , {field: 'resRoomName', title: '设备所属机房'}
+                , {field: 'remark', title: '告警信息',formatter: function(value, row, index){
+                        return "["+row.resName+"]设备被检测";
+                    }}
+                ,{field: 'hanleState', title: '处理类型',formatter:function (value, row, index) {
+                    if(value==0){
+                        return '调拨'
+                    }else if(value==1){
+                        return '借调'
+                    }else if(value==2){
+                        return '报废'
+                    }else if(value==3){
+                        return '维修'
+                    }else{
+                        return '其他'
+                    }
+                }}
+                , {field: 'handleReason', title: '处理信息'}
+                , {field: 'handleUserName', title: '处理人'}
+                ,{field:'resId', title: '操作',formatter: addFunctionAlty, }
+            ];
+        }else if($("select[name='state']").val() == '1'){
+            colum = [
+                {field: 'state', title: '状态',formatter:function (value, row, index) {
+                        if(row.state==0){
+                            return '解除'
+                        }else if(row.state==1){
+                            return '未解除'
+                        }else{
+                            return '正常'
+                        }
+                    }}
+                , {field: 'orgName', title: '设备所属机构'}
+                , {field: 'resRoomName', title: '设备所属机房'}
+                , {field: 'remark', title: '告警信息',formatter: function(value, row, index){
+                        return "["+row.resName+"]设备被检测到异常信息";
+                    }}
+                ,{field:'resId', title: '操作',formatter: addFunctionAlty, }
+            ];
+        }else{
+            colum = [
+                {field: 'state', title: '状态',formatter:function (value, row, index) {
+                        if(row.state==0){
+                            return '解除'
+                        }else if(row.state==1){
+                            return '未解除'
+                        }else{
+                            return '正常'
+                        }
+                    }}
+                , {field: 'orgName', title: '设备所属机构'}
+                , {field: 'resRoomName', title: '设备所属机房'}
+                , {field: 'remark', title: '提示信息',formatter: function(value, row, index){
+                        return "["+row.resName+"]设备被检测";
+                    }}
+                ,{field:'resId', title: '操作',class:'active1',formatter: addFunctionAlty, }
+            ];
+        }
+
+        $('#test').bootstrapTable('destroy');
+        loadTable($('#test'),colum,ctxPath+'alarmLog/getPage', getQuery);
+    })
+
+
+    $("#test").on('load-success.bs.table',function () {
+
+        $('.bootstrap-table tr td').each(function () {
+            if($(this).hasClass("active1")){
+
+            }else{
+                $(this).attr("title", $(this).text());
+                $(this).css("cursor", 'pointer');
+            }
+        });
+    })
+    loadTable($('#test'),columns,ctxPath+'alarmLog/getPage', getQuery);
+
+})
+
+
+
+
+
+

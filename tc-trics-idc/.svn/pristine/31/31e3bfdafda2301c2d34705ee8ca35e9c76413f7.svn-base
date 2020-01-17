@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.readdev.mapper.SysDevUserMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.readdev.domain.SysDevUser" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="is_del" property="isDel" jdbcType="INTEGER" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="room_id" property="roomId" jdbcType="BIGINT" />
+    <result column="login_status" property="loginStatus" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sys_dev_user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.manage.idc.readdev.domain.SysDevUser" >
+    insert into sys_dev_user (id, username, password, 
+      is_del, created_time, updated_time, 
+      room_id, login_status)
+    values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{isDel,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, 
+      #{roomId,jdbcType=BIGINT}, #{loginStatus,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.readdev.domain.SysDevUser" >
+    update sys_dev_user
+    <set>
+        <if test="username != null and username != ''">
+          username = #{username,jdbcType=VARCHAR},
+        </if>
+        <if test="password != null and password != ''">
+          password = #{password,jdbcType=VARCHAR},
+        </if>
+        <if test="isDel != null and isDel != ''">
+          is_del = #{isDel,jdbcType=INTEGER},
+        </if>
+        <if test="roomId != null and roomId != ''">
+          room_id = #{roomId,jdbcType=BIGINT},
+        </if>
+        <if test="loginStatus != null">
+          login_status = #{loginStatus,jdbcType=INTEGER},
+        </if>
+      <if test="updatedTime != null">
+          updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, username, password, is_del, created_time, updated_time, room_id, login_status
+    from sys_dev_user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, username, password, is_del, created_time, updated_time, room_id, login_status
+    from sys_dev_user
+  </select>
+
+  <sql id="allColumn">
+        id, username, password, is_del, created_time, updated_time, room_id, login_status
+  </sql>
+
+  <select id="selectOne" parameterType="com.manage.idc.readdev.domain.SysDevUser" resultMap="BaseResultMap">
+        select
+            <include refid="allColumn"/>
+        from sys_dev_user
+        <where>
+            <if test="id != null and id != ''">
+               AND id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+              AND username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+              AND password = #{password}
+            </if>
+            <if test="createdTime != null and createdTime != ''">
+              AND created_time = #{createdTime}
+            </if>
+            <if test="updatedTime != null and updatedTime != ''">
+              AND updated_time = #{createdTime}
+            </if>
+            <if test="roomId != null and roomId != ''">
+              AND room_id = #{roomId}
+            </if>
+            <if test="loginStatus != null and loginStatus != ''">
+              AND login_status = #{loginStatus}
+            </if>
+          AND is_del = '0'
+        </where>
+  </select>
+    <select id="selectByCondition" resultMap="BaseResultMap">
+        SELECT
+	    sdu.*,rm.name roomName
+        FROM
+            sys_dev_user sdu
+        LEFT JOIN room rm on sdu.room_id=rm.id
+        <where>
+        <if test="data.id != null and data.id != ''">
+            AND sdu.id = #{data.id}
+        </if>
+        <if test="data.username != null and data.username != ''">
+            AND sdu.username  like concat('%',#{data.username},'%')
+        </if>
+        <if test="data.password != null and data.password != ''">
+            AND sdu.password = #{data.password}
+        </if>
+        <if test="data.createdTime != null and data.createdTime != ''">
+            AND sdu.created_time = #{createdTime}
+        </if>
+        <if test="data.updatedTime != null and data.updatedTime != ''">
+            AND sdu.updated_time = #{data.createdTime}
+        </if>
+        <if test="data.roomId != null and data.roomId != ''">
+            AND sdu.room_id = #{data.roomId}
+        </if>
+        <if test="data.loginStatus != null and data.loginStatus != ''">
+            AND sdu.login_status = #{data.loginStatus}
+        </if>
+            AND sdu.is_del = 0
+        </where>
+    </select>
+</mapper>

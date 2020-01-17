@@ -1,0 +1,243 @@
+layui.use('table', function(){
+    var table = layui.table;
+
+    table.render({
+        elem: '#test'
+        ,url:'/role/getPage'
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'roleName', title: '角色名'}
+            , {field: 'remark', title: '具体描述'}
+            , {field: 'createTime', title: '创建时间' ,templet: function(d){
+                    var dateee = new Date(d.createTime).toJSON();
+                    var date = new Date(+new Date(dateee)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
+                    return date;
+                }
+
+            },
+            {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+        ]]
+        ,page: true
+    });
+
+    $("#searchbtn").on('click',function () {
+        refreshTable();
+    })
+    function refreshTable() {
+        table.reload("test",{
+            page: {
+                curr: 1 //重新从第 1 页开始
+            },
+            where: {
+                roleName: $("#roleName").val(),
+            }
+        })
+    }
+    layui.use(['tree', 'util'], function(){
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        //console.log(obj)
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                $.ajax({
+                    url:  "/role/delete",
+                    type: "POST",
+                    data:{
+                        id:data.id
+                    },
+                    cache:false,
+                    dataType: "json",
+                    success: function(data){
+                        layer.msg(data.message);
+                        if(data.code=="0"){
+                            layer.close(index);
+                            setTimeout("javascript:location.href='/role'", 1500);
+                        }
+                    },
+                    error:function(err){
+                        layer.msg("服务器内部错误！")
+                    }
+                });
+            });
+        } else if(obj.event === 'edit'){
+            $("#id").val(data.id);
+            $("#name").val(data.roleName);
+            $("#remark").val(data.remark);
+            loadTree(data.id)
+        }
+        /**
+         * 修改弹框加载tree
+         */
+        function loadTree(roleId){
+            $.ajax({
+                url:  "/menu/getTree",
+                type: "GET",
+                data:{
+                    roleId:roleId
+                },
+                cache:false,
+                dataType: "json",
+                success: function(data){
+                    if(data.code=="0"){
+                        buildTreeEdit(data.data)
+                    }
+                },
+                error:function(err){
+                    layer.msg("服务器内部错误！")
+                }
+            });
+        }
+    });
+
+    var tree = layui.tree,
+        layer = layui.layer,
+        util = layui.util
+
+    $("#myModal").on("show.bs.modal",function(){
+        $.ajax({
+            url:  "/menu/getTree",
+            type: "GET",
+            data:{
+            },
+            cache:false,
+            dataType: "json",
+            success: function(data){
+                if(data.code=="0"){
+                    buildTreeAdd(data.data)
+                }
+            },
+            error:function(err){
+                layer.msg("服务器内部错误！")
+            }
+        });
+    })
+    function buildTreeAdd(data) {
+        //基本演示
+        tree.render({
+            elem: '#treeData'
+            ,data: data
+            ,showCheckbox: true  //是否显示复选框
+            ,id: 'tree',
+            showLine: false
+        });
+    }
+        function buildTreeEdit(data) {
+            //基本演示
+            tree.render({
+                elem: '#editTree'
+                ,data: data
+                ,showCheckbox: true  //是否显示复选框
+                ,id: 'editTree',
+                showLine: false
+            });
+        }
+        
+    $("#editRole").on("click",function () {
+        var id =$("#id").val();
+
+        var roleName=$("#name").val();
+        if(roleName==""){
+            layer.msg("请输入角色名称！！")
+            $("#name").focus()
+            return;
+        }
+        const remark = $("#remark").val();
+        if(remark===""){
+            layer.msg("请输入角色备注！！")
+            $("#remark").focus()
+            return;
+        }
+        //获得选中的节点
+        var checkData = tree.getChecked('editTree');
+
+        if(checkData==""){
+            layer.msg("请选择角色权限！！")
+            return;
+        }
+        var menuIds='';
+        checkData.forEach((item, index, arr) => {
+            console.log(item)
+            menuIds+=item.id+","
+        });
+        menuIds = menuIds.substr(0, menuIds.length - 1);
+
+        $.ajax({
+            url:  "/role/update",
+            type: "POST",
+            data:{
+                id:id,
+                roleName:roleName,
+                remark:remark,
+                menuIds:menuIds
+            },
+            cache:false,
+            dataType: "json",
+            success: function(data){
+                layer.msg(data.message);
+                if(data.code=="0"){
+                    setTimeout("javascript:location.href='/role'", 1500);
+                }
+            },
+            error:function(err){
+                layer.msg("服务器内部错误！")
+            }
+        });
+    })
+
+
+    $("#addRole").on("click",function () {
+        var roleName=$("#rname").val();
+        if(roleName==""){
+            layer.msg("请输入角色名称！！")
+            $("#rname").focus()
+            return;
+        }
+        var remark=$("#rremark").val();
+        if(remark==""){
+            layer.msg("请输入角色备注！！")
+            $("#remark").focus()
+            return;
+        }
+        //获得选中的节点
+        var checkData = tree.getChecked('tree');
+
+        if(checkData==""){
+            layer.msg("请选择角色权限！！")
+            return;
+        }
+        var menuIds='';
+        checkData.forEach((item, index, arr) => {
+            console.log(item)
+            menuIds+=item.id+","
+        });
+        menuIds = menuIds.substr(0, menuIds.length - 1);
+        $.ajax({
+            url:  "/role/add",
+            type: "POST",
+            data:{
+                roleName:roleName,
+                remark:remark,
+                menuIds:menuIds
+            },
+            cache:false,
+            dataType: "json",
+            success: function(data){
+                layer.msg(data.message);
+                if(data.code=="0"){
+                    setTimeout("javascript:location.href='/role'", 1500);
+                }
+            },
+            error:function(err){
+                layer.msg("服务器内部错误！")
+            }
+        });
+
+    })
+
+
+
+});
+});

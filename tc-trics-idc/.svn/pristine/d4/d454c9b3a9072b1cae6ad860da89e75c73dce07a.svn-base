@@ -1,0 +1,113 @@
+/*layui.use('table', function(){
+    var table = layui.table;
+
+    table.render({
+        elem: '#test'
+        ,url:'/rack/getPage'
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'orgName', title: '机构'}
+            , {field: 'roomName', title: '机房',}
+            , {field: 'name', title: '名称'}
+            , {field: 'assetId', title: '资产编号',} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+            , {field: 'row', title: '行列',}
+            , {field: 'width', title: '宽度',}
+            , {field: 'height', title: '高度',}
+            , {field: 'capacity', title: '容量',}
+            , {field: 'tid', title: 'tid',}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+        ]],
+        data: [
+            {
+                "id": 10000,
+                "机构": "user-0",
+                "机房": "user-0",
+                "名称": "女",
+                "资产编号": "城市-0",
+                "行列": "签名-0",
+                "宽度": "签名-0",
+                "高度": "签名-0",
+                "容量": 255,
+                "tid": 255,
+
+            },
+        ]
+        ,page: true
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        //console.log(obj)
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+            });
+        } else if(obj.event === 'edit'){
+            layer.prompt({
+                formType: 2
+                ,value: data.email
+            }, function(value, index){
+                obj.update({
+                    email: value
+                });
+                layer.close(index);
+            });
+        }
+    });
+
+    $("button[name='search_btn']").on("click",function(){
+        refreshTable()
+    });
+
+
+    function refreshTable() {
+        table.reload("test",{
+            page: {
+                curr: 1 //重新从第 1 页开始
+            },
+            where: {
+                name: $(":input[name='name_search']").val(),
+                roomId: $(":input[name='roomSelect_search']").val(),
+            }
+        })
+    }
+});*/
+
+
+function getQuery(){
+    return null;
+}
+
+$(function () {
+    loadRoomSelect("roomSelect_search");
+
+
+    function addFunctionAlty(value, row, index) {
+        return [
+            '<button id="bind" type="button" class="btn bg-yellow table-btn">详情</button>',
+            '<button id="unbind" type="button" class="btn bg-yellow table-btn">编辑</button>',
+            '<button id="unbind" type="button" class="btn bg-bold table-btn">删除</button>',
+            '<button id="unbind" type="button" class="btn bg-bold table-btn">解绑</button>',
+
+        ].join('');
+    }
+
+    var columns =  [
+        {checkbox: true,width: 50}
+        , {field: 'orgName', title: '机构'}
+        , {field: 'roomName', title: '机房',}
+        , {field: 'name', title: '名称'}
+        , {field: 'assetId', title: '资产编号',} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+        , {field: 'row', title: '行列',}
+        , {field: 'width', title: '宽度',}
+        , {field: 'height', title: '高度',}
+        , {field: 'capacity', title: '容量',}
+        ,{field:'id', title: '操作',formatter: addFunctionAlty}
+    ];
+
+    loadTable($('#test'),columns,ctxPath+'rack/getPage', getQuery);
+})

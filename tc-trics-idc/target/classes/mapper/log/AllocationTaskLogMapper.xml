@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.log.mapper.AllocationTaskLogMapper">
+  <resultMap id="BaseResultMap" type="com.manage.idc.log.domain.AllocationTaskLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+    <result column="task_type" jdbcType="INTEGER" property="taskType" />
+    <result column="task_id" jdbcType="BIGINT" property="taskId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="start_org_id" jdbcType="BIGINT" property="startOrgId" />
+    <result column="end_org_id" jdbcType="BIGINT" property="endOrgId" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="person_name" jdbcType="VARCHAR" property="personName" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, task_name, task_type, task_id, `state`, start_org_id, end_org_id, start_time, 
+    end_time, person_name,remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from allocation_task_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByCondition" resultMap="BaseResultMap">
+    SELECT
+    ct.*, so.`name` startOrgName,
+    soo.`name` endOrgName
+    FROM
+    allocation_task_log ct
+    LEFT JOIN sys_org so ON so.id = ct.start_org_id
+    LEFT JOIN sys_org soo ON soo.id = ct.end_org_id
+    <where>
+      <if test="fullCode != null">
+        and (so.full_code like concat('',#{fullCode},'%') or soo.full_code like concat('',#{fullCode},'%'))
+      </if>
+    </where>
+    ORDER BY end_time DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from allocation_task_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.log.domain.AllocationTaskLog" useGeneratedKeys="true">
+    insert into allocation_task_log (task_name, task_type, task_id, 
+      `state`, start_org_id, end_org_id, 
+      start_time, end_time, person_name
+      )
+    values (#{taskName,jdbcType=VARCHAR}, #{taskType,jdbcType=INTEGER}, #{taskId,jdbcType=BIGINT}, 
+      #{state,jdbcType=INTEGER}, #{startOrgId,jdbcType=BIGINT}, #{endOrgId,jdbcType=BIGINT}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{personName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.log.domain.AllocationTaskLog" useGeneratedKeys="true">
+    insert into allocation_task_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="taskName != null">
+        task_name,
+      </if>
+      <if test="taskType != null">
+        task_type,
+      </if>
+      <if test="taskId != null">
+        task_id,
+      </if>
+      <if test="state != null">
+        `state`,
+      </if>
+      <if test="startOrgId != null">
+        start_org_id,
+      </if>
+      <if test="endOrgId != null">
+        end_org_id,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="personName != null">
+        person_name,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="taskName != null">
+        #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskType != null">
+        #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="taskId != null">
+        #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="startOrgId != null">
+        #{startOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="endOrgId != null">
+        #{endOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="personName != null">
+        #{personName,jdbcType=VARCHAR},
+      </if><if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.manage.idc.log.domain.AllocationTaskLog">
+    update allocation_task_log
+    <set>
+      <if test="taskName != null">
+        task_name = #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskType != null">
+        task_type = #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="taskId != null">
+        task_id = #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="state != null">
+        `state` = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="startOrgId != null">
+        start_org_id = #{startOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="endOrgId != null">
+        end_org_id = #{endOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="personName != null">
+        person_name = #{personName,jdbcType=VARCHAR},
+      </if> <if test="remark != null">
+      remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.log.domain.AllocationTaskLog">
+    update allocation_task_log
+    set task_name = #{taskName,jdbcType=VARCHAR},
+      task_type = #{taskType,jdbcType=INTEGER},
+      task_id = #{taskId,jdbcType=BIGINT},
+      `state` = #{state,jdbcType=INTEGER},
+      start_org_id = #{startOrgId,jdbcType=BIGINT},
+      end_org_id = #{endOrgId,jdbcType=BIGINT},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      person_name = #{personName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

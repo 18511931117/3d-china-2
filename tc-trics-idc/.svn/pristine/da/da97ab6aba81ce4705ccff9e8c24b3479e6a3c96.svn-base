@@ -1,0 +1,431 @@
+var $table = $('#treeTable');
+
+//自定义checked
+$table.on('post-body.bs.table',function(data){
+    $(this).find("input:checkbox").each(function (i) {
+        var $check = $(this);
+        if ($check.attr("id") && $check.next("label")) {
+            return;
+        }
+        $check.next().remove();
+        var name = $check.attr("name");
+        var id = name + "-" + i;
+        var $label = $('<label for="'+ id +'"></label>');
+        $check.attr("id", id).parent().addClass("checkbox-custom").append($label);
+    });
+});
+
+
+function addFunctionAlty(value, row, index) {
+    var data = [
+        '<button id="editMenu" type="button" class="btn bg-yellow table-btn" >编辑</button>',
+        '<button id="deleteMenu" type="button" class="btn bg-bold table-btn">删除</button>',
+    ];
+    return data.join('');
+}
+$(function() {
+    $.ajax({
+        url: ctxPath+'menu/getList',
+        type:'get',
+        //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+        success: function(data){
+            if(data.code = '0'){
+                $table.bootstrapTable({
+                    data:data.data,
+                    idField: 'id',
+                    dataType:'jsonp',
+                    columns: [
+                        { field: 'check',  checkbox: true, formatter: function (value, row, index) {
+                                if (row.check == true) {
+                                    //设置选中
+                                    return {  checked: true };
+                                }
+                            }
+                        },
+                        { field: 'name',  title: '菜单名称'},
+                        { field: 'permission',  title: '权限标识'},
+                        { field: 'type',  title: '类型',formatter:function (value,row,index) {
+                                switch (row.type) {
+                                    case "1":
+                                        return "菜单";
+                                    case "2":
+                                        return "按钮"
+                                }
+                        }},
+                        { field: 'url',  title: 'URL'},
+                        { field: 'num',  title: '排序'},
+                        { field: 'id', title: '操作', align: 'center', events : operateEvents, formatter: addFunctionAlty },
+                    ],
+
+                    // bootstrap-table-treegrid.js 插件配置 -- start
+
+                    //在哪一列展开树形
+                    treeShowField: 'name',
+                    //指定父id列
+                    parentIdField: 'parentId',
+
+                    onResetView: function(data) {
+                        $table.treegrid({
+                            initialState: 'collapsed',// 所有节点都折叠
+                            treeColumn: 1,
+                            onChange: function() {
+                                $table.bootstrapTable('resetWidth');
+                            }
+                        });
+
+                        //只展开树形的第一级节点
+                        $table.treegrid('getRootNodes').treegrid('expand');
+
+                    },
+                    onCheck:function(row){
+                        var datas = $table.bootstrapTable('getData');
+                        // 勾选子类
+                        selectChilds(datas,row,"id","pid",true);
+
+                        // 勾选父类
+                        selectParentChecked(datas,row,"id","parentId")
+
+                        // 刷新数据
+                        $table.bootstrapTable('load', datas);
+                    },
+
+                    onUncheck:function(row){
+                        var datas = $table.bootstrapTable('getData');
+                        selectChilds(datas,row,"id","parentId",false);
+                        $table.bootstrapTable('load', datas);
+                    },
+                    // bootstrap-table-treetreegrid.js 插件配置 -- end
+                });
+
+            }
+        }
+    })
+
+});
+
+
+//初始化操作按钮的方法
+window.operateEvents = {
+    'click #deleteMenu': function (e, value, row, index) {
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"是否确认删除此机构?",
+            btn:["关闭","确定"],
+            callBack1:function () {
+                console.log("取消")
+            },
+            callBack2:function () {
+                $.ajax({
+                    url:  ctxPath+"menu/delete",
+                    type: "POST",
+                    data:{
+                        menuId:row.id
+                    },
+                    cache:false,
+                    dataType: "json",
+                    success: function(data){
+                        var obj={
+                            type:"showSweetAlert",
+                            title:"提示",
+                            content:data.message,
+                        };
+                        method.msg_layer(obj);
+                        if(data.code=="0"){
+                            setTimeout("javascript:location.href='/menu'", 1500);
+                        }
+                    },
+                    error:function(err){
+                        layer.msg("服务器内部错误！")
+                    }
+                });
+                $('.msg-layer-bg').css('display','none')
+                $('.msg-layer').css('display','none')
+            },
+        };
+        method.msg_layer(obj);
+
+
+    },
+    'click #editMenu': function (e, value, row, index) {
+        $("#menusId1").val('')
+        $("#id").val('');
+        $.ajax({
+            url:  "/menu/getTree",
+            type: "GET",
+            data:{
+            },
+            cache:false,
+            dataType: "json",
+            success: function(data){
+                if(data.code=="0"){
+                    $("#menuTree1").treeview({
+                        showCheckbox: false,
+                        data: data.data,
+                        onNodeSelected:function (event, data) {
+                            $("#menusId1").val(data.id)
+                        }
+                    });
+                }
+            },
+            error:function(err){
+                var obj={
+                    type:"showSweetAlert",
+                    title:"提示",
+                    content:'服务器内部错误！',
+                };
+                method.msg_layer(obj);
+            }
+        });
+        //数据回显
+        $("#name1").val(row.name);
+        $("#permission1").val(row.permission);
+       $("#type1").val(row.type);
+        $("#url1").val(row.url);
+       $("#num1").val(row.num);
+       $("#id").val(row.id);
+      $("#myModal1").modal("show")
+    }
+};
+
+function add(id) {
+    alert("add 方法 , id = " + id);
+}
+function del(id) {
+    alert("del 方法 , id = " + id);
+}
+function update(id) {
+    alert("update 方法 , id = " + id);
+}
+
+$("#myModal").on("show.bs.modal",function(){
+    $("#menusId").val('')
+    $.ajax({
+        url:  ctxPath+"menu/getTree",
+        type: "GET",
+        data:{
+        },
+        cache:false,
+        dataType: "json",
+        success: function(data){
+            if(data.code=="0"){
+                $("#menuTree").treeview({
+                    showCheckbox: false,
+                    data: data.data,
+                    onNodeSelected:function (event, data) {
+                        $("#menusId").val(data.id)
+                    }
+            });
+            }
+        },
+        error:function(err){
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"服务器内部错误！",
+            };
+            method.msg_layer(obj);
+        }
+    });
+
+})
+//添加
+$("#addMenus").on("click",function () {
+    var name = $("#name").val();
+    if(name==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入菜单名称！！",
+        };
+        method.msg_layer(obj);
+        $("#name").focus()
+        return
+    }
+    var permission= $("#permission").val();
+    if(permission==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入权限标识！！",
+        };
+        method.msg_layer(obj);
+        $("#permission").focus()
+        return;
+    }
+    var type =$("#type").val();
+    if(type==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入类型(1:菜单 2:按钮)！！",
+        };
+        method.msg_layer(obj);
+        $("#type").focus()
+        return;
+    }
+    var url =$("#url").val();
+    if(url==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入URL！！",
+        };
+        method.msg_layer(obj);
+        $("#url").focus();
+        return;
+    }
+    var parentId = $('#menusId').val()
+
+    // if(parentId==""){
+    //     alert("请选择上级ID！！")
+    //     $("#parent").focus()
+    //     return;
+    // }
+    var num =$("#num").val();
+    if(num==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入排序！！",
+        };
+        method.msg_layer(obj);
+        $("#num1").focus();
+        return;
+    }
+    $.ajax({
+        url:  ctxPath+"menu/add",
+        type: "POST",
+        data:{
+            name:name,
+            permission:permission,
+            type:type,
+            url:url,
+            parentId:parentId,
+            num,num
+        },
+        cache:false,
+        dataType: "json",
+        success: function(data){
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:data.message,
+            };
+            method.msg_layer(obj);
+            if(data.code=="0"){
+                setTimeout('window.location.reload()',1500);
+
+            }
+        },
+        error:function(err){
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"服务器内部错误！",
+            };
+            method.msg_layer(obj);
+        }
+    });
+})
+//修改
+$("#editMenu").on("click",function () {
+    var id = $("#id").val();
+    var name = $("#name1").val();
+    if(name==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入菜单名称！！",
+        };
+        method.msg_layer(obj);
+        $("#nam1").focus()
+        return
+    }
+    var permission= $("#permission1").val();
+    if(permission==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入权限标识！！",
+        };
+        method.msg_layer(obj);
+        $("#permission1").focus()
+        return;
+    }
+    var type =$("#type1").val();
+    if(type==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入类型(1:菜单 2:按钮)！！",
+        };
+        method.msg_layer(obj);
+        $("#type").focus()
+        return;
+    }
+    var url =$("#url1").val();
+    if(url==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入URL！！",
+        };
+        method.msg_layer(obj);
+        $("#url").focus();
+        return;
+    }
+    var parentId = $('#menusId1').val()
+
+    // if(parentId==""){
+    //     alert("请选择上级ID！！")
+    //     $("#menusId1").focus()
+    //     return;
+    // }
+    var num =$("#num1").val();
+    if(num==""){
+        var obj={
+            type:"showSweetAlert",
+            title:"提示",
+            content:"请输入排序！！",
+        };
+        method.msg_layer(obj);
+        $("#num1").focus();
+        return;
+    }
+    $.ajax({
+        url:  ctxPath+"menu/update",
+        type: "POST",
+        data:{
+            id:id,
+            name:name,
+            permission:permission,
+            type:type,
+            url:url,
+            parentId:parentId,
+            num,num
+        },
+        cache:false,
+        dataType: "json",
+        success: function(data){
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:data.message,
+            };
+            method.msg_layer(obj)
+            if(data.code=="0"){
+                setTimeout('window.location.reload()',1500);
+
+            }
+        },
+        error:function(err){
+            var obj={
+                type:"showSweetAlert",
+                title:"提示",
+                content:"服务器内部错误！",
+            };
+            method.msg_layer(obj);
+        }
+    });
+})

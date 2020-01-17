@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.task.mapper.CheckTaskMapper">
+  <resultMap id="BaseResultMap" type="com.manage.idc.task.domain.CheckTask">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="task_type" jdbcType="INTEGER" property="taskType" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="check_task_type" jdbcType="INTEGER" property="checkTaskType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, `name`, task_type, `state`, org_id, remark, create_time, is_del,user_id,check_task_type
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from check_task
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from check_task
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.task.domain.CheckTask" useGeneratedKeys="true">
+    insert into check_task (`name`, task_type, `state`, 
+      org_id, remark, create_time, 
+      is_del)
+    values (#{name,jdbcType=VARCHAR}, #{taskType,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, 
+      #{orgId,jdbcType=BIGINT}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{isDel,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.task.domain.CheckTask" useGeneratedKeys="true">
+    insert into check_task
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        `id`,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="taskType != null">
+        task_type,
+      </if>
+      <if test="state != null">
+        `state`,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="isDel != null">
+        is_del,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="checkTaskType != null">
+         check_task_type,
+      </if>
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="taskType != null">
+        #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDel != null">
+        #{isDel,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="checkTaskType != null">
+        #{checkTaskType,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.manage.idc.task.domain.CheckTask">
+    update check_task
+    <set>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="taskType != null">
+        task_type = #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        `state` = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDel != null">
+        is_del = #{isDel,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.task.domain.CheckTask">
+    update check_task
+    set `name` = #{name,jdbcType=VARCHAR},
+      task_type = #{taskType,jdbcType=INTEGER},
+      `state` = #{state,jdbcType=INTEGER},
+      org_id = #{orgId,jdbcType=BIGINT},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      is_del = #{isDel,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByCondition" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+	ct.*,so.`name` orgName
+    FROM
+	check_task ct
+    LEFT JOIN sys_org so ON so.id = ct.org_id
+    <where>
+      <if test="fullCode != null">
+        and so.full_code like concat('',#{fullCode},'%')
+      </if>
+      <if test="data.isDel!=null">
+        and ct.is_del=#{data.isDel}
+      </if>
+      <if test="data.state!=null">
+        and ct.state =#{data.state}
+      </if>
+      <if test="data.name!=null and data.name!=''">
+        and ct.name like concat('%',#{data.name},'%')
+      </if>
+        and ct.state !=2
+    </where>
+    ORDER BY create_time DESC
+  </select>
+  <select id="getCheckTaskPage" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    ct.*,so.`name` orgName,
+    su.name ownerName
+    FROM
+    check_task ct
+    LEFT JOIN sys_org so ON so.id = ct.org_id
+    LEFT JOIN sys_user su on su.id = ct.user_id
+    <where>
+      <if test="fullCode != null">
+        and so.full_code like concat('',#{fullCode},'%')
+      </if>
+      <if test="data.isDel!=null">
+        and ct.is_del=#{data.isDel}
+      </if>
+      <if test="data.state!=null">
+        and ct.state=#{data.state}
+      </if>
+      <if test="data.queryName!=null and data.queryName!=''">
+        and (ct.name like concat('%',#{data.queryName},'%') or ct.id like concat('%',#{data.queryName},'%'))
+      </if>
+      and ct.state !=2
+    </where>
+    ORDER BY create_time DESC
+  </select>
+
+</mapper>

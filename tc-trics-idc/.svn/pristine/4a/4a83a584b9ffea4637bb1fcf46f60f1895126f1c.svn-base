@@ -1,0 +1,195 @@
+package com.manage.idc.task.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.enums.TaskState;
+import com.manage.idc.common.enums.TaskType;
+import com.manage.idc.common.exception.IdcException;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.device.domain.Res;
+import com.manage.idc.device.mapper.ResMapper;
+import com.manage.idc.log.domain.AllocationTaskLog;
+import com.manage.idc.log.mapper.AllocationTaskLogMapper;
+import com.manage.idc.system.domain.Label;
+import com.manage.idc.system.domain.SysOrg;
+import com.manage.idc.system.mapper.LabelMapper;
+import com.manage.idc.system.mapper.SysOrgMapper;
+import com.manage.idc.task.domain.AllocationTask;
+import com.manage.idc.task.domain.AllocationTaskDesc;
+import com.manage.idc.task.mapper.AllocationTaskDescMapper;
+import com.manage.idc.task.mapper.AllocationTaskMapper;
+import com.manage.idc.task.service.AllocationTaskService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/22 20:31
+ **/
+@Service
+@Transactional
+public class AllocationTaskServiceImpl extends BaseTaskServiceImpl implements AllocationTaskService {
+    @Autowired
+    private AllocationTaskMapper allocationTaskMapper;
+    @Autowired
+    private AllocationTaskDescMapper allocationTaskDescMapper;
+
+    @Autowired
+    private ResMapper resMapper;
+    @Autowired
+    private LabelMapper labelMapper;
+    @Autowired
+    private  AllocationTaskLogMapper allocationTaskLogMapper;
+    @Autowired
+    private SysOrgMapper sysOrgMapper;
+    @Override
+    public void add(AllocationTask allocationTask) {
+        long allocationTaskId = IdGen.getUUId();
+        allocationTask.setId(allocationTaskId);
+        allocationTask.setCreateTime(new Date());
+        allocationTask.setEndTime(new Date());
+        allocationTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        allocationTask.setState(TaskState.CONDUCT_TASK.getState());
+        allocationTask.setTaskType(TaskType.RES_ALLOCATION.getType());
+        allocationTaskMapper.insertSelective(allocationTask);
+
+        String resId = allocationTask.getResIds();
+        List<String> resIds =  Arrays.asList(resId.split(","));
+        for(String resid : resIds){
+            Res res = resMapper.selectByPrimaryKey(Long.parseLong(resid));
+            //根据Tid查询标签
+            Label label = labelMapper.selectByTid(res.getTid());
+            if(label==null){
+                throw  new IdcException("设备："+res.getName()+"  没有绑定标签！");
+            }
+            //添加设备调拨详情记录
+            AllocationTaskDesc allocationTaskDesc = new AllocationTaskDesc();
+            allocationTaskDesc.setCreateTime(new Date());
+            allocationTaskDesc.setId(IdGen.getUUId());
+            allocationTaskDesc.setLabelId(label.getId());
+            allocationTaskDesc.setResId(res.getId());
+            allocationTaskDesc.setRoomId(res.getRoomId());
+            allocationTaskDesc.setState(TaskState.CONDUCT_TASK.getState());
+            allocationTaskDesc.setTaskId(allocationTaskId);
+            allocationTaskDesc.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+            allocationTaskDescMapper.insertSelective(allocationTaskDesc);
+//            更新设备状态为盘点任务中
+            super.updateResStatus(Long.parseLong(resid),"3");
+        }
+
+    }
+
+    @Override
+    public void delete(AllocationTask allocationTask) {
+        allocationTask.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        allocationTaskMapper.updateByPrimaryKeySelective(allocationTask); //更新调拨任务
+        AllocationTaskDesc allocationTaskDesc = new AllocationTaskDesc();
+        allocationTaskDesc.setTaskId(allocationTask.getId());
+        allocationTaskDesc.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        allocationTaskDescMapper.updateByTaskId(allocationTaskDesc);
+
+        //撤销设备状态
+        List<Long> byTaskIdResIdList = allocationTaskDescMapper.getByTaskIdResIdList(allocationTaskDesc.getTaskId());
+        byTaskIdResIdList.stream().forEach(resId->super.updateResStatus(resId,"1"));
+    }
+
+    @Override
+    public void updateState(AllocationTask allocationTask) {
+        allocationTask.setState(TaskState.SUCCESS_TASK.getState());
+        allocationTaskMapper.updateByPrimaryKeySelective(allocationTask);
+        AllocationTaskDesc allocationTaskDesc = new AllocationTaskDesc();
+        allocationTaskDesc.setTaskId(allocationTask.getId());
+        allocationTaskDesc.setState(TaskState.SUCCESS_TASK.getState());
+        allocationTaskDescMapper.updateByTaskId(allocationTaskDesc);
+        if(allocationTask.getState()==TaskState.SUCCESS_TASK.getState()){
+            AllocationTask allocationTasks = allocationTaskMapper.selectByPrimaryKey(allocationTask.getId());
+            AllocationTaskLog allocationTaskLog = new AllocationTaskLog();
+            allocationTaskLog.setId(IdGen.getUUId());
+            allocationTaskLog.setEndOrgId(allocationTasks.getEndOrgId());
+            allocationTaskLog.setEndTime(new Date());
+            allocationTaskLog.setPersonName(allocationTasks.getStartName());
+            allocationTaskLog.setStartOrgId(allocationTasks.getStartOrgId());
+            allocationTaskLog.setStartTime(allocationTasks.getCreateTime());
+            allocationTaskLog.setTaskId(allocationTasks.getId());
+            allocationTaskLog.setTaskType(allocationTasks.getTaskType());
+            allocationTaskLog.setState(allocationTasks.getState());
+            allocationTaskLog.setTaskName(allocationTasks.getTaskName());
+            allocationTaskLog.setRemark(allocationTasks.getRemark());
+            allocationTaskLogMapper.insertSelective(allocationTaskLog);
+            //更新设备为正常
+            AllocationTask allocation = allocationTaskMapper.selectByPrimaryKey(allocationTask.getId());
+            //查询任务中的所有设备
+            List<Long> byTaskIdResIdList = allocationTaskDescMapper.getByTaskIdResIdList(allocationTaskDesc.getTaskId());
+            //更新设备信息  位置信息  部门信息  状态信息 设备操作人  设备所有者
+            //1:根据taskId查询任务详情信息  2.更新设备任务状态
+            //根据orgId查询区域ID
+            Long endOrgId = allocation.getEndOrgId();
+            SysOrg sysOrg = new SysOrg();
+            sysOrg.setId(endOrgId);
+            SysOrg sysOrg1 = sysOrgMapper.selectOne(sysOrg);
+            byTaskIdResIdList.stream().forEach(resId->super.updateResStatus(resId,"1",allocation,Long.parseLong(sysOrg1.getRegionId())));
+        }
+
+    }
+
+    @Override
+    public PageInfo<AllocationTaskDesc> desc(AllocationTask allocationTask,PageRequest pageRequest) {
+        allocationTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);  //前段传入 过滤条件 默认是全部
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        Long id = allocationTask.getId();
+        List<AllocationTaskDesc> allocationTaskDescs = allocationTaskDescMapper.selectByCheckTaskId(id);
+        return new PageInfo<>(allocationTaskDescs);
+    }
+
+    @Override
+    public List<AllocationTaskDesc> export(AllocationTask allocationTask) {
+        ArrayList<Long> ids = new ArrayList<>();
+        Arrays.stream(allocationTask.getIds().split(",")).forEach(id->
+                ids.add(Long.parseLong(id)));
+        return  allocationTaskDescMapper.selectByExport(ids);
+    }
+
+    @Override
+    public PageInfo<AllocationTask> getPage(AllocationTask allocationTask, PageRequest pageRequest) {
+        allocationTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);  //前段传入 过滤条件 默认是全部
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        allocationTask.setOrgId(SessionUtil.getUser().getOrgId());
+        List<AllocationTask> list = allocationTaskMapper.selectByCondition(DataSetUtile.setQueryMap(allocationTask,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<AllocationTask>(list);
+    }
+
+    @Override
+    public PageInfo<AllocationTask> getAllocationTaskPage(AllocationTask allocationTask, PageRequest pageRequest) {
+        allocationTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<AllocationTask> list = allocationTaskMapper.getAppCheckTaskPage(DataSetUtile.setQueryMap(allocationTask,pageRequest,null));
+        return new PageInfo<>(list);
+    }
+
+    @Override
+    public List<AllocationTaskDesc> getAllocationTaskDesc(AllocationTaskDesc allocationTaskDesc) {
+        return allocationTaskDescMapper.getAppCheckTaskDesc(allocationTaskDesc);
+    }
+
+    @Override
+    public AllocationTask getByTask(AllocationTask allocationTask) {
+        return allocationTaskMapper.getByTask(allocationTask);
+    }
+}

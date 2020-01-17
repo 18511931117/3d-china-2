@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" style="height: 100%;width: 100%">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+
+    <title>登录吧</title>
+
+</head>
+
+<body style="width: 100%;height: 100%">
+<iframe style="width: 100%;height: 100%" width="100%" height="100%" src="http://360.7mphoto.com/201905jf39/index.html"></iframe>
+</body>
+</html>

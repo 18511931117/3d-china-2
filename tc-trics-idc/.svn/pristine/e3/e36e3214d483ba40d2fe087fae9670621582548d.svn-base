@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" style="border: none;background: none">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+
+    <title>盘点任务管理</title>
+
+
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-reset.css}" rel="stylesheet">
+
+    <style>
+        .table {
+
+            table-layout:fixed;
+
+        }
+        table td{
+
+            overflow: hidden;
+
+            text-overflow:ellipsis;
+
+            white-space: nowrap;
+
+        }
+
+
+    </style>
+
+    <link th:href="@{/css/layer-animate.css}" rel="stylesheet">
+
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+    <!-- Bootstrap core CSS -->
+
+
+</head>
+<body style="border: none;background: none" class="gdt">
+<div id="operateDiv" style="display: none;">
+    <shiro:hasPermission name="checkTask:desc">
+        <button id="bind" type="button" class="btn bg-yellow table-btn">详情</button>
+    </shiro:hasPermission>
+
+    <shiro:hasPermission name="checkTask:delete">
+        <button id="unbind" type="button" class="btn bg-bold table-btn">撤销</button>
+    </shiro:hasPermission>
+</div>
+<!-- page start-->
+<div class="row row-top">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <span class="tab-o">任务管理</span><b style="color: #00C6FF"> > </b><span class="tab-er">盘点任务</span>
+            </header>
+        </section>
+    </div>
+</div>
+<div class="table-warp">
+    <div class="row row-pading">
+        <div class="form-group col-sm-2" style="margin-bottom: 0">
+            <shiro:hasPermission name="checkTask:add">
+                <button class="btn bg-yellow"  data-toggle="modal" data-target="#myModal">新建任务</button>
+            </shiro:hasPermission>
+        </div>
+        <div class="form-group col-sm-4" style="margin-bottom: 0">
+            <label class="control-label col-lg-3 col-sm-4" style="display: inline-block;height: 34px;line-height: 34px">任务状态</label>
+            <div class="col-lg-8 col-sm-7">
+                <select  class="selectpicker show-tick form-control" data-live-search="true" id="state">
+                    <option value="">请选择</option>
+                    <option value="0">待执行</option>
+                    <option value="1">执行中</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-4" style="margin-bottom: 0">
+            <label class="col-lg-3 col-sm-4 control-label" style="display: inline-block;height: 34px;line-height: 34px;">任务名称</label>
+            <div class="col-lg-8 col-sm-6">
+                <input type="text" class="form-control" id="queryTaskName" placeholder="任务名称">
+            </div>
+        </div>
+        <button class="btn bg-yellow" id="queryTask">搜索</button>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel1">
+                <table  id="test" lay-filter="test"></table>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!--main content end-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 80%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    添加任务
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="btn-warp">
+                    <button class="btn bg-yellow" data-toggle="modal" id="addDevice"><span id="btn">添加设备</span></button>
+                    <button class="btn bg-yellow" id="batchDel" lay-event="batchDel">批量删除</button>
+                    <button class="btn bg-yellow" id="addTask">创建任务</button>
+                </div>
+<!--                <div style="display: flex">-->
+<!--                    <div style="flex: 1;padding: 15px">-->
+<!--                        <form class="form-horizontal tasi-form" method="get">-->
+<!--                            <div class="form-group col-sm-12">-->
+<!--                                <label class="control-label col-sm-4">任务名称</label>-->
+<!--                                <div class="col-sm-6">-->
+<!--                                    <input type="text" id="taskName" class="form-control" placeholder="任务名称">-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="form-group col-sm-12">-->
+<!--                                <label class="control-label col-sm-4">备注</label>-->
+<!--                                <div class="col-sm-6">-->
+<!--                                    <textarea class="form-control" id="remark" rows="3" style="height: 50px"></textarea>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                    <div style="flex: 1;padding: 15px">-->
+<!--                        <form class="form-horizontal tasi-form" method="get">-->
+<!--                            <div class="form-group">-->
+<!--                                <label class="control-label col-sm-4">盘点任务类型</label>-->
+<!--                                <div class="col-sm-8">-->
+<!--                                    <select class="selectpicker show-tick form-control" data-live-search="true" name="loadOrg"  id="loadOrg" onchange="role()">-->
+<!--                                        <option value="">请选择</option>-->
+<!--                                        <option value="1">设备盘点</option>-->
+<!--                                        <option value="2">机构设备盘点</option>-->
+<!--                                        <option value="3">机房设备盘点</option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="form-group">-->
+<!--                                <label class="control-label col-sm-4">负责人</label>-->
+<!--                                <div class="col-sm-8">-->
+<!--                                    <select class="selectpicker show-tick form-control" data-live-search="true" name="loadUser"  id="userId">-->
+
+<!--                                    </select>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash;                                          <div class="form-group" id="startRoomNone">&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                              <label class="control-label col-sm-4">存放位置</label>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                              <div class="col-sm-8">&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                                  <select class="selectpicker show-tick form-control" data-live-search="true" name="loadRoom"  id="loadRoom">&ndash;&gt;-->
+
+<!--                            &lt;!&ndash;                                                  </select>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                              </div>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                          </div>&ndash;&gt;-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div class="row" style="margin-top: 15px;margin-bottom: 15px">
+                    <div class="col-sm-6">
+                        <form class="form-horizontal tasi-form" method="get">
+                            <div class="form-group col-sm-12">
+                                <label class="control-label col-sm-4">任务名称</label>
+                                <div class="col-sm-6">
+                                    <input type="text" id="taskName" class="form-control" placeholder="任务名称">
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-12">
+                                <label class="control-label col-sm-4">备注</label>
+                                <div class="col-sm-6">
+                                    <textarea class="form-control" id="remark" rows="3" style="height: 50px"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-6">
+                        <form class="form-horizontal tasi-form" method="get">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">盘点任务类型</label>
+                                    <div class="col-sm-8">
+                                        <select class="selectpicker show-tick form-control" data-live-search="true" name="loadOrg"  id="loadOrg" onchange="role()">
+                                            <option value="">请选择</option>
+                                            <option value="1">设备盘点</option>
+                                            <option value="2">机构设备盘点</option>
+                                            <option value="3">机房设备盘点</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">负责人</label>
+                                    <div class="col-sm-8">
+                                        <select class="selectpicker show-tick form-control" data-live-search="true" name="loadUser"  id="userId">
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                    </div>
+                </div>
+                <div class="test2" style="display: none">
+                    <table class="layui-hide" id="test2" lay-filter="test2"></table>
+
+                </div>
+                <div class='department-table' style="display: none">
+                    <table class="layui-hide" id="department-table"></table>
+                </div>
+                <div class="jifang-table">
+                    <table class="layui-hide" id="jifang-table"></table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-yellow" data-dismiss="modal">关闭
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="background-color:rgba(7,16,102,.9) ">
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    筛选详情
+                </h4>
+            </div>
+
+            <div class="row" style="margin: 0">
+                <div class=" form-group col-sm-2">
+                    <label for="">设备名称</label>
+                    <input type="text" class="form-control" id="name" placeholder="设备名称">
+                </div>
+                <div class="form-group col-sm-2">
+                    <label for="">机柜U位</label>
+                    <input type="text" class="form-control" id="sheft" placeholder="机柜U位">
+                </div>
+                <div class="form-group col-sm-2">
+                    <label for="">TID</label>
+                    <input type="text" class="form-control" id="tid" placeholder="TID">
+                </div>
+                <div class="form-group col-sm-2">
+                    <label for="">所有人</label>
+                    <input type="text" class="form-control" id="owner" placeholder="所有人">
+                </div>
+                <div class="form-group col-sm-2">
+                    <label for="">资产编号</label>
+                    <input type="text" class="form-control" id="assetId" placeholder="资产编号">
+                </div>
+                <div class="form-group col-sm-2">
+                    <label for="">操作员</label>
+                    <input type="text" class="form-control" id="operator" placeholder="操作员">
+                </div>
+                <div class="form-group col-sm-2">
+                    <label for="">规格型号</label>
+                    <input type="text" class="form-control" id="model" placeholder="规格型号">
+                </div>
+                <div class=" form-group col-sm-2">
+                    <label for="">设备类型</label>
+                    <div class="">
+                        <select class="selectpicker show-tick form-control" data-live-search="true" name="resTypeSelect" id="resTypeCode1">
+
+                        </select>
+                    </div>
+                </div>
+                <div class=" form-group col-sm-2" style="display: none">
+                    <label for="">机房</label>
+                    <div class="">
+                        <input type="hidden" class="form-control" id="roomId" placeholder="规格型号">
+                    </div>
+                </div>
+                <div class="form-group col-sm-2">
+                    <label for="">状态</label>
+                    <div class="">
+                        <select class="selectpicker show-tick form-control" data-live-search="true" name="devStatus" id="status">
+
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-sm-2" style="margin-top: 25px">
+                    <button type="button" class="btn bg-yellow"  id="queryRes" >
+                        筛选
+                    </button>
+                </div>
+
+
+            </div>
+
+            <div class="data">
+                <table class="layui-hide" id="test3" lay-filter="test3"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary" id="devQuery" data-dismiss="modal" >
+                    添加设备
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div>
+</div>
+<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="background-color:rgba(7,16,102,.9) ">
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    机构添加
+                </h4>
+            </div>
+
+            <div class="row" style="margin: 0">
+                <div class="form-group col-sm-2">
+                    <label for="">机构名称</label>
+                    <input type="text" class="form-control" id="orgName" placeholder="机构名称">
+                </div>
+<!--                <div class=" form-group col-sm-2">-->
+<!--                    <label for="">所属区域</label>-->
+<!--                    <div class="">-->
+<!--                        <select class="selectpicker show-tick form-control" data-live-search="true"  name="region" id="region">-->
+
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div class="form-group col-sm-2" style="margin-top: 25px">
+                    <button type="button" class="btn bg-yellow"  id="queryRes2" >
+                        筛选
+                    </button>
+                </div>
+
+
+            </div>
+
+            <div class="data">
+                <table class="layui-hide" id="test4" lay-filter="test4"></table>
+                <script type="text/html" id="barDemo4">
+                    <a class="layui-btn layui-btn-xs" lay-event="del">删除</a>
+                </script>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary" id="devQuery2" data-dismiss="modal" >
+                    添加机构
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div>
+</div>
+<div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="background-color:rgba(7,16,102,.9) ">
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    机房添加
+                </h4>
+            </div>
+
+            <div class="row" style="margin: 0">
+                <div class=" form-group col-sm-2">
+                    <label for="">机房名称</label>
+                    <input type="text" class="form-control" id="roomName" placeholder="机房名称">
+                </div>
+<!--                <div class=" form-group col-sm-2">-->
+<!--                    <label for="">所属机构</label>-->
+<!--                    <div class="">-->
+<!--                        <select class="selectpicker show-tick form-control" data-live-search="true"  id="org">-->
+
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div class="form-group col-sm-2" style="margin-top: 25px">
+                    <button type="button" class="btn bg-yellow"  id="queryRes3" >
+                        筛选
+                    </button>
+                </div>
+
+
+            </div>
+
+            <div class="data">
+                <table class="layui-hide" id="test5" lay-filter="test5"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary" id="devQuery4" data-dismiss="modal" >
+                    添加机房
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div>
+</div>
+
+<div class="modal fade" id="myModal5" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="background-color:rgba(7,16,102,.9) ">
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    详情
+                </h4>
+
+                <div class="data">
+                    <table class="layui-hide" id="test6" lay-filter="test6"></table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal6" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="background-color:rgba(7,16,102,.9) ">
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    详情
+                </h4>
+
+                <div class="data">
+                    <table class="layui-hide" id="test7"></table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div>
+    </div>
+</div>
+    <script type="text/javascript" th:inline="javascript">
+        ctxPath = /*[[@{/}]]*/ '';
+    </script>
+    <script th:src="@{/js/method.js}"></script>
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/3rd/bootstrap-table/bootstrap-table.css}" >
+    <script th:src="@{/3rd/bootstrap-table/bootstrap-table.js}"></script>
+    <script th:src="@{/3rd/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/3rd/bootstrap-table/select/bootstrap-select.min.css}">
+    <script th:src="@{/3rd/bootstrap-table/select/bootstrap-select.min.js}"></script>
+
+    <script th:inline="javascript" th:src="@{/pagejs/task/checkTask.js}"></script>
+    <script th:inline="javascript" th:src="@{/pagejs/common/selectNode.js}"></script>
+
+</body>
+</html>

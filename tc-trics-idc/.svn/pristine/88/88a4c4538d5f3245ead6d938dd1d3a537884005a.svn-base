@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.system.mapper.ResTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.ResType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="res_type_code" property="resTypeCode" jdbcType="VARCHAR" />
+    <result column="res_type_name" property="resTypeName" jdbcType="VARCHAR" />
+
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="full_code" property="fullCode" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from res_type
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.manage.idc.system.domain.ResType" >
+    insert into res_type (
+      <trim prefixOverrides="," suffixOverrides=",">
+        <if test="id != null and id != 0">
+          id,
+        </if>
+        <if test="isValid != null and isValid != ''">
+          is_valid,
+        </if>
+        <if test="resTypeCode != null and resTypeCode != ''">
+          res_type_code,
+        </if>
+        <if test="resTypeName != null and resTypeName != ''">
+          res_type_name,
+        </if>
+        <if test="pid != null and pid != ''">
+          pid,
+        </if>
+        <if test="fullCode != null and fullCode != ''">
+          full_code,
+        </if>
+        <if test="level != null and level != ''">
+          level
+        </if>
+      </trim>
+      )
+    values (
+      <trim prefixOverrides="," suffixOverrides=",">
+        <if test="id != null and id != 0">
+          #{id,jdbcType=INTEGER},
+        </if>
+        <if test="isValid != null and isValid != ''">
+          #{isValid,jdbcType=INTEGER},
+        </if>
+        <if test="resTypeCode != null and resTypeCode != ''">
+          #{resTypeCode,jdbcType=VARCHAR},
+        </if>
+        <if test="resTypeName != null and resTypeName != ''">
+          #{resTypeName,jdbcType=VARCHAR},
+        </if>
+        <if test="pid != null and pid != ''">
+          #{pid,jdbcType=INTEGER},
+        </if>
+        <if test="fullCode != null and fullCode != ''">
+          #{fullCode,jdbcType=VARCHAR},
+        </if>
+        <if test="level != null and level != ''">
+          #{level,jdbcType=INTEGER},
+        </if>
+      </trim>
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.system.domain.ResType" >
+    update res_type
+    set
+    <trim prefixOverrides="," suffixOverrides=",">
+      <if test="isValid != null and isValid != ''">
+        is_valid = #{isValid,jdbcType=INTEGER},
+      </if>
+      <if test="resTypeCode != null and resTypeCode != ''">
+        res_type_code = #{resTypeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="resTypeName != null and resTypeName != ''">
+        res_type_name = #{resTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null and pid != ''">
+        pid = #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="fullCode != null and fullCode != ''">
+        full_code = #{fullCode,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null and level != ''">
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="isDel != null and isDel != ''">
+        is_del = #{isDel,jdbcType=INTEGER},
+      </if>
+      <if test="updatedTime != null">
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+      </if>
+    </trim>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <sql id="allcClumn">
+    id, is_valid, res_type_code, res_type_name, pid, full_code, level, created_time,
+    updated_time
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+        <include refid="allcClumn"/>
+    from res_type
+    where id = #{id,jdbcType=INTEGER} AND is_del = '0'
+  </select>
+
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+        <include refid="allcClumn"/>
+    from res_type
+  </select>
+
+
+  <select id="getList" resultMap="BaseResultMap" >
+    select
+        <include refid="allcClumn"/>
+    from res_type
+    <where>
+      <if test="id != null and id != ''">
+        AND id = #{id}
+      </if>
+      <if test="isValid != null and isValid != ''">
+        AND isValid = #{isValid}
+      </if>
+      <if test="resTypeCode != null and resTypeCode != ''">
+        AND res_type_code = #{resTypeCode}
+      </if>
+      <if test="resTypeName != null and resTypeName != ''">
+        AND res_type_name = #{resTypeName}
+      </if>
+      <if test="pid != null and pid != ''">
+        AND pid = #{pid}
+      </if>
+      <if test="fullCode != null and fullCode != ''">
+        AND full_code = #{fullCode}
+      </if>
+      <if test="level != null and level != ''">
+        AND level = #{level}
+      </if>
+      AND is_del = '0'
+
+    </where>
+    ORDER BY full_code
+  </select>
+
+
+
+  <select id="selectOne" resultMap="BaseResultMap" >
+    select
+    <include refid="allcClumn"/>
+    from res_type
+    <where>
+      <if test="id != null">
+        AND id = #{id}
+      </if>
+      <if test="isValid != null and isValid != ''">
+        AND isValid = #{isValid}
+      </if>
+      <if test="resTypeCode != null and resTypeCode != ''">
+        AND res_type_code = #{resTypeCode}
+      </if>
+      <if test="resTypeName != null and resTypeName != ''">
+        AND res_type_name = #{resTypeName}
+      </if>
+      <if test="pid != null and pid != ''">
+        AND pid = #{pid}
+      </if>
+      <if test="fullCode != null and fullCode != ''">
+        AND full_code = #{fullCode}
+      </if>
+      <if test="level != null and level != ''">
+        AND level = #{level}
+      </if>
+        AND is_del = '0'
+    </where>
+    limit 1
+  </select>
+
+
+  <resultMap id="treeMap" type="com.manage.idc.common.entiy.Tree">
+    <result column="id" jdbcType="VARCHAR" property="id"/>
+    <result column="res_type_name" jdbcType="VARCHAR" property="title"/>
+    <result column="res_type_name" jdbcType="VARCHAR" property="text"/>
+    <result column="pid" jdbcType="VARCHAR" property="parentId"/>
+    <collection property="children" ofType="com.manage.idc.common.entiy.Tree" column="id" select="selectByParentId"/>
+    <collection property="nodes" ofType="com.manage.idc.common.entiy.Tree" column="id" select="selectByParentId"/>
+  </resultMap>
+
+
+  <select id="getTree" resultMap="treeMap">
+    select * from res_type
+    <where>
+      AND is_del= '0'
+      AND pid = '0'
+    </where>
+
+  </select>
+    <select id="selectByParentId" resultMap="treeMap">
+        select * from res_type rt where rt.pid = #{id} AND rt.is_del= '0'
+  </select>
+
+
+</mapper>

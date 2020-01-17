@@ -1,0 +1,579 @@
+
+
+$(function(){
+    /* 地图 需要哪个省市的地图直接引用js 将下面的name以及mapType修改为对应省市名称*/
+    var maps = echarts.init(document.getElementById('mapadd'));
+    option = {
+        tooltip : {
+            trigger: 'item',
+            formatter: '{b}'
+        },
+
+        series : [{
+            name: '江苏',
+            type: 'map',
+            mapType: '江苏',
+            roam: false,
+            //top:'8%',
+            zoom:1.2,
+            //x:'25%',
+            //layoutCenter: ['25%', '25%'],
+            // 如果宽高比大于 1 则宽度为 100，如果小于 1 则高度为 100，保证了不超过 100x100 的区域
+            layoutSize: 240,
+            selectedMode : 'single',//multiple多选
+            itemStyle:{
+                normal:{
+                    label:{
+                        show:true,
+                        textStyle: {
+                            color: "#fff",
+                            fontSize: 14 ,
+                        }
+                    },
+                    fontSize: 8 ,
+                    areaStyle:{color:'#c9ef90'},
+                    borderWidth: 1,
+                    borderColor:'#ffffff',//区块的边框颜色
+                    /*shadowBlur: 2,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)',*/
+
+                },
+                emphasis:{//鼠标hover样式
+                    label:{
+                        show:true,
+                        textStyle:{
+                            color:'#ffffff'
+                        }
+                    },
+                    areaColor: "#ece39e",
+                    borderWidth: 1,
+                    borderColor:'#ffffff'
+                    //areaStyle:{color:'#c9ef90'}
+                }
+            },
+            data:[
+                {name:'南京市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3'
+                        }
+                    },mid:1
+                },
+                {name:'无锡市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3'
+                        }
+                    },mid:2
+                },
+                {name:'徐州市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3'
+                        }
+                    },mid:3
+                },
+                {name:'常州市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3',
+                        }
+                    },mid:4
+                },
+                {name:'苏州市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3',
+                        }
+                    },mid:5
+                },
+                {name:'南通市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3'
+                        }
+                    },mid:6
+                },
+                {name:'连云港市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3',
+                        }
+                    },mid:7
+                },
+                {name:'淮安市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3',
+                        }
+                    },mid:8
+                },
+                {name:'盐城市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3'
+                        }
+                    },mid:9
+                },
+                {name:'扬州市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3',
+                        }
+                    },mid:10
+                },
+                {name:'镇江市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3',
+                        }
+                    },mid:11
+                },
+                {name:'泰州市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3'
+                        }
+                    },mid:12
+                },
+                {name:'宿迁市',
+                    itemStyle: {
+                        normal: {
+                            areaColor: '#4ea397',
+                            borderColor: '#0550c3',
+                        }
+                    },
+                    mid:13
+                },
+
+            ]
+        }]
+    };
+    maps.setOption(option);
+    maps.resize();
+    maps.on('click', function(params){
+        change_region(params.name);
+        //alert(params.name);
+        console.log(params);//此处写点击事件内容
+    });
+
+})
+function change_region(name){
+    $.ajax({
+        type: "POST",//方法类型
+        dataType: "json",//预期服务器返回的数据类型
+        url: "/home/ajax_data" ,//url
+        data: {name:name},
+        success: function (result) {
+            console.log(result);//打印服务端返回的数据(调试用)
+
+
+            /*tongji_init(['77','88','33','44','55','0']);//6个统计
+            //维修曲线
+
+            var arr2_1=['product', '2014', '2015', '2016', '2017', '2018', '2019'];
+            var arr2_2=['设备维修', 41, 30, 65, 53, 83, 98];
+            var arr2_3=['设备报废', 86, 92, 85, 83, 74, 55];
+            var arr2_4=['设备调拨', 86, 97, 85, 83, 74, 65];
+            var arr2_5=['设备新增', 86, 92, 85, 89, 74, 55];
+            weixiuqu_init(arr2_1,arr2_2,arr2_3,arr2_4,arr2_5);//维修曲线
+
+            var arr3_1=['2013', '2014', '2015', '2016', '2017', '2018', '2019'];
+            var arr3_2=[0, 0, 0, 0, 0, 40, 80];
+            baofei_init(arr3_1,arr3_2);//6个统计
+
+            var arr4_1=['在线','维修','报废'];
+            var arr4_2=[{value:'72', name:'在线'},{value:'34', name:'维修'},{value:'60', name:'报废'},];
+            weixiu_init(arr4_1,arr4_2);//设备维修
+
+            var arr5_1=['在线','维修','报废'];
+            var arr5_2=[{value:'32', name:'在线'},{value:'64', name:'维修'},{value:'90', name:'报废'},];
+            zhuangtai_init(arr5_1,arr5_2);//设备状态*/
+
+
+            $('#p0').empty();
+            $('#p0').append(result.name+' '+result.ename);
+            var arr1=result.arr1;
+            tongji_init(arr1);//6个统计
+
+            var arr2_1=result.arr2_1;
+            var arr2_2=result.arr2_2;
+            var arr2_3=result.arr2_3;
+            var arr2_4=result.arr2_4;
+            var arr2_5=result.arr2_5;
+            weixiuqu_init(arr2_1,arr2_2,arr2_3,arr2_4,arr2_5);//维修曲线
+
+            var arr3_1=result.arr3_1;
+            var arr3_2=result.arr3_2;
+            baofei_init(arr3_1,arr3_2);//6个统计
+
+            var arr4_1=result.arr4_1;
+            //var arr4_2=[{value:'72', name:'在线'},{value:'34', name:'维修'},{value:'60', name:'报废'},];
+            //var arr4_2=result.arr4_2;
+            var arr4_2=[{value:result.arr4_2[0], name:'在线'},{value:result.arr4_2[1], name:'维修'},{value:result.arr4_2[2], name:'报废'}];
+            weixiu_init(arr4_1,arr4_2);//设备维修
+
+            var arr5_1=result.arr5_1;
+            //var arr5_2=[{value:'32', name:'在线'},{value:'64', name:'维修'},{value:'90', name:'报废'},];
+            //var arr5_2=result.arr5_2;
+            var arr5_2=[{value:result.arr5_2[0], name:'调拨'},{value:result.arr5_2[1], name:'维修'},{value:result.arr5_2[2], name:'借用'}];
+            zhuangtai_init(arr5_1,arr5_2);//设备状态
+
+        },
+        error : function() {
+            console.log("异常！");
+        }
+    });
+}
+
+function weixiuqu_init(arr2_1,arr2_2,arr2_3,arr2_4,arr2_5){
+    var weixiuqu = echarts.init(document.getElementById('weixiuqu'));
+    option = {
+        legend: {
+            righr:'10%',
+
+        },
+        tooltip: {
+            trigger: 'axis',
+            showContent: true,
+        },
+        dataset: {
+            source: [arr2_1,arr2_2,arr2_3,arr2_4,arr2_5]
+        },
+        xAxis: {type: 'category',boundaryGap : false,},
+        yAxis: {gridIndex: 0},
+        grid: {top: '16%'},
+        series: [
+            {type: 'line', smooth: true, seriesLayoutBy: 'row',areaStyle : {
+                    normal : {
+                        color : new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {
+                                offset : 0,
+                                color : 'rgba(49, 218, 113, 0.3)'
+                            },
+                            {
+                                offset : 0.8,
+                                color : 'rgba(49, 218, 113, 0)'
+                            } ], false),
+                        shadowColor : 'rgba(0, 0, 0, 0.1)',
+                        shadowBlur : 10
+                    }
+                },
+                //控制线条的颜色
+                itemStyle : {
+                    normal : {
+                        color : 'rgb(49,218,113)',
+                        borderColor : 'rgba(49,218,2,0.27)',
+                        borderWidth : 2
+
+                    }
+                }},
+            {type: 'line', smooth: true, seriesLayoutBy: 'row',areaStyle : {
+                    normal : {
+                        color : new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {
+                                offset : 0,
+                                color : 'rgba(241,120,12, 0.3)'
+                            },
+                            {
+                                offset : 0.8,
+                                color : 'rgba(241,120,12, 0)'
+                            } ], false),
+                        shadowColor : 'rgba(0, 0, 0, 0.1)',
+                        shadowBlur : 10
+                    }
+                },
+                //控制线条的颜色
+                itemStyle : {
+                    normal : {
+                        color : 'rgb(241,120,27)',
+                        borderColor : 'rgba(241,120,2,0.27)',
+                        borderWidth : 2
+
+                    }
+                }},
+            {type: 'line', smooth: true, seriesLayoutBy: 'row',areaStyle : {
+                    normal : {
+                        color : new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {
+                                offset : 0,
+                                color : 'rgba(17,143,223, 0.3)'
+                            },
+                            {
+                                offset : 0.8,
+                                color : 'rgba(17,143,223, 0)'
+                            } ], false),
+                        shadowColor : 'rgba(0, 0, 0, 0.1)',
+                        shadowBlur : 10
+                    }
+                },
+                //控制线条的颜色
+                itemStyle : {
+                    normal : {
+                        color : 'rgb(17,143,223)',
+                        borderColor : 'rgba(17,143,2,0.27)',
+                        borderWidth : 2
+
+                    }
+                }},
+            {type: 'line', smooth: true, seriesLayoutBy: 'row',areaStyle : {
+                    normal : {
+                        color : new echarts.graphic.LinearGradient(0,0,0,1,[
+                            {
+                                offset : 0,
+                                color : 'rgba(190,95,233, 0.3)'
+                            },
+                            {
+                                offset : 0.8,
+                                color : 'rgba(190,95,233, 0)'
+                            } ], false),
+                        shadowColor : 'rgba(0, 0, 0, 0.1)',
+                        shadowBlur : 10
+                    }
+                },
+                //控制线条的颜色
+                itemStyle : {
+                    normal : {
+                        color : 'rgb(190,95,233)',
+                        borderColor : 'rgba(190,95,2,0.27)',
+                        borderWidth : 2
+
+                    }
+                }},
+        ]
+    };
+
+    weixiuqu.setOption(option);
+    weixiuqu.resize();
+
+
+}
+// function zhuangtai_init(arr5_1,arr5_2){
+//     var zhuangtai = echarts.init(document.getElementById('zhuangtai'));
+//     option = {
+//
+//         tooltip: {
+//             trigger: 'item',
+//             formatter: "{b}"
+//         },
+//         legend: {
+//             orient: 'horizontal',
+//             bottom: 0,
+//             left: 'center',
+//             itemwidth: 2,
+//             itemheight:2,
+//             itemGap:2,
+//             data:arr5_1
+//         },
+//         series: [
+//
+//             {
+//                 name:'访问来源',
+//                 type:'pie',
+//                 radius: ['40%', '55%'],
+//                 label: {show:false,
+//                     normal: {
+//                         //formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+//                         formatter: '{c}台 ',
+//                         backgroundColor: '',
+//                         borderColor: '#aaa',
+//                         borderWidth: 0,
+//                         borderRadius: 4,
+//                         color:'#000',
+//
+//                     }
+//                 },
+//                 data:arr5_2,
+//                 itemStyle: {
+//                     emphasis: {
+//                         shadowBlur: 10,
+//                         shadowOffsetX: 0,
+//                         shadowColor: 'rgba(0, 0, 0, 0.5)'
+//                     },
+//                     normal:{
+//                         color:function(params) {
+//                             //自定义颜色
+//                             var colorList = [
+//                                 '#47b3fe', '#f77c34', '#8978f0',
+//                             ];
+//                             return colorList[params.dataIndex]
+//                         }
+//                     }
+//                 }
+//             }
+//         ]
+//     };
+//     zhuangtai.setOption(option);
+//     zhuangtai.resize();
+//
+// }
+// function weixiu_init(arr4_1,arr4_2){
+//     var weixiu = echarts.init(document.getElementById('weixiu'));
+//     option = {
+//
+//         tooltip: {
+//             trigger: 'item',
+//             formatter: "{b}"
+//         },
+//         legend: {
+//             orient: 'horizontal',
+//             bottom: 0,
+//             left: 'center',
+//             itemwidth: 2,
+//             itemheight:2,
+//             itemGap:2,
+//             data:arr4_1
+//         },
+//         series: [
+//
+//             {
+//                 name:'访问来源',
+//                 type:'pie',
+//                 radius: ['40%', '55%'],
+//                 label: {show:false,
+//                     normal: {
+//                         //formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+//                         formatter: '{c}台 ',
+//                         backgroundColor: '',
+//                         borderColor: '#aaa',
+//                         borderWidth: 0,
+//                         borderRadius: 4,
+//                         color:'#000',
+//                         rich: {
+//                             a: {
+//                                 color: '#fff',
+//                                 lineHeight: 22,
+//                                 align: 'center'
+//                             },
+//                             hr: {
+//                                 borderColor: '#aaa',
+//                                 width: '100%',
+//                                 borderWidth: 0.5,
+//                                 height: 0
+//                             },
+//                             per: {
+//                                 color: '#eee',
+//                                 backgroundColor: '#334455',
+//                                 padding: [2, 4],
+//                                 borderRadius: 2
+//                             }
+//                         }
+//                     }
+//                 },
+//                 data:arr4_2,
+//                 itemStyle: {
+//                     emphasis: {
+//                         shadowBlur: 10,
+//                         shadowOffsetX: 0,
+//                         shadowColor: 'rgba(0, 0, 0, 0.5)'
+//                     },
+//                     normal:{
+//                         color:function(params) {
+//                             //自定义颜色
+//                             var colorList = [
+//                                 '#47b3fe', '#f77c34', '#6bec65',
+//                             ];
+//                             return colorList[params.dataIndex]
+//                         }
+//                     }
+//                 }
+//             }
+//         ]
+//     };
+//     weixiu.setOption(option);
+//     weixiu.resize();
+// }
+// function baofei_init(arr3_1,arr3_2){
+//     var baofei = echarts.init(document.getElementById('baofei'));
+//     option = {
+//         color: ['#3398DB'],
+//         tooltip : {
+//             trigger: 'axis',
+//             axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+//                 type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+//             }
+//         },
+//         grid: {
+//             left: '3%',
+//             right: '4%',
+//             bottom: '6%',
+//             top:'3%',
+//             containLabel: true
+//         },
+//         xAxis : [
+//             {
+//                 type : 'category',
+//                 data : arr3_1,
+//                 axisTick: {
+//                     alignWithLabel: true
+//                 },
+//                 axisLine: {
+//                     lineStyle: {
+//                         type: 'solid',
+//                         color:'#999',
+//                         width:'1'
+//                     }
+//                 },
+//                 axisLabel: {
+//                     textStyle: {
+//                         color: '#999'
+//                     }
+//                 }
+//             }
+//         ],
+//         yAxis : [
+//             {
+//                 type : 'value',
+//                 min:0,
+//                 max:200,
+//                 axisLine: {
+//                     lineStyle: {
+//                         type: 'solid',
+//                         color:'#999',
+//                         width:'0'
+//                     }
+//                 },
+//                 axisLabel: {
+//                     textStyle: {
+//                         color: '#999'
+//                     }
+//                 }
+//             }
+//         ],
+//         series : [
+//             {
+//                 name:'报废数量',
+//                 type:'bar',
+//                 barWidth: '28%',
+//                 data:arr3_2,
+//             }
+//         ]
+//     };
+//     baofei.setOption(option);
+//     baofei.resize();
+// }
+function tongji_init(arr1){
+    for (i in arr1){
+        var j=Number(i)+1;
+        $('#num'+j).empty();
+        $('#num'+j).append(arr1[i]);
+    }
+
+}
+
+
+
+

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.task.mapper.BorrowTaskMapper">
+  <resultMap id="BaseResultMap" type="com.manage.idc.task.domain.BorrowTask">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="task_type" jdbcType="INTEGER" property="taskType" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="start_org_id" jdbcType="BIGINT" property="startOrgId" />
+    <result column="end_org_id" jdbcType="BIGINT" property="endOrgId" />
+    <result column="start_name" jdbcType="VARCHAR" property="startName" />
+    <result column="end_name" jdbcType="VARCHAR" property="endName" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="start_root_id" jdbcType="BIGINT" property="startRoomId" />
+    <result column="end_room_id" jdbcType="BIGINT" property="endRoomId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, task_name, remark, task_type, `state`, start_org_id, end_org_id, start_name, 
+    end_name, is_del, create_time, end_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from borrow_task
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from borrow_task
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.task.domain.BorrowTask" useGeneratedKeys="true">
+    insert into borrow_task (task_name, remark, task_type, 
+      `state`, start_org_id, end_org_id, 
+      start_name, end_name, is_del, 
+      create_time, end_time)
+    values (#{taskName,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{taskType,jdbcType=INTEGER}, 
+      #{state,jdbcType=INTEGER}, #{startOrgId,jdbcType=BIGINT}, #{endOrgId,jdbcType=BIGINT}, 
+      #{startName,jdbcType=VARCHAR}, #{endName,jdbcType=VARCHAR}, #{isDel,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.task.domain.BorrowTask" useGeneratedKeys="true">
+    insert into borrow_task
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="taskName != null">
+        task_name,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="taskType != null">
+        task_type,
+      </if>
+      <if test="state != null">
+        `state`,
+      </if>
+      <if test="startOrgId != null">
+        start_org_id,
+      </if>
+      <if test="endOrgId != null">
+        end_org_id,
+      </if>
+      <if test="startName != null">
+        start_name,
+      </if>
+      <if test="endName != null">
+        end_name,
+      </if>
+      <if test="isDel != null">
+        is_del,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="startRoomId != null">
+      start_room_id,
+      </if>
+      <if test="endRoomId != null">
+       end_room_id,
+      </if>
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="taskName != null">
+        #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="taskType != null">
+        #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="startOrgId != null">
+        #{startOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="endOrgId != null">
+        #{endOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="startName != null">
+        #{startName,jdbcType=VARCHAR},
+      </if>
+      <if test="endName != null">
+        #{endName,jdbcType=VARCHAR},
+      </if>
+      <if test="isDel != null">
+        #{isDel,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startRoomId != null">
+        #{startRoomId,jdbcType=BIGINT},
+      </if>
+      <if test="endRoomId != null">
+        #{endRoomId,jdbcType=BIGINT},
+      </if>
+
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.manage.idc.task.domain.BorrowTask">
+    update borrow_task
+    <set>
+      <if test="taskName != null">
+        task_name = #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="taskType != null">
+        task_type = #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        `state` = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="startOrgId != null">
+        start_org_id = #{startOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="endOrgId != null">
+        end_org_id = #{endOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="startName != null">
+        start_name = #{startName,jdbcType=VARCHAR},
+      </if>
+      <if test="endName != null">
+        end_name = #{endName,jdbcType=VARCHAR},
+      </if>
+      <if test="isDel != null">
+        is_del = #{isDel,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.task.domain.BorrowTask">
+    update borrow_task
+    set task_name = #{taskName,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      task_type = #{taskType,jdbcType=INTEGER},
+      `state` = #{state,jdbcType=INTEGER},
+      start_org_id = #{startOrgId,jdbcType=BIGINT},
+      end_org_id = #{endOrgId,jdbcType=BIGINT},
+      start_name = #{startName,jdbcType=VARCHAR},
+      end_name = #{endName,jdbcType=VARCHAR},
+      is_del = #{isDel,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByCondition" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    ct.*, so.`name` starOrgName,
+    soo.`name` endOrgName
+    FROM
+    borrow_task ct
+    LEFT JOIN sys_org so ON so.id = ct.start_org_id
+    LEFT JOIN sys_org soo ON soo.id = ct.end_org_id
+    <where>
+      <if test="data.orgId!=null and data.orgId!=''">
+        and  (so.parent_id=#{data.orgId} or so.id=#{data.orgId})
+      </if>
+      <if test="data.isDel!=null and data.isDel!=''">
+        and ct.is_del=#{data.isDel}
+      </if>
+      <if test="data.state!=null and data.state!=''">
+        and ct.state=#{data.state}
+      </if>
+      <if test="data.taskName!=null and data.taskName!=''">
+        and ct.task_name like concat('%',#{data.taskName},'%')
+      </if>
+      and ct.is_del=0
+    </where>
+    ORDER BY create_time DESC
+  </select>
+  <select id="getBorrowTaskPage" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+    ct.*, so.`name` starOrgName,
+    soo.`name` endOrgName
+    FROM
+    borrow_task ct
+    LEFT JOIN sys_org so ON so.id = ct.start_org_id
+    LEFT JOIN sys_org soo ON soo.id = ct.end_org_id
+    <where>
+      <if test="data.orgId!=null">
+        and  (so.parent_id=#{data.orgId} or so.id=#{data.orgId})
+      </if>
+      <if test="data.isDel!=null">
+        and ct.is_del=#{data.isDel}
+      </if>
+      <if test="data.state!=null">
+        and ct.state=#{data.state}
+      </if>
+      <if test="data.taskName!=null">
+        and (ct.task_name like concat('%',#{data.queryName},'%') or ct.id like concat('%',#{data.queryName},'%'))
+      </if>
+      and ct.state !=2
+    </where>
+    ORDER BY create_time DESC
+  </select>
+    <select id="getByTask" resultMap="BaseResultMap">
+      SELECT
+      ct.*, so.`name` starOrgName,
+      soo.`name` endOrgName,
+      rm1.name startRoomName,
+      rm2.name endRoomName
+
+      FROM
+      borrow_task ct
+      LEFT JOIN sys_org so ON so.id = ct.start_org_id
+      LEFT JOIN sys_org soo ON soo.id = ct.end_org_id
+      LEFT JOIN room rm1 on rm1.id=ct.start_room_id
+      LEFT JOIN room rm2 on rm2.id=ct.end_room_id
+      <where>
+        <if test="orgId!=null">
+          and  (so.parent_id=#{orgId} or so.id=#{orgId})
+        </if>
+        <if test="isDel!=null">
+          and ct.is_del=#{isDel}
+        </if>
+        <if test="state!=null">
+          and ct.state=#{state}
+        </if>
+        <if test="taskName!=null">
+          and (ct.task_name like concat('%',#{queryName},'%') or ct.id like concat('%',#{queryName},'%'))
+        </if>
+        and ct.id=#{id}
+      </where>
+      ORDER BY create_time DESC
+    </select>
+</mapper>

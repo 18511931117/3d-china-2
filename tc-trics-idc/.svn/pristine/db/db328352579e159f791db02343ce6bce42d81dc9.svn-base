@@ -1,0 +1,209 @@
+package com.manage.idc.task.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.enums.TaskState;
+import com.manage.idc.common.enums.TaskType;
+import com.manage.idc.common.exception.IdcException;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.device.domain.Res;
+import com.manage.idc.device.mapper.ResMapper;
+import com.manage.idc.log.domain.CheckTaskLog;
+import com.manage.idc.log.mapper.CheckTaskLogMapper;
+import com.manage.idc.system.domain.Label;
+import com.manage.idc.system.mapper.LabelMapper;
+import com.manage.idc.task.domain.CheckTask;
+import com.manage.idc.task.domain.CheckTaskDesc;
+import com.manage.idc.task.mapper.CheckTaskDescMapper;
+import com.manage.idc.task.mapper.CheckTaskMapper;
+import com.manage.idc.task.service.CheckTaskService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/22 20:31
+ **/
+@Service
+@Transactional
+public class CheckTaskServiceImpl extends BaseTaskServiceImpl implements CheckTaskService {
+    @Autowired
+    private CheckTaskMapper checkTaskMapper;
+    @Autowired
+    private ResMapper resMapper;
+    @Autowired
+    private CheckTaskDescMapper checkTaskDescMapper;
+    @Autowired
+    private LabelMapper labelMapper;
+    @Autowired
+    private CheckTaskLogMapper checkTaskLogMapper;
+
+    @Override
+    public void add(CheckTask checkTask) {
+        long checkTaskId =IdGen.getUUId();
+        checkTask.setId(checkTaskId);
+        checkTask.setCreateTime(new Date());
+        checkTask.setTaskType(TaskType.RES_CHECK.getType());
+        checkTask.setState(TaskState.NO_STAR_TASK.getState());
+        checkTask.setUserId(SessionUtil.getUser().getId());
+        //添加盘点设备任务
+        checkTaskMapper.insertSelective(checkTask);
+        //添加盘点设备任务详情
+        String resId = checkTask.getResIds();
+        List<String> resIds =  Arrays.asList(resId.split(","));
+        for(String resid : resIds){
+            Res res = resMapper.selectByPrimaryKey(Long.parseLong(resid));
+            String tid = res.getTid();
+            //根据Tid查询标签
+            Label label = labelMapper.selectByTid(tid);
+            if(label==null){
+                throw  new IdcException("设备："+res.getName()+"  没有绑定标签！");
+            }
+            CheckTaskDesc checkTaskDesc = new CheckTaskDesc();
+            checkTaskDesc.setId(IdGen.getUUId());
+            checkTaskDesc.setResId(res.getId());
+            checkTaskDesc.setResTypeCode(res.getResTypeCode());
+            checkTaskDesc.setRoomId(res.getRoomId());
+            checkTaskDesc.setTaskId(checkTaskId);
+            checkTaskDesc.setState(TaskState.NOT_ALREADY_PAN.getState());
+            checkTaskDesc.setOrgId(checkTask.getOrgId());
+            checkTaskDesc.setLabelId(label.getId());  //TODO 标签ID获取
+            checkTaskDesc.setCreateTime(new Date());
+            checkTaskDesc.setTid(res.getTid());
+            checkTaskDescMapper.insertSelective(checkTaskDesc);
+            //更新设备状态为盘点任务中
+            super.updateResStatus(Long.parseLong(resid),"7");
+        }
+    }
+
+    @Override
+    public PageInfo<CheckTaskDesc> desc(CheckTask checkTask,PageRequest pageRequest) {
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        checkTask.setOrgId(SessionUtil.getUser().getOrgId());
+        Long taskId = checkTask.getId();
+        List<CheckTaskDesc> checkTaskDescs = checkTaskDescMapper.selectByCheckTaskId(taskId);
+        return new PageInfo<CheckTaskDesc>(checkTaskDescs);
+    }
+
+    @Override
+    public void delete(CheckTask checkTask) {
+        //更新任务表
+        checkTask.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        checkTaskMapper.updateByPrimaryKeySelective(checkTask);
+        //更新任务详情表
+        CheckTaskDesc checkTaskDesc = new CheckTaskDesc();
+        checkTaskDesc.setTaskId(checkTask.getId());
+        checkTaskDesc.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        checkTaskDescMapper.updateByTaskId(checkTaskDesc);
+    }
+
+    @Override
+    public List<CheckTaskDesc> export(CheckTask checkTask) {
+        Long taskId = checkTask.getId();
+        return  checkTaskDescMapper.selectByCheckTaskId(taskId);
+    }
+
+    @Override
+    public PageInfo<CheckTask> getPage(CheckTask checkTask, PageRequest pageRequest) {
+        checkTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+//        checkTask.setState(TaskState.SUCCESS_TASK.getState());
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        checkTask.setOrgId(SessionUtil.getUser().getOrgId());
+        List<CheckTask> list = checkTaskMapper.selectByCondition(DataSetUtile.setQueryMap(checkTask,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<CheckTask>(list);
+    }
+
+    /**
+     * 设备盘点 有开始任务按钮，其余任务没有开始任务按钮. 任务状态前段传入
+     * @param checkTask
+     */
+    @Override
+    public void updateState(CheckTask checkTask) {
+        //更新任务状态
+        checkTaskMapper.updateByPrimaryKeySelective(checkTask);
+        //更新任务详情任务状态
+        CheckTaskDesc checkTaskDesc = new CheckTaskDesc();
+        checkTaskDesc.setTaskId(checkTask.getId());
+        checkTaskDesc.setState(TaskState.NOT_ALREADY_PAN.getState());
+        checkTaskDescMapper.updateByTaskId(checkTaskDesc);
+        //任务完成后保存到 盘点任务日志表中
+        if(checkTask.getState()==TaskState.SUCCESS_TASK.getState()){
+            CheckTask checkTasks = checkTaskMapper.selectByPrimaryKey(checkTask.getId());
+            CheckTaskLog checkTaskLog = new CheckTaskLog();
+            checkTaskLog.setId(IdGen.getUUId());
+            checkTaskLog.setTaskName(checkTasks.getName());
+            checkTaskLog.setTaskType(checkTasks.getTaskType());
+            checkTaskLog.setOrgId(checkTasks.getOrgId());
+            checkTaskLog.setStartTime(checkTasks.getCreateTime());
+            checkTaskLog.setEndTime(new Date());
+            checkTaskLog.setState(checkTasks.getState());
+            checkTaskLog.setTaskId(checkTask.getId());
+            checkTaskLog.setRemark(checkTask.getRemark());
+            checkTaskLogMapper.insertSelective(checkTaskLog);
+            //更新设备为盘点状态
+            List<Long> byTaskIdResIdList = checkTaskDescMapper.getByTaskIdResIdList(checkTaskDesc.getTaskId()); //查询任务中的所有设备
+            //更新设备信息为在线状态
+            byTaskIdResIdList.stream().forEach(resId->super.updateResStatus(resId,"1"));
+        }
+
+    }
+
+    @Override
+    public List<CheckTaskDesc> getCheckTaskDesc(CheckTaskDesc checkTask) {
+        return  checkTaskDescMapper.getCheckTaskDesc(checkTask);
+    }
+
+    @Override
+    public PageInfo<CheckTask> getCheckTaskPage(CheckTask checkTask, PageRequest pageRequest) {
+        checkTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+//        checkTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);   前段传入 过滤条件 默认是全部
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        checkTask.setOrgId(SessionUtil.getUser().getOrgId());
+        List<CheckTask> list = checkTaskMapper.getCheckTaskPage(DataSetUtile.setQueryMap(checkTask,pageRequest,null));
+        return new PageInfo<CheckTask>(list);
+    }
+
+    @Override
+    public String chenDeviceTid(CheckTask checkTask) {
+        String resId = checkTask.getResIds();
+        List<String> resIds =  Arrays.asList(resId.split(","));
+        String resNme=null;
+        for(String resid : resIds){
+            Res res = resMapper.selectByPrimaryKey(Long.parseLong(resid));
+            if (res.getTid()==null){
+                resNme=res.getName();
+            }
+        }
+        return resNme;
+    }
+
+    @Override
+    public void updateAppTaskDescState(CheckTaskDesc checkTaskDesc) {
+        //更新任务详情状态为 已盘 未盘
+        checkTaskDescMapper.updateByPrimaryKeySelective(checkTaskDesc);
+    }
+
+    @Override
+    public void updateAppTaskState(CheckTask checkTask) {
+        checkTaskMapper.updateByPrimaryKeySelective(checkTask);
+        List<Long> byTaskIdResIdList = checkTaskDescMapper.getByTaskIdResIdList(checkTask.getId()); //查询任务中所有已盘到的设备
+//        //更新设备信息为在线状态
+//        byTaskIdResIdList.stream().forEach(resId->super.updateResStatus(resId,"1"));
+    }
+}

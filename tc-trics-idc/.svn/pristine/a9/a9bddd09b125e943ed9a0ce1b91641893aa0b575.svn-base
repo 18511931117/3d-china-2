@@ -1,0 +1,176 @@
+package com.manage.idc.task.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.enums.TaskState;
+import com.manage.idc.common.enums.TaskType;
+import com.manage.idc.common.exception.IdcException;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.device.domain.Res;
+import com.manage.idc.device.mapper.ResMapper;
+import com.manage.idc.log.domain.RepairTaskLog;
+import com.manage.idc.log.mapper.RepairTaskLogMapper;
+import com.manage.idc.system.domain.Label;
+import com.manage.idc.system.mapper.LabelMapper;
+import com.manage.idc.task.domain.*;
+import com.manage.idc.task.mapper.RepairTaskDescMapper;
+import com.manage.idc.task.mapper.RepairTaskMapper;
+import com.manage.idc.task.service.RepairTaskService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/24 13:49
+ **/
+@Service
+@Transactional
+public class RepairTaskServiceImpl extends BaseTaskServiceImpl  implements RepairTaskService {
+    @Autowired
+    private RepairTaskMapper repairTaskMapper;
+    @Autowired
+    private RepairTaskDescMapper repairTaskDescMapper;
+    @Autowired
+    private ResMapper resMapper;
+    @Autowired
+    private LabelMapper labelMapper;
+    @Autowired
+    private RepairTaskLogMapper repairTaskLogMapper;
+
+    @Override
+    public void add(RepairTask repairTask) {
+        long allocationTaskId = IdGen.getUUId();
+        repairTask.setId(allocationTaskId);
+        repairTask.setCreateTime(new Date());
+        repairTask.setTaskType(TaskType.RES_REPAIR.getType());
+        repairTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        repairTask.setState(TaskState.CONDUCT_TASK.getState());
+        repairTaskMapper.insertSelective(repairTask);
+
+        String resId = repairTask.getResIds();
+        List<String> resIds = Arrays.asList(resId.split(","));
+        for (String resid : resIds) {
+            Res res = resMapper.selectByPrimaryKey(Long.parseLong(resid));
+            //添加设备维修详情记录
+            RepairTaskDesc repairTaskDesc = new RepairTaskDesc();
+            repairTaskDesc.setCreateTime(new Date());
+            repairTaskDesc.setId(IdGen.getUUId());
+            String tid = res.getTid();
+            //根据Tid查询标签
+            Label label = labelMapper.selectByTid(tid);
+            if(label==null){
+                throw  new IdcException("设备："+res.getName()+"  没有绑定标签！");
+            }
+            repairTaskDesc.setLabelId(label.getId());
+            repairTaskDesc.setResId(res.getId());
+            repairTaskDesc.setRoomId(res.getRoomId());
+            repairTaskDesc.setState(TaskState.CONDUCT_TASK.getState());
+            repairTaskDesc.setTaskId(allocationTaskId);
+            repairTaskDesc.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+            repairTaskDescMapper.insertSelective(repairTaskDesc);
+            //更新设备状态为维修任务中
+            super.updateResStatus(Long.parseLong(resid),"4");
+        }
+    }
+
+    @Override
+    public void delete(RepairTask repairTask) {
+        repairTask.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        repairTaskMapper.updateByPrimaryKeySelective(repairTask); //更新调拨任务
+        RepairTaskDesc repairTaskDesc = new RepairTaskDesc();
+        repairTaskDesc.setTaskId(repairTask.getId());
+        repairTaskDesc.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        repairTaskDescMapper.updateByTaskId(repairTaskDesc);
+        //撤销设备状态
+        List<Long> byTaskIdResIdList = repairTaskDescMapper.getByTaskIdResIdList(repairTaskDesc.getTaskId());
+        byTaskIdResIdList.stream().forEach(resId->super.updateResStatus(resId,"1"));
+    }
+
+    public PageInfo<RepairTaskDesc> desc(RepairTask repairTask,PageRequest pageRequest) {
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        repairTask.setOrgId(SessionUtil.getUser().getOrgId());
+        Long taskId = repairTask.getId();
+        List<RepairTaskDesc> checkTaskDescs = repairTaskDescMapper.selectByCheckTaskId(taskId);
+        return new PageInfo<>(checkTaskDescs);
+    }
+
+    @Override
+    public List<RepairTaskDesc> export(RepairTask repairTask) {
+        ArrayList<Long> ids = new ArrayList<>();
+        Arrays.stream(repairTask.getIds().split(",")).forEach(id->
+                ids.add(Long.parseLong(id)));
+        return  repairTaskDescMapper.selectByExport(ids);
+    }
+
+    @Override
+    public PageInfo<RepairTask> getPage(RepairTask repairTask, PageRequest pageRequest) {
+        repairTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);  //前段传入 过滤条件 默认是全部
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        repairTask.setOrgId(SessionUtil.getUser().getOrgId());
+        List<RepairTask> list = repairTaskMapper.selectByCondition(DataSetUtile.setQueryMap(repairTask,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<RepairTask>(list);
+    }
+
+    @Override
+    public void updateState(RepairTask repairTask) {
+        //更新任务状态
+        repairTask.setState(TaskState.SUCCESS_TASK.getState());
+        repairTaskMapper.updateByPrimaryKeySelective(repairTask);
+        //更新任务详情状态
+        RepairTaskDesc repairTaskDesc = new RepairTaskDesc();
+        repairTaskDesc.setTaskId(repairTask.getId());
+        repairTaskDesc.setState(repairTask.getState());
+        repairTaskDescMapper.updateByTaskId(repairTaskDesc);
+
+        //任务完成后保存到 盘点任务日志表中
+        if(repairTask.getState()==TaskState.SUCCESS_TASK.getState()){
+            RepairTask repairTasks = repairTaskMapper.selectByPrimaryKey(repairTask.getId());
+            RepairTaskLog checkTaskLog = new RepairTaskLog();
+            checkTaskLog.setId(IdGen.getUUId());
+            checkTaskLog.setTaskName(repairTasks.getTaskName());
+            checkTaskLog.setTaskType(repairTasks.getTaskType());
+            checkTaskLog.setOrgId(repairTasks.getOrgId());
+            checkTaskLog.setStartTime(repairTasks.getCreateTime());
+            checkTaskLog.setEndTime(new Date());
+            checkTaskLog.setState(repairTasks.getState());
+            checkTaskLog.setTaskId(repairTasks.getId());
+            checkTaskLog.setPersonName("");
+            checkTaskLog.setRemark(repairTasks.getRemark());
+            repairTaskLogMapper.insertSelective(checkTaskLog);
+
+            List<Long> byTaskIdResIdList = repairTaskDescMapper.getByTaskIdResIdList(repairTaskDesc.getTaskId()); //查询任务中的所有设备
+            //更新设备状态 在线
+            byTaskIdResIdList.stream().forEach(resId-> super.updateResStatus(resId,"1"));
+        }
+    }
+
+    @Override
+    public PageInfo<RepairTask> getRepairTaskPage(RepairTask repairTask, PageRequest pageRequest) {
+        repairTask.setIsDel(IdcConstant.SYSTEM_ISDEL.NOT_DEL);
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<RepairTask> list = repairTaskMapper.getRepairTaskPage(DataSetUtile.setQueryMap(repairTask,pageRequest,null));
+        return new PageInfo<>(list);
+    }
+
+    @Override
+    public List<RepairTaskDesc> getRepairTaskDesc(RepairTaskDesc repairTask) {
+        return repairTaskDescMapper.getRepairTaskDesc(repairTask);
+    }
+}

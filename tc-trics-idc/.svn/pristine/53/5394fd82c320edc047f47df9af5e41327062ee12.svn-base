@@ -1,0 +1,120 @@
+package com.manage.idc.system.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.IdcConstant;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.RandomUtile;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.system.domain.Rack;
+import com.manage.idc.system.domain.Room;
+import com.manage.idc.system.domain.SysOrg;
+import com.manage.idc.system.mapper.RackMapper;
+import com.manage.idc.system.mapper.RoomMapper;
+import com.manage.idc.system.mapper.SysOrgMapper;
+import com.manage.idc.system.service.RackService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @Author: WangZiFan
+ * @Date: 2019/10/17 20:01
+ * @Description:
+ */
+@Service
+public class RackServiceImpl implements RackService {
+    @Autowired
+    private RackMapper rackMapper;
+
+    @Autowired
+    private RoomMapper roomMapper;
+
+
+    @Autowired
+    private SysOrgMapper sysOrgMapper;
+
+    /*
+     * @Description: 获取分页列表
+     * @Author: WangZiFan
+     * @Date: 2019/10/19 15:57
+     * @param rack
+     * @param pageRequest
+     * @return com.github.pagehelper.PageInfo<com.manage.idc.system.domain.Rack>
+     */
+    @Override
+    public PageInfo<Rack> getPage(Rack rack, PageRequest pageRequest) {
+        if(null != pageRequest && pageRequest.getLimit() != null && pageRequest.getPage() != null){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<Rack> list = rackMapper.selectByCondition(DataSetUtile.setQueryMap(rack,pageRequest, SessionUtil.getUser()));
+        return new PageInfo<>(list);
+    }
+
+    /*
+     * @Description: 修改机架
+     * @Author: WangZiFan
+     * @Date: 2019/10/20 11:53
+     * @param rack
+     * @return void
+     */
+    @Override
+    public void updateRack(Rack rack) {
+        Room room = new Room();
+        room.setId(rack.getRoomId());
+        room = roomMapper.selectOne(room);
+
+
+        SysOrg sysOrg = new SysOrg();
+        sysOrg.setId(room.getOrgId());
+        sysOrg = sysOrgMapper.selectOne(sysOrg);
+        rack.setOrgId(sysOrg.getId());
+        rack.setRegionId(Long.parseLong(sysOrg.getRegionId()));
+        rack.setUpdatedTime(new Date());
+        rackMapper.updateByPrimaryKey(rack);
+    }
+    /*
+     * @Description: 添加机架
+     * @Author: WangZiFan
+     * @Date: 2019/10/20 11:53
+     * @param rack
+     * @return void
+     */
+    @Override
+    public void addRack(Rack rack) {
+        rack.setId(IdGen.getUUId());
+        Room room = new Room();
+        room.setId(rack.getRoomId());
+        room = roomMapper.selectOne(room);
+
+
+        SysOrg sysOrg = new SysOrg();
+        sysOrg.setId(room.getOrgId());
+        sysOrg = sysOrgMapper.selectOne(sysOrg);
+        rack.setOrgId(sysOrg.getId());
+        rack.setRegionId(Long.parseLong(sysOrg.getRegionId()));
+
+
+        rack.setAssetId(sysOrg.getFullCode()+"-"+"RACK_"+ RandomUtile.getRandomString(8));
+        rackMapper.insert(rack);
+    }
+    /*
+     * @Description: 删除机架
+     * @Author: WangZiFan
+     * @Date: 2019/10/20 11:54
+     * @param id
+     * @return void
+     */
+    @Override
+    public void delRack(Long id) {
+        Rack rack = new Rack();
+        rack.setId(id);
+        rack.setIsDel(IdcConstant.SYSTEM_ISDEL.DEL);
+        rack.setUpdatedTime(new Date());
+        rackMapper.updateByPrimaryKey(rack);
+    }
+}

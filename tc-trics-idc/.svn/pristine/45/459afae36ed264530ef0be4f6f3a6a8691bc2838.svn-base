@@ -1,0 +1,113 @@
+//knob
+$(".knob").knob();
+layui.use('table', function(){
+    var table = layui.table;
+    table.render({
+        elem: '#pcTable'
+        ,url: ctxPath+'device/getDeviceLabelingPage'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'assetId', title: '资产编号'}
+            , {field: 'name', title: '设备名称',}
+            , {field: 'resTypeName', title: '设备分类'}
+            , {field: 'roomName', title: '机房'}
+            , {field: 'barcode', title: '标签编号'}
+            , {field: 'isPrinted', title: '状态', templet: function (d) {
+                    if(d.isPrinted == '0' ){
+                        return "未打印"
+                    }else if(d.isPrinted == '1'){
+                        return "已打印"
+                    }else{
+                        return ""
+                    }}}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#button'}
+        ]]
+        ,page: true
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+            });
+        }  else if(obj.event === 'confirm'){
+            $.post(
+                ctxPath +"label/updateByTid",
+                {'tid':data.tid,'isPasted':'1'},
+                function(data){
+                    if(data.code == '0') {
+                        layer.msg("操作成功!");
+                        refreshTable();
+                    }else{
+                        layer.error("操作失败!");
+                    }
+                }
+            )
+        }
+    });
+
+
+    function refreshTable() {
+        table.reload("pcTable");
+    }
+});
+
+
+layui.use('table', function(){
+    var table = layui.table;
+    table.render({
+        elem: '#phoneTable'
+        ,url: ctxPath+'device/getDeviceLabelingPage'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'assetId', title: '资产编号'}
+            , {field: 'name', title: '设备名称',}
+            , {field: 'resTypeName', title: '设备分类'}
+            , {field: 'roomName', title: '机房'}
+            , {field: 'barcode', title: '标签编号'}
+            , {field: 'isPrinted', title: '状态', templet: function (d) {
+                    if(d.isPrinted == '0' ){
+                        return "未打印"
+                    }else if(d.isPrinted == '1'){
+                        return "已打印"
+                    }else{
+                        return ""
+                    }}}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#button'}
+        ]]
+        ,page: true
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+            });
+        } else if(obj.event === 'confirm'){
+            $.post(
+                ctxPath +"label/updateByTid",
+                {'tid':data.tid,'isPasted':'1'},
+                function(data){
+                    if(data.code == '0') {
+                        layer.msg("操作成功!");
+                        refreshTable();
+                    }else{
+                        layer.error("操作失败!");
+                    }
+                }
+            )
+        }
+    });
+
+    function refreshTable() {
+        table.reload("phoneTable");
+    }
+});

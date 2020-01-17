@@ -1,0 +1,131 @@
+package com.manage.idc.system.service.impl;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.Tree;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.common.utils.TreeUtil;
+import com.manage.idc.system.domain.SysMenu;
+import com.manage.idc.system.mapper.SysMenuMapper;
+import com.manage.idc.system.mapper.SysRoleMenuMapper;
+import com.manage.idc.system.service.SysMenuService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/14 10:18
+ **/
+@Service
+@Transactional
+public class SysMenuServiceImpl implements SysMenuService {
+    @Autowired
+    private SysMenuMapper sysMenuMapper;
+    @Autowired
+    private SysRoleMenuMapper sysRoleMenuMapper;
+
+
+    /**
+     * 查找用户权限集
+     *
+     * @param username 用户名
+     * @return 用户权限集合
+     */
+    public List<SysMenu> findUserPermissions(String username) {
+        return sysMenuMapper.findUserPermissions(username);
+    }
+
+    /**
+     * 菜单添加
+     *
+     * @param sysMenu 菜单（按钮）对象
+     */
+    @Override
+    public void createMenu(SysMenu sysMenu) {
+        sysMenu.setId(IdGen.getUUId());
+        sysMenuMapper.createMenu(sysMenu);
+    }
+
+    /**
+     * 删除菜单（按钮）
+     *
+     * @param menuIds 菜单（按钮）id
+     */
+    @Override
+    public void deleteMeuns(String menuIds) {
+        ArrayList<Long> idList = new ArrayList<>();
+        Arrays.asList(menuIds.split(",")).stream().forEach(id -> idList.add(Long.parseLong(id)));
+        sysMenuMapper.deleteMeuns(idList);
+    }
+
+    /**
+     * 修改菜单（按钮）
+     * @param sysMenu
+     */
+    @Override
+    public void updateMenu(SysMenu sysMenu) {
+        sysMenuMapper.updateMenu(sysMenu);
+    }
+
+    /**
+     * 查询菜单树结构
+     * @param menu
+     * @return
+     */
+    @Override
+    public Tree<SysMenu> findMenus(SysMenu menu) {
+        List<SysMenu> menus = sysMenuMapper.selectList(menu);
+        List<Tree<SysMenu>> menuTrees = this.convertMenus(menus);
+        return TreeUtil.buildMenuTree(menuTrees);
+    }
+
+    @Override
+    public PageInfo<SysMenu> getPage(SysMenu sysMenu, PageRequest pageRequest) {
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        List<SysMenu> list = sysMenuMapper.selectByCondition(DataSetUtile.setQueryMap(sysMenu,pageRequest,null));
+        return new PageInfo<SysMenu>(list);
+    }
+
+    private List<Tree<SysMenu>> convertMenus(List<SysMenu> menus) {
+        List<Tree<SysMenu>> trees = new ArrayList<>();
+        menus.forEach(menu -> {
+            Tree<SysMenu> tree = new Tree<>();
+            tree.setId(String.valueOf(menu.getId()));
+            tree.setParentId(String.valueOf(menu.getParentId()));
+            tree.setTitle(menu.getName());
+            tree.setIcon(null);
+            tree.setUrl(menu.getUrl());
+            tree.setData(menu);
+            trees.add(tree);
+        });
+        return trees;
+    }
+
+    @Override
+    public List<SysMenu> getList(SysMenu sysMenu) {
+        return sysMenuMapper.selectList(sysMenu);
+    }
+
+    @Override
+    public  Tree<SysMenu> getTree(SysMenu menu) {
+        List<SysMenu> menus = sysMenuMapper.selectList(menu);
+        //通过roleId 查询角色所有的menuId
+        if(menu.getRoleId()!=null){
+            List<Long> menuIds = sysRoleMenuMapper.getMenusId(menu.getRoleId());
+        }
+
+        List<Tree<SysMenu>> trees = TreeUtil.convertMenus(menus);
+        Tree<SysMenu> sysMenuTree = TreeUtil.buildMenuTree(trees);
+        return sysMenuTree;
+    }
+}

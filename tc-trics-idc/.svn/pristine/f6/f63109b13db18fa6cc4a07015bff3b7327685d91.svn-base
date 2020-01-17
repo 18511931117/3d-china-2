@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" style="border: none;background: none">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+
+
+    <title>江苏有线三网融合扭曲中心数据中心-设备线缆管理系统</title>
+
+
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-reset.css}" rel="stylesheet">
+
+    <link th:href="@{/css/layer-animate.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+    <![endif]-->
+</head>
+
+<body style="border:none;background: none" class="gdt">
+
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <span class="tab-o">系统管理</span><b style="color: #00a6b2"> > </b><span class="tab-er">用户管理</span>
+            </header>
+        </section>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <button type="button" class="btn bg-yellow" data-toggle="modal" data-target="#addModel">添加用户</button>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group col-sm-8">
+            <label class="control-label col-sm-3" style="display: inline-block;height: 34px;line-height: 34px">用户姓名</label>
+            <div class=" col-sm-8">
+                <input type="text" name="name_search" class="form-control" id="queryName" placeholder="请输入">
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <button type="button" id="queryUser" name="search_btn" class="btn btn-info"><a style="color: #fff">搜索</a></button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <table id="test" ></table>
+        </section>
+    </div>
+</div>
+    <div class="modal fade" id="addModel" tabindex="-1" role="dialog" aria-labelledby="addModel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 90%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">
+                        添加用户
+                    </h4>
+                </div>
+                <form class="form-horizontal tasi-form" method="get">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">姓名</label>
+                        <div class="col-sm-10">
+                            <input type="text"  id="name" class="form-control" placeholder="姓名">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">账号</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="username" class="form-control" placeholder="账号">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">邮箱</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="email" class="form-control" placeholder="邮箱">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">工号</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="workNum" class="form-control" placeholder="工号">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">机构</label>
+                        <div class="col-lg-10">
+                            <select class="selectpicker show-tick form-control" data-live-search="true"  id="orgSelect" name="orgSelect">
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2">角色</label>
+                        <div class="col-lg-10">
+                            <select class="selectpicker show-tick form-control" data-live-search="true"  id="role" name="roleSelect">
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-10">
+                            <input type="password" id="password"  class="form-control" placeholder="密码">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">离职</label>
+                        <div class="radio" style="float:left;">
+                            <label style="vertical-align: middle">
+                                <input type="radio" style="margin-left: 0" name="optionsRadios"  value="0" checked>
+                                否
+                            </label>
+                        </div>
+                        <div class="radio" id="isQuit" style="float:left;">
+                            <label style="vertical-align: middle">
+                                <input type="radio" style="margin-left: 0" name="optionsRadios" value="1" >
+                                是
+                            </label>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" name="close">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" id="addUser">
+                        确认添加
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <script type="text/javascript" th:inline="javascript">
+        ctxPath = /*[[@{/}]]*/ '';
+    </script>
+<script th:src="@{/js/method.js}"></script>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/3rd/bootstrap-table/bootstrap-table.css}">
+    <script th:src="@{/3rd/bootstrap-table/bootstrap-table.js}"></script>
+
+<script th:inline="javascript" th:src="@{/pagejs/common/util.js}"></script>
+    <link rel="stylesheet" th:href="@{/3rd/bootstrap-table/select/bootstrap-select.min.css}">
+    <script th:src="@{/3rd/bootstrap-table/select/bootstrap-select.min.js}"></script>
+
+<script th:inline="javascript" th:src="@{/pagejs/common/selectNode.js}"></script>
+    <script th:inline="javascript" th:src="@{/pagejs/system/user.js}"></script>
+
+</body>
+</html>

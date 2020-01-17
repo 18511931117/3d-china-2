@@ -1,0 +1,25 @@
+layui.use('table', function(){
+    var table = layui.table;
+    table.render({
+        elem: '#test'
+        ,url:ctxPath+'allocationTask/desc?id='+id
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'resId', title: '设备编号'}
+            , {field: 'resName', title: '设备名称',}
+            , {field: 'resTypeCode', title: '设备分类'}
+            , {field: 'roomName', title: '机房'}
+            , {field: 'rackName', title: '机架'}
+            , {field: 'sheft', title: '机位'}
+            , {field: 'labelCode', title: '标签编号'}
+            , {field: 'ownerName', title: '所有人'}
+            , {field: 'state', title: '状态'}
+        ]]
+        ,page: true
+    });
+    $("#exportDesc").on("click",function () {
+        window.location.href=ctxPath+"allocationTask/export?id="+id
+    })
+});

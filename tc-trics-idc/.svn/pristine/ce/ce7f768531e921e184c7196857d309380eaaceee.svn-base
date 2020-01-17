@@ -1,0 +1,127 @@
+package com.manage.idc.log.service.impl;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.utils.*;
+import com.manage.idc.log.domain.SystemLog;
+import com.manage.idc.log.service.OperationLogService;
+import com.manage.idc.log.mapper.OperationLogMapper;
+import com.manage.idc.system.domain.SysUser;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.*;
+
+/**
+ * @Description
+ * @Author lyq_j
+ * @DATE 2019/10/21 20:31
+ **/
+@Service
+@Transactional
+public class OperationLogServiceImpl implements OperationLogService {
+    @Autowired
+    private OperationLogMapper operationLogMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Override
+    public void saveLog(ProceedingJoinPoint point, Method targetMethod, HttpServletRequest request, String operation, long start) {
+        SysUser user = SessionUtil.getUser();
+        SystemLog operationLog = new SystemLog();
+        operationLog.setId(IdGen.getUUId());
+        operationLog.setUserId(user.getId()); //设置操作人
+        operationLog.setOrgId(user.getOrgId()); //设置操作人所属机构
+        String ip = IPUtil.getIpAddr(request); //设置IP
+        operationLog.setIp(ip);
+        // 请求的类名
+        String className = point.getTarget().getClass().getName();
+        // 请求的方法名
+        String methodName = targetMethod.getName();
+        operationLog.setMethod(className + "." + methodName + "()");
+        // 请求的方法参数值
+        Object[] args = point.getArgs();
+        // 请求的方法参数名称
+        LocalVariableTableParameterNameDiscoverer u = new LocalVariableTableParameterNameDiscoverer();
+        String[] paramNames = u.getParameterNames(targetMethod);
+        if (args != null && paramNames != null) {
+            StringBuilder params = new StringBuilder();
+            params = handleParams(params, args, Arrays.asList(paramNames));
+            operationLog.setInput(params.toString());
+        }
+        operationLog.setPath(request.getRequestURI().toLowerCase());
+        operationLog.setUpdateTime(new Date());
+        operationLog.setCreateTime(new Date());
+        operationLogMapper.insertSelective(operationLog);
+
+
+    }
+
+    private StringBuilder handleParams(StringBuilder params, Object[] args, List paramNames) {
+        try {
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] instanceof Map) {
+                    Set set = ((Map) args[i]).keySet();
+                    List<Object> list = new ArrayList<>();
+                    List<Object> paramList = new ArrayList<>();
+                    for (Object key : set) {
+                        list.add(((Map) args[i]).get(key));
+                        paramList.add(key);
+                    }
+                    return handleParams(params, list.toArray(), paramList);
+                } else {
+                    if (args[i] instanceof Serializable) {
+                        Class<?> aClass = args[i].getClass();
+                        try {
+                            aClass.getDeclaredMethod("toString", new Class[]{null});
+                            // 如果不抛出 NoSuchMethodException 异常则存在 toString 方法 ，安全的 writeValueAsString ，否则 走 Object的 toString方法
+                            params.append(paramNames.get(i)).append(":").append(objectMapper.writeValueAsString(args[i]));
+                        } catch (NoSuchMethodException e) {
+                            params.append(paramNames.get(i)).append(":").append(objectMapper.writeValueAsString(args[i].toString()));
+                        }
+                    } else if (args[i] instanceof MultipartFile) {
+                        MultipartFile file = (MultipartFile) args[i];
+                        params.append(paramNames.get(i)).append(":").append(file.getName());
+                    } else {
+                        params.append(paramNames.get(i)).append(":").append(args[i]);
+                    }
+                }
+            }
+        } catch (Exception ignore) {
+            params.append("参数解析失败");
+            ignore.printStackTrace();
+        }
+
+        return params;
+    }
+
+    @Override
+    public PageInfo<SystemLog> getPage(SystemLog operationLog, PageRequest pageRequest) {
+        if(null != pageRequest){
+            PageHelper.startPage(pageRequest.getPage(),pageRequest.getLimit());
+        }
+        operationLog.setOrgId(SessionUtil.getUser().getOrgId());
+        List<SystemLog> list = operationLogMapper.selectByCondition(DataSetUtile.setQueryMap(operationLog,pageRequest,SessionUtil.getUser()));
+        return new PageInfo<SystemLog>(list);
+    }
+
+    @Override
+    public  List<SystemLog>  export(SystemLog systemLog) {
+        SysUser user = SessionUtil.getUser();
+        systemLog.setOrgId(user.getOrgId());
+        ArrayList<Long> ids = new ArrayList<>();
+        Arrays.stream(systemLog.getIds().split(",")).forEach(id->
+                ids.add(Long.parseLong(id)));
+        List<SystemLog> list = operationLogMapper.selectExportList(ids);
+        return  list;
+    }
+}

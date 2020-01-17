@@ -1,0 +1,54 @@
+//package com.manage.idc.readdev.controller;
+//
+//import com.manage.idc.common.entiy.ResultResponse;
+//import com.manage.idc.common.utils.Base64Utils;
+//import com.manage.idc.common.utils.DataSetUtile;
+//import com.manage.idc.common.utils.MD5Util;
+//import com.manage.idc.readdev.domain.SysDevUser;
+//import com.manage.idc.readdev.service.ReadDevService;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestMapping;
+//import org.springframework.web.bind.annotation.RestController;
+//
+//@RestController
+//@RequestMapping("/app/dev")
+//public class ReadDevController {
+//
+//    @Autowired
+//    private ReadDevService readDevService;
+//    /*
+//     * @Description: 登录
+//     * @Author: WangZiFan
+//     * @Date: 2019/11/6 17:15
+//     * @param user
+//     * @return com.manage.idc.common.entiy.ResultResponse
+//     */
+//    @PostMapping("login")
+//    public ResultResponse login(SysDevUser user){
+//        if(null != user){
+//            user.setPassword(MD5Util.encrypt(user.getUsername().toLowerCase(),  Base64Utils.encode(user.getPassword())));
+//            return readDevService.login(user);
+//        }else{
+//            return DataSetUtile.setErrorResultMessage("请输入用户名和密码!");
+//        }
+//    }
+//    /*
+//     * @Description: 登出
+//     * @Author: WangZiFan
+//     * @Date: 2019/11/6 17:54
+//     * @param user
+//     * @return com.manage.idc.common.entiy.ResultResponse
+//     */
+//    @PostMapping("logout")
+//    public ResultResponse logout(SysDevUser user){
+//        readDevService.logout(user);
+//        return DataSetUtile.setSuccessResult(null);
+//    }
+//    @PostMapping("checkMassage")
+//    public ResultResponse checkMassage(String tid,String roomId){
+//        readDevService.checkMassage(tid,roomId);
+//        return DataSetUtile.setSuccessResult(null);
+//    }
+//
+//}

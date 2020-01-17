@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.system.mapper.AlarmsLogRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.AlarmsLogRole" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <result column="role_id" property="roleId" jdbcType="BIGINT" />
+    <result column="is_del" property="isDel" jdbcType="INTEGER" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from alarms_log_role
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+
+  <delete id="deleteByOrgId" parameterType="java.lang.Long" >
+    delete from alarms_log_role
+    where org_id = #{id,jdbcType=BIGINT}
+  </delete>
+
+
+  <insert id="insert" parameterType="com.manage.idc.system.domain.AlarmsLogRole" >
+    insert into alarms_log_role (id, org_id, role_id, 
+      is_del, created_time)
+    values (#{id,jdbcType=BIGINT}, #{orgId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, 
+      #{isDel,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.system.domain.AlarmsLogRole" >
+    update alarms_log_role
+    set org_id = #{orgId,jdbcType=BIGINT},
+      role_id = #{roleId,jdbcType=BIGINT},
+      is_del = #{isDel,jdbcType=INTEGER},
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, org_id, role_id, is_del, created_time
+    from alarms_log_role
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, org_id, role_id, is_del, created_time
+    from alarms_log_role
+  </select>
+
+
+  <select id="selectRoleIdByOrgId" resultType="long">
+    select role_id from alarms_log_role where org_id = #{value}
+  </select>
+</mapper>

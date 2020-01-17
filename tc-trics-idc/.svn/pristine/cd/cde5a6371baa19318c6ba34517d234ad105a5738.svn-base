@@ -1,0 +1,48 @@
+server:
+  port: 8081
+spring:
+  profiles:
+    active: dev
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: utf-8
+    servlet:
+      content-type: text/html
+    suffix: .html
+    check-template-location: true
+    prefix: classpath:/templates/
+
+#mybaties配置
+mybatis:
+  # 实体类扫描路径
+  type-aliases-package: com.manage.idc.*.domain
+  # xml 扫描路径
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    jdbc-type-for-null: null
+  global-config:
+    # 关闭 mybatis-plus的 banner
+    banner: false
+
+
+###########################shiro##########################################
+# 免认证的路径配置，如静态资源等
+idc:
+  shiro:
+    anon_url: /css/**,/js/**,/img/**,/font-awesome/**,/logout,favicon.ico,/app/dev/*,/getReportData,/websocket/manager/*
+    login_url: /login
+    success_url: /index
+    logout_url: /logout
+    unauthorized_url: /unauthorized
+    session_timeout: 3600
+    cookie_timeout: 86400
+
+###########################shiro##########################################
+task:
+  pool:
+    corePoolSize: 20
+    maxPoolSize: 40
+    keepAlive: 300
+    queueCapacity: 50
+    namePrefix=: rcode

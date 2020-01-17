@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.system.mapper.ResExtGrpMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.ResExtGrp" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column=" is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="res_type_code" property="resTypeCode" jdbcType="VARCHAR" />
+    <result column="ext_grp_code" property="extGrpCode" jdbcType="VARCHAR" />
+    <result column="ext_grp_name" property="extGrpName" jdbcType="VARCHAR" />
+    <result column="seq" property="seq" jdbcType="INTEGER" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="is_Del" property="isDel" jdbcType="INTEGER" />
+  </resultMap>
+
+
+  <resultMap id="extResultMap" type="com.manage.idc.system.domain.ext.ResExtGrpExt" extends="BaseResultMap">
+    <collection property="resExtCfgList" ofType="com.manage.idc.system.domain.ext.ResExtGrpExt" column="ext_grp_code" select="selectExtCfgListByGrepCode"/>
+  </resultMap>
+
+
+  <sql id="allColumn">
+    r.id,
+    r.is_valid,
+    r.res_type_code,
+    r.ext_grp_code,
+    r.ext_grp_name,
+    r.seq,
+    r.created_time,
+    r.updated_time,
+    r.is_Del
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from res_ext_grp
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.manage.idc.system.domain.ResExtGrp" >
+    insert into res_ext_grp
+    (
+      id,
+      res_type_code,
+      ext_grp_code,
+      ext_grp_name,
+      seq
+      )
+    values (
+      #{id,jdbcType=INTEGER},
+      #{resTypeCode,jdbcType=VARCHAR},
+      #{extGrpCode,jdbcType=VARCHAR},
+      #{extGrpName,jdbcType=VARCHAR},
+      #{seq,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.system.domain.ResExtGrp" >
+    update res_ext_grp
+    set
+        <if test="isValid != null and isValid != ''">
+          is_valid = #{isValid,jdbcType=INTEGER},
+        </if>
+        <if test="resTypeCode != null and resTypeCode != ''">
+          res_type_code = #{resTypeCode,jdbcType=VARCHAR},
+        </if>
+        <if test="extGrpCode != null and extGrpCode != ''">
+          ext_grp_code = #{extGrpCode,jdbcType=VARCHAR},
+        </if>
+        <if test="extGrpName != null and extGrpName != ''">
+          ext_grp_name = #{extGrpName,jdbcType=VARCHAR},
+        </if>
+        <if test="seq != null and seq != ''">
+          seq = #{seq,jdbcType=INTEGER},
+        </if>
+        <if test="isDel != null and isDel != ''">
+          is_Del = #{isDel,jdbcType=INTEGER},
+        </if>
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+        <include refid="allColumn"/>
+    from res_ext_grp r
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+        <include refid="allColumn"/>
+    from res_ext_grp r
+  </select>
+
+
+  <select id="selectOne" resultMap="BaseResultMap" >
+    select
+    <include refid="allColumn"/>
+    from res_ext_grp r
+    <where>
+      <if test="id != null and id != ''">
+        AND r.id = #{id,jdbcType=INTEGER}
+      </if>
+      <if test="isValid != null and isValid != ''">
+        AND r.is_valid = #{isValid,jdbcType=INTEGER}
+      </if>
+      <if test="resTypeCode != null and resTypeCode != ''">
+        AND r.res_type_code = #{resTypeCode,jdbcType=VARCHAR}
+      </if>
+      <if test="extGrpCode != null and extGrpCode != ''">
+        AND r.ext_grp_code = #{extGrpCode,jdbcType=VARCHAR}
+      </if>
+      <if test="extGrpName != null and extGrpName != ''">
+        AND r.ext_grp_name = #{extGrpName,jdbcType=VARCHAR}
+      </if>
+      <if test="seq != null and seq != ''">
+        AND r.seq = #{seq,jdbcType=INTEGER}
+      </if>
+      AND r.is_del = '0'
+    </where>
+  </select>
+
+
+
+  <select id="getList" resultMap="extResultMap">
+    select
+        <include refid="allColumn"/>
+    from res_ext_grp r
+    <where>
+      <if test="data.id != null and data.id != ''">
+        AND r.id = #{data.id,jdbcType=INTEGER}
+      </if>
+      <if test="data.isValid != null and data.isValid != ''">
+        AND r.is_valid = #{data.isValid,jdbcType=INTEGER}
+      </if>
+      <if test="data.resTypeCode != null and data.resTypeCode != ''">
+        AND r.res_type_code = #{data.resTypeCode,jdbcType=VARCHAR}
+      </if>
+      <if test="data.extGrpCode != null and data.extGrpCode != ''">
+        AND r.ext_grp_code = #{data.extGrpCode,jdbcType=VARCHAR}
+      </if>
+      <if test="data.extGrpName != null and data.extGrpName != ''">
+        AND r.ext_grp_name = #{data.extGrpName,jdbcType=VARCHAR}
+      </if>
+      <if test="data.seq != null and data.seq != ''">
+        AND r.seq = #{data.seq,jdbcType=INTEGER}
+      </if>
+      AND r.is_del = '0'
+    </where>
+  </select>
+
+
+  <select id="selectExtCfgListByGrepCode" resultType="com.manage.idc.system.domain.ext.ResExtCfgExt" parameterType="string">
+    select
+      rec.id,
+      rec.is_valid as isValid,
+      rec.res_type_code as resTypeCode,
+      rec.ext_grp_code as extGrpCode,
+      rec.item_code as itemCode,
+      rec.item_name as itemName,
+      rec.seq,
+      rec.val_type as valType,
+      sk.sys_name as valTypeName,
+      rec.remark,
+      rec.created_time as createdTime,
+      rec.updated_time as updatedTime
+    from res_ext_cfg rec
+    left join (select * from sys_param s where s.sys_key = 'dataType' and s.is_del = '1') sk on rec.val_type = sk.id
+    <where>
+      rec.ext_grp_code = #{ext_grp_code}
+        and
+      rec.is_del = '0'
+    </where>
+  </select>
+</mapper>

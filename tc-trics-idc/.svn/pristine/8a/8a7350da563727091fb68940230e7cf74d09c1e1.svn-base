@@ -1,0 +1,112 @@
+package com.manage.idc.system.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.annotation.Operation;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.system.domain.*;
+import com.manage.idc.system.mapper.SysUserRoleMapper;
+import com.manage.idc.system.service.SysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+
+/**
+ * @Description 用户管理
+ * @Author lyq_j
+ * @DATE 2019/10/14 9:31
+ **/
+@Controller
+@Api(tags = "用户管理")
+@RequestMapping("/user")
+public class SysUserController {
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
+    @Autowired
+    private SysUserService sysUserService;
+    @RequestMapping("")
+    public ModelAndView userIdex(ModelAndView model){
+        model.setViewName("system/user");
+        return model;
+    }
+    @RequestMapping("toAddUser")
+    public ModelAndView toAddUser(ModelAndView model){
+        model.setViewName("system/addUser");
+        return model ;
+    }
+    @GetMapping("toEditUser")
+    public ModelAndView toEditUser(ModelAndView model,SysUser sysUser){
+         model.setViewName("system/editUser");
+         sysUser =sysUserService.selectUserById(sysUser);
+        SysUserRole userRole = sysUserRoleMapper.getUserByRoleId(sysUser.getId());
+        model.addObject("user",sysUser);
+        model.addObject("roleId",userRole.getRoleId());
+        return model ;
+    }
+
+
+
+    @RequestMapping("getPage")
+    @ResponseBody
+    @ApiOperation(value = "获取用户分页列表", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getPage(SysUser sysUser, PageRequest pageRequest){
+        PageInfo<SysUser> pageInfo = sysUserService.getPage(sysUser,pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequiresPermissions("user:add")
+    @Operation(operation = "用户添加")
+    @ApiOperation(value = "用户添加", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse add(SysUser user) {
+        //校验用户名是否存在
+        SysUser byName = sysUserService.findByName(user.getUsername());
+        if (byName == null) {
+            sysUserService.createUser(user);
+            return DataSetUtile.setSuccessResult(null);
+        }
+        return new ResultResponse().fail().message("用户名已存在！");
+
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequiresPermissions("user:delete")
+    @Operation(operation = "用户删除")
+    @ApiOperation(value = "用户删除", httpMethod = "GET")
+    @ResponseBody
+    public ResultResponse delete(@NotBlank(message = "{required}") String userIds) {
+        sysUserService.deleteUser(userIds);
+         return DataSetUtile.setSuccessResult(null);
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequiresPermissions("user:update")
+    @Operation(operation = "用户修改")
+    @ApiOperation(value = "用户修改", httpMethod = "POST")
+    @ResponseBody
+    public ResultResponse update(SysUser user) {
+        sysUserService.updateUser(user);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    /**
+     * 根据部门获取所有用户 默认是当前用户所在部门的所有的用户
+     */
+    @GetMapping(value = "/getUserByOrgId")
+    @ResponseBody
+    public ResultResponse getUserByOrgId(SysUser sysUser) {
+        List<SysUser> list =sysUserService.getUserByOrgId(sysUser);
+        return DataSetUtile.setSuccessResult(list);
+    }
+
+
+}

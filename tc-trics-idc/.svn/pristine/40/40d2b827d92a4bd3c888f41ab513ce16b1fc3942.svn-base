@@ -1,0 +1,119 @@
+package com.manage.idc.device.domain.ext;
+
+import com.manage.idc.device.domain.Res;
+import com.manage.idc.device.domain.ResExt;
+
+import java.util.List;
+
+/**
+ * @Author: WangZiFan
+ * @Date: 2019/10/26 15:46
+ * @Description:
+ */
+public class ResQuery extends Res {
+    /*
+        id集合
+     */
+    private List<Long> ids;
+
+
+    /*
+        扩展查询集合
+     */
+    private List<ResExt> resExts;
+
+
+    /*
+        app模糊查询
+     */
+    private String queryStr;
+
+
+    private String isBind;
+
+
+    /**
+     * 盘点任务设备ID集合
+     */
+    private List<Long>  deviceIds;
+
+    /**
+     * 盘点任务机房ID集合
+     */
+    private List<Long>  roomIds;
+
+    /**
+     * 盘点任务部门ID集合
+     */
+    private List<Long> orgIds;
+
+    private String fullCode;
+
+    @Override
+    public String getFullCode() {
+        return fullCode;
+    }
+
+    @Override
+    public void setFullCode(String fullCode) {
+        this.fullCode = fullCode;
+    }
+
+    public String getIsBind() {
+        return isBind;
+    }
+
+    public void setIsBind(String isBind) {
+        this.isBind = isBind;
+    }
+
+    public String getQueryStr() {
+        return queryStr;
+    }
+
+    public void setQueryStr(String queryStr) {
+        this.queryStr = queryStr;
+    }
+
+    public List<Long> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Long> ids) {
+        this.ids = ids;
+    }
+
+    public List<ResExt> getResExts() {
+        return resExts;
+    }
+
+    public void setResExts(List<ResExt> resExts) {
+        this.resExts = resExts;
+    }
+
+
+    public List<Long> getRoomIds() {
+        return roomIds;
+    }
+
+    public void setRoomIds(List<Long> roomIds) {
+        this.roomIds = roomIds;
+    }
+
+    public List<Long> getOrgIds() {
+        return orgIds;
+    }
+
+    public void setOrgIds(List<Long> orgIds) {
+        this.orgIds = orgIds;
+    }
+
+    public List<Long> getDeviceIds() {
+        return deviceIds;
+    }
+
+    public void setDeviceIds(List<Long> deviceIds) {
+        this.deviceIds = deviceIds;
+    }
+
+}

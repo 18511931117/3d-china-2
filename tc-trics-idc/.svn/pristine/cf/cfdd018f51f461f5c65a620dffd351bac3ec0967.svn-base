@@ -1,0 +1,130 @@
+package com.manage.idc.system.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.utils.IdGen;
+import com.manage.idc.system.domain.Label;
+import com.manage.idc.system.domain.ResExtCfg;
+import com.manage.idc.system.domain.ResExtGrp;
+import com.manage.idc.system.domain.Room;
+import com.manage.idc.system.service.LabelService;
+import com.manage.idc.system.service.ResExtCfgService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.io.IOException;
+import java.util.List;
+
+
+/**
+ * @Author: WangZiFan
+ * @Date: 2019/10/17 16:48
+ * @Description:
+ */
+@Controller
+@RequestMapping("resExtCfg")
+@Api(tags = "资产扩展信息配置管理")
+public class ResExtCfgController {
+    @Autowired
+    private ResExtCfgService resExtCfgService;
+    /*
+     * @Description: 添加资产扩展信息配置
+     * @Author: WangZiFan
+     * @Date: 2019/10/22 13:42
+     * @param resExtCfg
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("addResExtCfg")
+    @ResponseBody
+    @RequiresPermissions("resExtCfg:addResExtCfg")
+    @ApiOperation(value = "添加资产扩展信息配置", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse addResExtCfg(ResExtCfg resExtCfg){
+        resExtCfgService.addResExtCfg(resExtCfg);
+        return DataSetUtile.setSuccessResult(null);
+    }
+    /*
+     * @Description: 修改资产扩展信息配置
+     * @Author: WangZiFan
+     * @Date: 2019/10/22 17:17
+     * @param resExtCfg
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("updateResExtCfg")
+    @ResponseBody
+    @RequiresPermissions("resExtCfg:updateResExtCfg")
+    @ApiOperation(value = "修改资产扩展信息配置", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse updateResExtCfg(ResExtCfg resExtCfg){
+        resExtCfgService.updateResExtCfg(resExtCfg);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    /*
+     * @Description: 删除资产扩展信息配置
+     * @Author: WangZiFan
+     * @Date: 2019/10/22 17:24
+     * @param id
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("delResExtCfg/{id}")
+    @RequiresPermissions("resExtCfg:delResExtCfg")
+    @ResponseBody
+    @ApiOperation(value = "删除资产扩展信息配置", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse delResExtCfg(@PathVariable Long id){
+        resExtCfgService.delResExtCfg(id);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+    @GetMapping("getList")
+    @ResponseBody
+    @ApiOperation(value = "获取扩展信息列表", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getList(ResExtCfg resExtCfg){
+        List<ResExtCfg> list = resExtCfgService.getList(resExtCfg);
+        return DataSetUtile.setSuccessResult(list);
+    }
+
+
+    /*
+     * @Description: 添加扩展字段页面
+     * @Author: WangZiFan
+     * @Date: 2019/11/3 17:48
+     * @param model
+     * @return org.springframework.web.servlet.ModelAndView
+     */
+    @GetMapping("toResExtAdd/{group}")
+    @ApiOperation(value = "添加扩展字段页面", httpMethod = "GET", response = ResultResponse.class)
+    public ModelAndView toResExtAdd(ModelAndView model,@PathVariable("group")  String group){
+        ResExtCfg resExtCfg = new ResExtCfg();
+        resExtCfg.setExtGrpCode(group);
+        model.setViewName("system/resExtAdd");
+        model.addObject("bean",resExtCfg);
+        return model;
+    }
+
+
+    /*
+     * @Description: 编辑扩展字段页面
+     * @Author: WangZiFan
+     * @Date: 2019/11/3 17:48
+     * @param model
+     * @return org.springframework.web.servlet.ModelAndView
+     */
+    @GetMapping("toResExtEdit/{id}")
+    @ApiOperation(value = "编辑扩展字段页面", httpMethod = "GET", response = ResultResponse.class)
+    public ModelAndView toResExtEdit(@PathVariable("id") Long id,ModelAndView model){
+        ResExtCfg resExtCfg = new ResExtCfg();
+        resExtCfg.setId(id);
+        resExtCfg = resExtCfgService.getList(resExtCfg).get(0);
+        model.setViewName("system/resExtEdit");
+        model.addObject("bean",resExtCfg);
+        return model;
+    }
+
+}

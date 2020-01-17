@@ -1,0 +1,31 @@
+package com.manage.idc.task.mapper;
+
+import com.manage.idc.task.domain.AllocationTask;
+import com.manage.idc.task.domain.AllocationTaskDesc;
+import com.manage.idc.task.domain.CheckTaskDesc;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+import java.util.Map;
+
+@Mapper
+public interface AllocationTaskDescMapper {
+    int deleteByPrimaryKey(Long id);
+
+    int insert(AllocationTaskDesc record);
+
+    int insertSelective(AllocationTaskDesc record);
+
+    AllocationTaskDesc selectByPrimaryKey(Long id);
+
+    int updateByPrimaryKeySelective(AllocationTaskDesc record);
+
+    int updateByPrimaryKey(AllocationTaskDesc record);
+
+    void updateByTaskId(AllocationTaskDesc allocationTaskDesc);
+
+    List<AllocationTaskDesc> selectByCheckTaskId(Long id);
+
+
+    List<AllocationTaskDesc> getAppCheckTaskDesc(AllocationTaskDesc allocationTaskDesc);
+}

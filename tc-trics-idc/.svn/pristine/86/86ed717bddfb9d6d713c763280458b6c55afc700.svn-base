@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.task.mapper.RepairTaskDescMapper">
+  <resultMap id="BaseResultMap" type="com.manage.idc.task.domain.RepairTaskDesc">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="res_id" jdbcType="BIGINT" property="resId" />
+    <result column="room_id" jdbcType="BIGINT" property="roomId" />
+    <result column="label_id" jdbcType="BIGINT" property="labelId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="task_id" jdbcType="BIGINT" property="taskId" />
+    <result column="is_del" jdbcType="INTEGER" property="isDel" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, res_id, room_id, label_id, `state`, create_time, task_id, is_del
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from repair_task_desc
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from repair_task_desc
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.task.domain.RepairTaskDesc" useGeneratedKeys="true">
+    insert into repair_task_desc (res_id, room_id,
+      label_id, `state`, create_time, 
+      task_id, is_del)
+    values (#{resId,jdbcType=BIGINT}, #{roomId,jdbcType=BIGINT},
+      #{labelId,jdbcType=BIGINT}, #{state,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{taskId,jdbcType=BIGINT}, #{isDel,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.manage.idc.task.domain.RepairTaskDesc" useGeneratedKeys="true">
+    insert into repair_task_desc
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="resId != null">
+        res_id,
+      </if>
+      <if test="roomId != null">
+        room_id,
+      </if>
+
+      <if test="labelId != null">
+        label_id,
+      </if>
+      <if test="state != null">
+        `state`,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="taskId != null">
+        task_id,
+      </if>
+      <if test="isDel != null">
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="resId != null">
+        #{resId,jdbcType=BIGINT},
+      </if>
+      <if test="roomId != null">
+        #{roomId,jdbcType=BIGINT},
+      </if>
+      <if test="labelId != null">
+        #{labelId,jdbcType=BIGINT},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="taskId != null">
+        #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="isDel != null">
+        #{isDel,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.manage.idc.task.domain.RepairTaskDesc">
+    update repair_task_desc
+    <set>
+      <if test="resId != null">
+        res_id = #{resId,jdbcType=BIGINT},
+      </if>
+      <if test="roomId != null">
+        room_id = #{roomId,jdbcType=BIGINT},
+      </if>
+      <if test="labelId != null">
+        label_id = #{labelId,jdbcType=BIGINT},
+      </if>
+      <if test="state != null">
+        `state` = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="taskId != null">
+        task_id = #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="isDel != null">
+        is_del = #{isDel,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.task.domain.RepairTaskDesc">
+    update repair_task_desc
+    set res_id = #{resId,jdbcType=BIGINT},
+      room_id = #{roomId,jdbcType=BIGINT},
+      label_id = #{labelId,jdbcType=BIGINT},
+      `state` = #{state,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      task_id = #{taskId,jdbcType=BIGINT},
+      is_del = #{isDel,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByTaskId" parameterType="com.manage.idc.task.domain.BorrowTaskDesc">
+    update repair_task_desc
+    <set>
+      <if test="resId != null">
+        res_id = #{resId,jdbcType=BIGINT},
+      </if>
+      <if test="roomId != null">
+        room_id = #{roomId,jdbcType=BIGINT},
+      </if>
+      <if test="labelId != null">
+        label_id = #{labelId,jdbcType=BIGINT},
+      </if>
+      <if test="state != null">
+        `state` = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="taskId != null">
+        task_id = #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="isDel != null">
+        is_del = #{isDel,jdbcType=INTEGER},
+      </if>
+    </set>
+    where task_id = #{taskId,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByCheckTaskId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+     SELECT
+          ctd.*, re.`name` resName,
+          rm.name roomName,
+          re.`owner` ownerName,
+          ll.barcode labelCode,
+          re.asset_id resCode,
+          re.sheft sheft,
+          re.res_type_code resTypeCode,
+          rk.`name` rackName
+      FROM
+          repair_task_desc ctd
+    LEFT JOIN res re ON re.id = ctd.res_id
+    LEFT JOIN room rm ON rm.id =ctd.room_id
+	LEFT JOIN label ll ON ctd.label_id=ll.id
+	LEFT JOIN rack rk on rk.id=re.rack_id
+      WHERE
+          ctd.task_id = #{id}
+           and ctd.is_del=0
+            ORDER BY create_time DESC
+  </select>
+  <select id="getRepairTaskDesc" resultMap="BaseResultMap">
+    SELECT
+          ctd.*, re.`name` resName,
+          rm.name roomName,
+          re.`owner` ownerName,
+          ll.barcode labelCode,
+          re.asset_id resCode,
+          re.sheft sheft,
+          re.res_type_code resTypeCode,
+          rk.`name` rackName,
+          so.name orgName
+      FROM
+          repair_task_desc ctd
+    LEFT JOIN res re ON re.id = ctd.res_id
+    LEFT JOIN room rm ON rm.id =ctd.room_id
+	LEFT JOIN label ll ON ctd.label_id=ll.id
+	LEFT JOIN rack rk on rk.id=re.rack_id
+    LEFT JOIN sys_org so on re.org_id=so.id
+    <where>
+      <if test="taskId !=null">
+        AND ctd.task_id = #{taskId}
+      </if>
+      <if test="queryName !='' and queryName!=null">
+        and (
+        re.asset_id like concat('%',#{queryName},'%')
+        or re.name like concat('%',#{queryName},'%')
+        )
+      </if>
+      and ctd.is_del = 0
+    </where>
+    ORDER BY create_time DESC
+  </select>
+  <select id="getByTaskIdResIdList" resultType="java.lang.Long">
+    select res_id
+    from repair_task_desc
+    where task_id=#{id}
+  </select>
+
+
+  <select id="selectOne" resultMap="BaseResultMap">
+    SELECT
+          ctd.*
+      FROM
+          repair_task_desc ctd
+    LEFT JOIN repair_task rt ON ctd.task_id = rt.id
+    <where>
+      <if test="id != null">
+        AND ctd.id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="resId != null">
+        AND ctd.res_id = #{resId,jdbcType=BIGINT}
+      </if>
+      <if test="roomId != null">
+        AND ctd.room_id = #{roomId,jdbcType=BIGINT}
+      </if>
+      <if test="labelId != null">
+        AND ctd.label_id = #{labelId,jdbcType=BIGINT}
+      </if>
+      <if test="state != null">
+        AND ctd.state = #{state,jdbcType=INTEGER}
+      </if>
+      <if test="createTime != null">
+        AND ctd.create_time = #{createTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="taskId != null">
+        AND ctd.task_id = #{taskId,jdbcType=BIGINT}
+      </if>
+      <if test="isDel != null">
+        AND ctd.is_del = #{isDel,jdbcType=INTEGER}
+      </if>
+    </where>
+    limit 1
+  </select>
+  <select id="selectByExport" parameterType="list" resultMap="BaseResultMap">
+     SELECT
+          ctd.*, re.`name` resName,
+          rm.name roomName,
+          re.`owner` ownerName,
+          ll.barcode labelCode,
+          re.asset_id resCode,
+          re.sheft sheft,
+          re.res_type_code resTypeCode,
+          rk.`name` rackName
+      FROM
+          repair_task_desc ctd
+    LEFT JOIN res re ON re.id = ctd.res_id
+    LEFT JOIN room rm ON rm.id =ctd.room_id
+	LEFT JOIN label ll ON ctd.label_id=ll.id
+	LEFT JOIN rack rk on rk.id=re.rack_id
+      WHERE
+          ctd.id  in
+    <foreach collection="list" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+           and ctd.is_del=0
+            ORDER BY create_time DESC
+
+  </select>
+</mapper>

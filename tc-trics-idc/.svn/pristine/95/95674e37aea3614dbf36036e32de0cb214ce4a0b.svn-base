@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manage.idc.system.mapper.SysRoleMapper">
+    <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.SysRole">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="is_del" jdbcType="INTEGER" property="isDel"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, role_name, remark, is_del,`create_time`,update_time,org_id
+  </sql>
+    <select id="findUserRole" resultMap="BaseResultMap">
+      SELECT
+	r.id,
+	r.role_name,
+	r.remark,
+	r.is_del,
+	r.create_time,
+	r.update_time,
+	r.org_id
+        FROM
+            sys_role r
+        LEFT JOIN sys_user_role ur ON (r.id = ur.role_id)
+        LEFT JOIN sys_user u ON (u.id = ur.user_id)
+        WHERE
+            u.username = #{username}
+    </select>
+
+    <insert id="createRole" keyColumn="id" keyProperty="id" parameterType="sysRole"
+            useGeneratedKeys="true">
+    insert into sys_role (id,role_name, remark, is_del,`create_time`,update_time,org_id
+    )
+    values (#{id,jdbcType=BIGINT},#{roleName,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},#{isDel,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},#{orgId,jdbcType=BIGINT}
+    )
+  </insert>
+
+
+    <delete id="deleteRoles" parameterType="java.util.List">
+        delete from sys_role where
+        id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateRole" parameterType="com.manage.idc.system.domain.SysRole">
+        update sys_role
+        <set>
+            <if test="roleName != null">
+                role_name = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                `create_time` = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                `update_time` = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectByCondition" parameterType="map" resultMap="BaseResultMap">
+        select
+        sy.id, sy.role_name, sy.remark, sy.is_del,sy.`create_time`,sy.update_time,sy.org_id
+        from sys_role sy
+        LEFT JOIN sys_org so ON sy.org_id = so.id
+        <where>
+            <if test="data.id != null">
+                and sy.id = #{data.id,jdbcType=INTEGER}
+            </if>
+            <if test="data.roleName != null">
+                and sy.role_name like concat('%',#{data.roleName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="data.remark != null">
+                and sy.remark = #{data.remark,jdbcType=VARCHAR}
+            </if>
+            <if test="data.createTime != null">
+                and sy.`create_time` = #{data.createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="data.updateTime != null">
+                and sy.`update_time` = #{data.updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="fullCode != null">
+                and so.full_code like concat('',#{fullCode},'%')
+            </if>
+            <if test="data.isDel != null">
+                and  sy.is_del = #{data.isDel,jdbcType=INTEGER}
+            </if>
+        </where>
+        order by sy.create_time desc
+    </select>
+    <select id="getRole" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="roleName != null">
+                and role_name = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                and remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                and `create_time` = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                and `update_time` = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            and is_del=0
+        </where>
+
+    </select>
+</mapper>

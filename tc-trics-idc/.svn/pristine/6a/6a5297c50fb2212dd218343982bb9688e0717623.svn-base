@@ -1,0 +1,66 @@
+layui.use('table', function(){
+    var table = layui.table;
+    table.render({
+        elem: '#test'
+        ,url:'/user/getPage'
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'name', title: '姓名'}
+            , {field: 'username', title: '账号',}
+            , {field: 'orgName', title: '机构'}
+            , {field: 'email', title: '邮箱'}
+            , {field: 'isQuit', title: '是否离职',templet: function(d){
+                    var isQ=d.isQuit;
+                    if(isQ==0){
+                        return "在职";
+                    }else{
+                        return "离职"
+                    }
+                }}
+            , {field: 'createTime', title: '创建时间' ,templet: function(d){
+                    var dateee = new Date(d.createTime).toJSON();
+                    var date = new Date(+new Date(dateee)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
+                    return date;
+                }
+
+            },
+            {field: 'adg', title: '操作', width: 240, toolbar: '#barDemo'}
+        ]]
+        ,page: true
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        //console.log(obj)
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                $.ajax({
+                    url:  "/user/delete",
+                    type: "POST",
+                    data:{
+                        id:data.id
+                    },
+                    cache:false,
+                    dataType: "json",
+                    success: function(data){
+                        layer.msg(data.message);
+                        if(data.code=="0"){
+                            layer.close(index);
+                            setTimeout("javascript:location.href='/user'", 1500);
+                        }
+                    },
+                    error:function(err){
+                        layer.msg("服务器内部错误！")
+                    }
+                });
+
+            });
+        } else if(obj.event === 'edit'){
+
+            window.location.href="/user/toEditUser?id="+ data.id
+        }
+    });
+});

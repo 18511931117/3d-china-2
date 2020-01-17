@@ -1,0 +1,162 @@
+package com.manage.idc.system.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.utils.DataSetUtile;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.system.domain.Label;
+import com.manage.idc.system.domain.ext.LabelQuery;
+import com.manage.idc.system.service.LabelService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+
+/**
+ * @Author: WangZiFan
+ * @Date: 2019/10/17 16:48
+ * @Description:
+ */
+@Controller
+@RequestMapping("label")
+@Api(tags = "标签管理")
+public class LabelController {
+    @Autowired
+    private LabelService labelService;
+    /*
+     * @Description: 标签展示页面
+     * @Author: WangZiFan
+     * @Date: 2019/10/29 14:09
+     * @param model
+     * @return org.springframework.web.servlet.ModelAndView
+     */
+    @GetMapping("toLabel")
+    @ApiOperation(value = "标签展示页面", httpMethod = "GET", response = ModelAndView.class)
+    public ModelAndView toLabel(ModelAndView model){
+        model.setViewName("system/label");
+        return model;
+    }
+
+
+    @GetMapping("toLabelImprot")
+    @ApiOperation(value = "标签导入页面", httpMethod = "GET", response = ModelAndView.class)
+    public ModelAndView toLabelImprot(ModelAndView model){
+        model.setViewName("system/labelImport");
+        return model;
+    }
+
+    /*
+     * @Description: 分页查询
+     * @Author: WangZiFan
+     * @Date: 2019/10/18 15:42
+     * @param label
+     * @param pageRequest
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @RequestMapping("getPage")
+    @ResponseBody
+    @ApiOperation(value = "获取标签分页列表", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getPage(LabelQuery label, PageRequest pageRequest){
+        PageInfo<Label> pageInfo =  labelService.getPage(label,pageRequest);
+        return DataSetUtile.setPageSuccessResult(pageInfo);
+    }
+
+    /*
+     * @Description: excal导入标签
+     * @Author: WangZiFan
+     * @Date: 2019/10/18 16:53
+     * @param multipartFile
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("importLabel")
+    @ResponseBody
+    @RequiresPermissions("label:importLabel")
+    @ApiOperation(value = "导入标签", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse importLabel(MultipartFile labelFile){
+        try {
+            boolean b = labelService.importLabel(labelFile);
+            if(!b){
+                return DataSetUtile.setImportError("上传模板与解析模板不符，请导出最新模板重试!");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return DataSetUtile.setErrorResult(e);
+        }
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+
+    /*
+     * @Description: 获取未绑定的标签分页
+     * @Author: WangZiFan
+     * @Date: 2019/10/26 14:13
+     * @param labelType
+     * @param startBarcode
+     * @param endBarcode
+     * @param request
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @GetMapping("getNotBindLabelPage")
+    @ResponseBody
+    @ApiOperation(value = "获取未绑定的标签分页", httpMethod = "GET", response = ResultResponse.class)
+    public ResultResponse getNotBindLabelPage(String labelType,Long startBarcode,Long endBarcode,PageRequest request){
+        PageInfo<Label> label = labelService.getNotBindLabelPage(labelType,startBarcode,endBarcode,request);
+        return DataSetUtile.setPageSuccessResult(label);
+    }
+
+
+
+
+    /*
+     * @Description: 删除标签
+     * @Author: WangZiFan
+     * @Date: 2019/10/19 14:30
+     * @param id
+     * @return com.manage.idc.common.entiy.ResultResponse
+     */
+    @PostMapping("delLabel/{id}")
+    @ResponseBody
+    @RequiresPermissions("label:delLabel")
+    @ApiOperation(value = "删除标签", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse delLabel(@PathVariable("id") Long id){
+        labelService.delLabel(id);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+
+    /*
+     * @Description: 导出标签模板
+     * @Author: WangZiFan
+     * @Date: 2019/10/23 18:40
+     * @param response
+     * @return void
+     */
+    @GetMapping("exportLabelModel")
+    @ResponseBody
+    @ApiOperation(value = "导出标签模板", httpMethod = "POST", response = ResultResponse.class)
+    public void exportLabelModel(HttpServletResponse response){
+        try {
+            labelService.exportLabelModel(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @PostMapping("updateByTid")
+    @ResponseBody
+    @ApiOperation(value = "根据Tid修改标签", httpMethod = "POST", response = ResultResponse.class)
+    public ResultResponse updateByTid(Label label){
+        labelService.updateByTid(label);
+        return DataSetUtile.setSuccessResult(null);
+    }
+
+}

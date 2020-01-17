@@ -1,0 +1,82 @@
+// layui.use('table', function(){
+//     var table = layui.table;
+//
+//     table.render({
+//         elem: '#test'
+//         ,url:'/sysLog/getPage'
+//         ,title: '用户数据表'
+//         ,cols: [[
+//             {type: 'checkbox'},
+//             {field: 'id', title: 'ID',}
+//             , {field: 'userName', title: '操作者'}
+//             , {field: 'orgName', title: '组织'}
+//             , {field: 'ip', title: '操作IP'}
+//             , {field: 'path', title: '操作路由'}
+//             , {field: 'method', title: '操作方法'}
+//             , {field: 'input', title: '操作内容'}
+//             ,{field: 'createTime', title: '开始时间' ,templet: function(d){
+//                     var dateee = new Date(d.createTime).toJSON();
+//                     var date = new Date(+new Date(dateee)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
+//                     return date;
+//                 }
+//
+//             }
+//         ]]
+//         ,page: true
+//     });
+//
+    $("#export").on('click',function () {
+        window.location.href='/sysLog/export'
+    })
+//
+//
+// });
+
+function addFunctionAlty(value, row, index) {
+    return [
+        '<button id="bind" type="button" class="btn bg-yellow table-btn">导出</button>',
+    ].join('');
+}
+
+$('#test').bootstrapTable({
+    url: ctxPath+'sysLog/getPage',
+    method: 'GET',
+    uniqueId: 'id',                        // 绑定ID，不显示
+    striped: false,                         //是否显示行间隔色
+    cache: false,                          //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+    sortable: true,                        //是否启用排序
+    sidePagination: "server",              //分页方式：client客户端分页，server服务端分页（*）
+    undefinedText: '--',
+    strictSearch: true,
+    clickToSelect: true,                   // 点击选中行
+    pagination: true,                      //是否显示分页
+    pageNumber:1,                          //初始化加载第一页，默认第一页,并记录
+    pageSize:10,//每页显示的数量
+    pageList: [ 10, 20, 50, 100],//设置每页显示的数量
+    paginationPreText:"上一页",
+    paginationNextText:"下一页",
+    paginationLoop:false,
+    //得到查询的参数
+    queryParams : function (params) {
+        //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+        var temp = {
+            limit: params.limit,                         //页面大小
+            page: (params.offset / params.limit) + 1,   //页码
+            sort: params.sort,      //排序列名
+            sortOrder: params.order //排位命令（desc，asc）
+        };
+        return temp;
+    },
+    columns:
+        [{checkbox: true,width: 50}
+            ,{field:'userName',title: '操作者', }
+            ,{field:'orgName', title: '组织'}
+            ,{field:'ip', title: '操作IP', }
+            ,{field:'path', title: '操作路由'}
+            ,{field:'method', title: '操作方法'}
+            ,{field:'input', title: '操作内容'}
+            ,{field:'createTime', title: '操作时间',formatter:function (value, row, index) {
+                return date(row.createTime)
+            }}
+        ]
+});

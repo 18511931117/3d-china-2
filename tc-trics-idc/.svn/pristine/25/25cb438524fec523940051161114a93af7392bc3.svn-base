@@ -1,0 +1,115 @@
+package com.manage.idc.system.controller;
+
+import com.manage.idc.common.annotation.Operation;
+import com.manage.idc.common.config.socket.WebSocketServer;
+import com.manage.idc.common.entiy.ResultResponse;
+import com.manage.idc.common.enums.UserType;
+import com.manage.idc.common.exception.LoginException;
+import com.manage.idc.common.service.RedisService;
+import com.manage.idc.common.utils.Base64Utils;
+import com.manage.idc.common.utils.CaptchaUtil;
+import com.manage.idc.common.utils.MD5Util;
+
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.system.domain.SysUser;
+import com.manage.idc.system.mapper.SysUserMapper;
+import com.wf.captcha.base.Captcha;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @Description 用户登录
+ * @Author lyq_j
+ * @DATE 2019/10/14 13:52
+ **/
+@Slf4j
+@Api(tags = "用户登录")
+@Controller
+public class LoginController extends BaseController {
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private SysUserMapper userService;
+
+    @Autowired
+    private WebSocketServer webSocketServer;
+
+    /**
+     * 登录跳转
+     *
+     * @return
+     */
+    @ApiOperation(value = "登录首页跳转", httpMethod = "GET")
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String login() {
+        return "login";
+    }
+
+    /**
+     * 用户登录接口
+     *
+     * @param request
+     * @param model
+     * @return
+     */
+    @ApiOperation(value = "登录认证", httpMethod = "POST", response = ResultResponse.class)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @Operation(operation = "用户登录")
+    @ResponseBody
+    public ResultResponse login(HttpServletRequest request, String username, String password, boolean rememberMe,Model model) {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+            return new ResultResponse().fail().message("用户名或密码不能为空！");
+        }
+        password = MD5Util.encrypt(username.toLowerCase(),  Base64Utils.encode(password));
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
+        this.login(token);
+        SysUser user =null;
+        Session session = SessionUtil.getSession();
+        //webSocketServer.onOpen();
+        return new ResultResponse().success().message("登陆成功！").data(user);
+    }
+
+    @ApiOperation(value = "App登录认证", httpMethod = "POST", response = ResultResponse.class)
+    @RequestMapping(value = "/data/app/login", method = RequestMethod.POST)
+    @ResponseBody
+    public ResultResponse appLogin(HttpServletRequest request, String username, String password, boolean rememberMe,Model model) {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+            return new ResultResponse().fail().message("用户名或密码不能为空！");
+        }
+        password = MD5Util.encrypt(username.toLowerCase(),  Base64Utils.encode(password));
+        SysUser user = userService.findByName(username, UserType.USER_SCJ.getState());
+        if (user == null)
+            return new ResultResponse().fail().message("账号未注册！");
+        if (!org.thymeleaf.util.StringUtils.equals(password, user.getPassword()))
+            return new ResultResponse().fail().message("用户名或密码错误！");
+        if (SysUser.STATUS_LOCK.equals(user.getState()))
+            return  new ResultResponse().fail().message("账号已被锁定,请联系管理员！");
+            user = userService.selectUserByApp(username,UserType.USER_SCJ.getState());
+        return new ResultResponse().success().message("登陆成功！").data(user);
+    }
+
+    /**
+     * 图片验证码
+     *
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @GetMapping("images/captcha")
+    @ApiOperation(value = "验证码生成", httpMethod = "GET", response = void.class)
+    public void captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        new CaptchaUtil(redisService).outPng(110, 34, 4, Captcha.TYPE_ONLY_NUMBER, request, response);
+    }
+
+}

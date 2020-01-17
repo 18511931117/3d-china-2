@@ -1,0 +1,256 @@
+var treeData;
+
+/*加载机房下拉框*/
+function loadRoomSelect(name,value){
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"room/getPage",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+                if(value != null && value != '' && value != undefined){
+                    ele.val(value);
+                }
+            }
+        }
+    )
+}
+
+/*加载机构树形菜单*/
+function loadOrgTree(tree,name,regioneId,value,reload){
+    $.get(
+        ctxPath +"org/getOrgSelectTree",
+        {'regioneId':regioneId},
+        function(data){
+            if(data.code == '200'){
+                if(reload){
+                    tree.reload(name, {
+                        //新的参数
+                        data: data.data
+                    });
+                }else{
+                    tree.render({
+                        elem: "[name='"+name+"']"
+                        ,data: data.data
+                        ,showLine: false  //是否开启连接线
+                        ,id:name
+                    });
+                }
+            }
+        }
+    )
+}
+
+
+
+
+
+function loadRegione(name,value){
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"region/getPage",
+        function(data){
+            if(data.code == '0'){
+               for (var i = 0;i<data.data.length;i++){
+                   var obj = data.data[i];
+                   ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+               }
+
+               if(value != null && value != undefined && value != ''){
+                   ele.val(value);
+               }
+            }
+        }
+    )
+}
+//加载角色列表
+function  loadRole(name) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"role/getRole",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.roleName+"</option>");
+                }
+            }
+        }
+    )
+}
+
+//加载组织机构列表
+function loadOrg(name) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"org/getOrgAll",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+            }
+        }
+    )
+}
+
+/*
+    加载机架下拉框
+ */
+function loadRackSelect(name,roomId,pid,val){
+    var ele;
+    if(pid != null && pid != undefined && pid != ''){
+        ele = $("#"+pid).find(":input[name='"+name+"']");
+    }else{
+        ele = $(":input[name='"+name+"']");
+    }
+    if(roomId != ''){
+        ele.html("<option value=''>请选择</option>");
+        $.get(
+            ctxPath +"rack/getPage",
+            {'roomId':roomId},
+            function(data){
+                if(data.code == '0'){
+                    for (var i = 0;i<data.data.length;i++){
+                        var obj = data.data[i];
+                        ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                    }
+
+                    if(val != null && val != undefined && val != ''){
+                        ele.val(val);
+                    }
+                }
+            })
+    }else{
+        ele.html("<option value=''>请先选择机房</option>");
+    }
+}
+
+
+
+/*
+    加载设备下拉菜单
+ */
+function loadDevSelect(name,rackId,pid,val){
+    var ele;
+    if(pid != null && pid != undefined && pid != ''){
+        ele = $("#"+pid).find(":input[name='"+name+"']");
+    }else{
+        ele = $(":input[name='"+name+"']");
+    }
+    if(rackId != ''){
+        ele.html("<option value=''>请选择</option>");
+        $.get(
+            ctxPath +"device/getDevicePage",
+            {'rackId':rackId},
+            function(data){
+                if(data.code == '0'){
+                    for (var i = 0;i<data.data.length;i++){
+                        var obj = data.data[i];
+                        ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                    }
+
+                    if(val != null && val != undefined && val != ''){
+                        ele.val(val);
+                    }
+                }
+            })
+    }else{
+        ele.html("<option value=''>请先选择机房</option>");
+    }
+}
+
+//加载设备类型下拉框
+function  loadDevTypeSelect(name) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"resType/getList",
+        {'pid':'6351408125559439366'},
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.fullCode+"'>"+obj.resTypeName+"</option>");
+                }
+            }
+        }
+    )
+}
+
+
+function  loadExtTypeSelect(name,value) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"param/getPage",
+        {'type':'dataType'},
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.sysName+"</option>");
+                }
+                if(value != null && value != '' && value != undefined){
+                    ele.val(value);
+                }
+            }
+        }
+    )
+}
+
+function  loadDevStatus(name) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"param/getPage",
+        {'type':'devStatus'},
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.sysName+"</option>");
+                }
+            }
+        }
+    )
+}
+function loadRegion(name) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"region/getList",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+            }
+        }
+    )
+}
+
+function loadUser(name) {
+    var ele = $(":input[name='"+name+"']");
+    ele.html("<option value=''>请选择</option>");
+    $.get(
+        ctxPath +"user/getUserByOrgId",
+        function(data){
+            if(data.code == '0'){
+                for(var i = 0 ;i<data.data.length;i++){
+                    var obj = data.data[i];
+                    ele.append("<option value='"+obj.id+"'>"+obj.name+"</option>");
+                }
+            }
+        }
+    )
+}

@@ -1,0 +1,71 @@
+package com.manage.idc.device.domain;
+
+import com.manage.idc.common.entiy.BaseEntity;
+import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+* Created by Mybatis Generator on 2019/10/16
+*/
+
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Res extends BaseEntity {
+
+
+    private Integer isAppBind;
+
+
+    private Integer isValid;
+    /*
+        设备分类
+     */
+    private String resTypeCode;
+
+    private Long orgId;
+
+    private Long regionId;
+    /*
+        机房ID
+     */
+    private Long roomId;
+
+    private Long roomAreaId;
+
+    private Long rackId;
+    /*
+        机位
+     */
+    private String sheft;
+    /*
+        设备名称
+     */
+    private String name;
+
+    private String assetId;
+
+    private String model;
+
+    private String tid;
+    /*
+        所有人
+     */
+    private String owner;
+
+    private String operator;
+    /*
+        状态
+     */
+    private String status;
+
+    private String isPasted;
+
+    private Integer isPrinted;
+
+}

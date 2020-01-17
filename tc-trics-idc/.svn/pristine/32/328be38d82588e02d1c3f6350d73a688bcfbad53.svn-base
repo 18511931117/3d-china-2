@@ -1,0 +1,315 @@
+
+layui.use('table', function(){
+    var table = layui.table;
+
+    table.render({
+        elem: '#test'
+        ,url:'/checkTask/getPage'
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'name', title: '任务名称'}
+            , {field: 'taskType', title: '任务类型',templet: function(d){
+                    var state=d.taskType;  //1-设备贴标,2-设备盘点,3-设备调拨,4-设备借用,5-设备维修
+                    switch (state) {
+                        case 1:
+                            return"设备贴标"
+                        case 2:
+                            return "设备盘点"
+                        case 3:
+                            return "设备调拨"
+                        case 4:
+                            return "设备借用"
+                        case 5:
+                            return "设备维修"
+                    }
+
+                }}
+            , {field: 'state', title: '任务状态',templet: function(d){
+                    var state=d.state;  //0-待执行,2-执行中,8-执行完毕
+                    switch (state) {
+                        case 0:
+                            return"待执行"
+                        case 1:
+                            return "进行中"
+                        case 2:
+                            return "已完成"
+                    }
+
+                }}
+            , {field: 'orgName', title: '所属机构'}
+            , {field: 'remark', title: '所属机构'}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+        ]]
+        ,page: true
+
+    });
+
+    //新建任务搜索设备
+    $("#myModal").on("show.bs.modal",function(){
+        //加载组织机构
+        loadOrg("loadOrg");
+        loadRoomSelect("loadRoom");
+        loadUser("loadUser")
+        var deviceData=[];
+        layer.msg("新建")
+        //点击前清空deviceData
+        deviceData.length=0
+        //新建任务创建任务
+        table.render({
+            elem: '#test2'
+            // ,url: ctxPath+'device/getDevicePage'
+            ,title: '用户数据表'
+            ,cellMinWidth: 92 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+                {type:'checkbox'}
+                ,{field:'name',title: '设备名称', }
+                ,{field:'resTypeName', title: '设备分类'}
+                ,{field:'roomName', title: '机房', }
+                ,{field:'rackName', title: '机架'}
+                ,{field:'sheft', title: '机位',} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                ,{field:'owner', title: '所有人', }
+                ,{field:'status', title: '显示状态', }
+                ,{field:'barcode', title: '标签编号',width:150}
+                , {field: '操作', title: '操作', toolbar: '#barDemo2'}
+            ]],
+            data: deviceData
+            ,page: true
+        });
+        //设备筛选按钮
+        $("#devQuery").on("click",function () {
+            var selectedData =table.checkStatus("deviceTable");
+            console.log(deviceData)
+            $(selectedData.data).each(function (index,item) {
+                //请求设备是否绑定标签 TODO
+                deviceData.push(item);
+            })
+            table.reload('test2', {
+                data: deviceData // 调用table.reload 重新渲染显示加载追加了数据的表格
+            });
+        })
+        //添加任务接口
+        $("#addTask").on("click",function () {
+            if(deviceData.length===0){
+                layer.msg("请选择设备！！！")
+                return
+            }
+            var taskName =$("#taskName").val()
+            if(taskName==""){
+                layer.msg("请输入任务名称！！！")
+                $("#taskName").focus()
+                return
+            }
+            var remark =$("#remark").val()
+            if(remark==""){
+                layer.msg("请输入任务备注！！！")
+                $("#remark").focus()
+                return
+            }
+            var orgId =$("#loadOrg option:selected").val();
+            if(orgId==""){
+                layer.msg("请选择部门！！！")
+                $("#orgId").focus()
+                return
+            }
+            var userId =$("#userId option:selected").val();
+            if(userId==""){
+                layer.msg("请选择负责人！！！")
+                $("#userId").focus()
+                return
+            }
+            var roomId =$("#room option:selected").val();
+            if(roomId==""){
+                layer.msg("请选择机房！！！")
+                $("#room").focus()
+                return
+            }
+            //封装数据
+            var resIds='';
+            $(deviceData).each(function (index,item) {
+                resIds+=item.id+","
+            })
+            resIds = resIds.substr(0, resIds.length - 1);
+            console.log(resIds)
+            //添加任务
+            $.ajax({
+                url:  "/checkTask/add",
+                type: "POST",
+                data:{
+                    name:taskName,
+                    remark:remark,
+                    orgId:orgId,
+                    userId:userId,
+                    roomId:roomId,
+                    resIds:resIds
+                },
+                cache:false,
+                dataType: "json",
+                success: function(data){
+                    layer.msg(data.message);
+                    if(data.code=="0"){
+                        setTimeout("javascript:location.href='/checkTask'", 1500);
+                    }
+                },
+                error:function(err){
+                    layer.msg("服务器内部错误！")
+                }
+            });
+
+
+        })
+
+    })
+//任务模糊查询
+    $("#queryTask").on("click",function () {
+        table.reload("test",{
+            page: {
+                curr: 1 //重新从第 1 页开始
+            },
+            where: {
+                name: $("#queryTaskName").val(),
+                state:$("#state option:selected").val()
+            }
+        })
+
+    })
+    $("#myModal2").on("show.bs.modal",function(){
+        loadRoomSelect("roomSelect")  //加载机房下拉框
+        loadDevStatus("devStatus")
+        loadDevTypeSelect("resTypeSelect")
+        table.render({
+            id:"deviceTable"
+            ,elem: '#test3'
+            ,url: ctxPath+'device/getDevicePage'
+            ,cellMinWidth: 110 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+                {type:'checkbox'}
+                ,{field:'name',title: '设备名称', }
+                ,{field:'resTypeName', title: '设备分类'}
+                ,{field:'roomName', title: '机房', }
+                ,{field:'rackName', title: '机架'}
+                ,{field:'sheft', title: '机位',} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                ,{field:'owner', title: '所有人', }
+                ,{field:'status', title: '显示状态', }
+                ,{field:'barcode', title: '标签编号',width:150}
+            ]]
+            ,page: true
+
+        });
+        $("#queryRes").on("click",function () {
+            layer.msg("test3")
+            table.reload("deviceTable",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    name: $("#name").val(),
+                    sheft:$("#sheft").val(),
+                    tid:$("#tid").val(),
+                    owner:$("#owner").val(),
+                    operator:$("#operator").val(),
+                    assetId:$("#assetId").val(),
+                    model:$("#model").val(),
+                    roomId:$("#roomId option:selected").val(),
+                    status:$("#status option:selected").val()
+                }
+            })
+
+        })
+    })
+
+
+
+
+
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        //console.log(obj)
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                $.ajax({
+                    url:  "/checkTask/delete",
+                    type: "POST",
+                    data:{
+                        id:data.id
+                    },
+                    cache:false,
+                    dataType: "json",
+                    success: function(data){
+                        layer.msg(data.message);
+                        if(data.code=="0"){
+                            obj.del();
+                        }
+                    },
+                    error:function(err){
+                        layer.msg("服务器内部错误！")
+                    }
+                });
+                layer.close(index);
+            });
+        } else if(obj.event === 'det'){
+            console.log(data.id)
+            window.location.href = "/checkTask/toDesc?id="+data.id
+        }
+    });
+
+    table.on('tool(test2)', function(obj){
+        var data = obj.data;
+        //console.log(obj)
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+            });
+        } else if(obj.event === 'det'){
+            layer.msg("这是详情")
+        } else if(obj.event === "out"){
+            layer.msg("这是完成")
+        }
+    });
+    //批量删除
+$("#batchDel").on("click",function () {
+    var checkedArr=[];
+    var selectedData =table.checkStatus("deviceTable").data;
+    if(selectedData==""){
+        layer.msg("请选择要删除的数据！！")
+        return
+    }
+    layer.confirm('真的删除行么', function(index){
+        //DOTO 批量删除
+
+        layer.close(index);
+    });
+})
+    // var checkstatus = table.checkstatus('ordertest'),
+    //     data = checkstatus.data;
+    //     for (var i=0; i<data.length ; i++){
+    //         checkedarr.push[i];
+    //     }
+    // $.each(checkedarr, function(k){
+    //     $(".layui-table-view .layui-table tbody tr[data-index="+checkedarr[k]+"]").remove();
+    
+    // function devCheckTid(resIds) {
+    //     $.ajax({
+    //         url:  "/checkTask/devCheckTid",
+    //         type: "POST",
+    //         data:{
+    //             resId:resIds
+    //         },
+    //         cache:false,
+    //         dataType: "json",
+    //         success: function(data){
+    //             layer.msg(data.message);
+    //             if(data.code=="0"){
+    //                 setTimeout("javascript:location.href='/checkTask'", 1500);
+    //             }
+    //         },
+    //         error:function(err){
+    //             layer.msg("服务器内部错误！")
+    //         }
+    //     });
+    // }
+});

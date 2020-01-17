@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" href="../img/favicon.html">
+
+    <title>设备标签绑定</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-reset.css" rel="stylesheet">
+    <!--external css-->
+    <link href="../assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/style-responsive.css" rel="stylesheet" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <section id="container" class="">
+        <!--header start-->
+        <header class="header white-bg">
+            <div class="sidebar-toggle-box">
+                <div data-original-title="Toggle Navigation" data-placement="right" class="icon-reorder tooltips"></div>
+            </div>
+            <!--logo start-->
+            <a href="#" class="logo">江苏有线</a>
+            <!--logo end-->
+
+            <div class="top-nav ">
+                <ul class="nav pull-right top-menu">
+                    <li>
+                        <input type="text" class="form-control search" placeholder="Search">
+                    </li>
+                    <!-- user login dropdown start-->
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <img alt="" src="../img/avatar1_small.jpg">
+                            <span class="username">Jhon Doue</span>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu extended logout">
+                            <div class="log-arrow-up"></div>
+                            <!--                          <li><a href="#"><i class=" icon-suitcase"></i>Profile</a></li>-->
+                            <!--                          <li><a href="#"><i class="icon-cog"></i> Settings</a></li>-->
+                            <!--                          <li><a href="#"><i class="icon-bell-alt"></i> Notification</a></li>-->
+                            <li><a href="../login.html"><i class="icon-key"></i> Log Out</a></li>
+                        </ul>
+                    </li>
+                    <!-- user login dropdown end -->
+                </ul>
+            </div>
+        </header>
+        <!--header end-->
+        <!--sidebar start-->
+        <aside>
+            <div id="sidebar" class="nav-collapse ">
+                <!-- sidebar menu start-->
+                <ul class="sidebar-menu">
+                    <li class="">
+                        <a class="" href="../index.html">
+                            <i class="icon-dashboard"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+                    <li class="sub-menu active">
+                        <a href="javascript:;" class="">
+                            <i class="icon-book"></i>
+                            <span>设备管理</span>
+                            <span class="arrow"></span>
+                        </a>
+                        <ul class="sub">
+                            <li><a class="" href="general.html">设备信息管理</a></li>
+                            <li class="active"><a class="" href="buttons.html">设备标签绑定</a></li>
+                            <li><a class="" href="widget.html">设备贴标</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;" class="">
+                            <i class="icon-cogs"></i>
+                            <span>线缆管理</span>
+                            <span class="arrow"></span>
+                        </a>
+                        <ul class="sub">
+                            <li><a class="" href="../label2/grids.html">线缆信息管理</a></li>
+                            <li><a class="" href="../label2/calendar.html">线缆标签绑定</a></li>
+                            <li><a class="" href="../label2/charts.html">线缆贴标</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;" class="">
+                            <i class="icon-tasks"></i>
+                            <span>任务管理</span>
+                            <span class="arrow"></span>
+                        </a>
+                        <ul class="sub">
+                            <li><a class="" href="../task/form_component.html">盘点任务</a></li>
+                            <li><a class="" href="../task/form_wizard.html">调拨任务</a></li>
+                            <li><a class="" href="../task/form_validation.html">借用任务</a></li>
+                            <li><a class="" href="../task/form_task.html">维修任务</a></li>
+                            <li><a class="" href="../task/tabledetail.html">报废任务</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;" class="">
+                            <i class="icon-th"></i>
+                            <span>日志管理</span>
+                            <span class="arrow"></span>
+                        </a>
+                        <ul class="sub">
+                            <li><a class="" href="../log/basic_table.html">盘点任务日志</a></li>
+                            <li><a class="" href="../log/basic_table2.html">调拨任务日志</a></li>
+                            <li><a class="" href="../log/basic_table3.html">借用任务日志</a></li>
+                            <li><a class="" href="../log/basic_table4.html">维修任务日志</a></li>
+                            <li><a class="" href="../log/basic_table5.html">操作日志</a></li>
+                            <li><a class="" href="../log/basic_table6.html">告警日志</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;" class="">
+                            <i class="icon-glass"></i>
+                            <span>系统管理</span>
+                            <span class="arrow"></span>
+                        </a>
+                        <ul class="sub">
+                            <li><a class="" href="../system/user.html">账号管理</a></li>
+                            <li><a class="" href="../system/role.html">角色管理</a></li>
+                            <li><a class="" href="../system/menu.html">菜单管理</a></li>
+                            <li><a class="" href="../system/profile.html">机构管理</a></li>
+                            <li><a class="" href="../system/invoice.html">机房管理</a></li>
+                            <li><a class="" href="../system/jjmangt.html">机架管理</a></li>
+                            <li><a class="" href="../system/fenclass.html">设备分类管理</a></li>
+                            <li><a class="" href="../system/lablemangt.html">标签管理</a></li>
+                            <li><a class="" href="../system/3djfang.html">3D机房</a></li>
+                            <li><a class="" href="../404.html">404 Error</a></li>
+                            <li><a class="" href="../500.html">500 Error</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="" href="../login.html">
+                            <i class="icon-user"></i>
+                            <span>Login Page</span>
+                        </a>
+                    </li>
+                </ul>
+                <!-- sidebar menu end-->
+            </div>
+        </aside>
+        <!--sidebar end-->
+        <!--main content start-->
+        <section id="main-content">
+            <section class="wrapper">
+                <!-- page start-->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <section class="panel">
+                            <header class="panel-heading">
+                                设备标签绑定
+                            </header>
+                        </section>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="row-fulid">
+                            <div class="panel-body" style="background: #fff;margin-bottom: 20px">
+                                <form class="form-horizontal form-inline" method="get">
+                                    <div class="form-group col-sm-5">
+                                        <label class="control-label col-sm-4">所属机房</label>
+                                        <div class="col-sm-7">
+                                            <select class="form-control">
+                                                <option>Guc01</option>
+                                                <option>M2机房</option>
+                                                <option>南京广电</option>
+                                                <option>机房</option>
+                                                <option>测试机房</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label class="control-label col-sm-4">设备分类</label>
+                                        <div class=" col-sm-7">
+                                            <select class="form-control">
+                                                <option>服务器</option>
+                                                <option>路由器</option>
+                                                <option>防火墙</option>
+                                                <option>交换机</option>
+                                                <option>电子设备</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-success">搜索</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <section class="panel">
+                                    <table class="table table-striped border-top" id="sample_2">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:8px;"><input type="checkbox" class="group-checkable"
+                                                        data-set="#sample_1 .checkboxes" /></th>
+                                                <th class="hidden-phone">设备名称</th>
+                                                <th class="hidden-phone">所属机房</th>
+                                                <th class="hidden-phone">机架</th>
+                                                <th class="hidden-phone">几位</th>
+                                                <th class="hidden-phone">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="12" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">M2机房</td>
+                                                <td class="hidden-phone">38</td>
+                                                <td class="hidden-phone">
+                                                    <!--                                            <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                            <span class="label label-info">打印</span>-->
+                                                    <!--                                            <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="13" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">M2机房</td>
+                                                <td class="hidden-phone">38</td>
+                                                <td class="hidden-phone">
+                                                    <!--                                            <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                            <span class="label label-info">打印</span>-->
+                                                    <!--                                            <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="14" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">M2机房</td>
+                                                <td class="hidden-phone">38</td>
+                                                <td class="hidden-phone">
+                                                    <!--                                            <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                            <span class="label label-info">打印</span>-->
+                                                    <!--                                            <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="15" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">M2机房</td>
+                                                <td class="hidden-phone">38</td>
+                                                <td class="hidden-phone">
+                                                    <!--                                            <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                            <span class="label label-info">打印</span>-->
+                                                    <!--                                            <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="16" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">M2机房</td>
+                                                <td class="hidden-phone">38</td>
+                                                <td class="hidden-phone">
+                                                    <!--                                            <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                            <span class="label label-info">打印</span>-->
+                                                    <!--                                            <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="17" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">M2机房</td>
+                                                <td class="hidden-phone">38</td>
+                                                <td class="hidden-phone">
+                                                    <!--                                            <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                            <span class="label label-info">打印</span>-->
+                                                    <!--                                            <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="row-fulid">
+                            <section class="panel">
+                                <div class="panel-body">
+                                    <form class="form-inline" role="form">
+                                        <div class="form-group col-sm-5">
+                                            <label class="sr-only" for="exampleInputEmail2">编号从</label>
+                                            <input type="text" class="form-control" id="exampleInputEmail2"
+                                                placeholder="编号从">
+                                        </div>
+                                        <div class="form-group col-sm-5">
+                                            <label class="sr-only" for="exampleInputPassword2">编号到</label>
+                                            <input type="text" class="form-control" id="exampleInputPassword2"
+                                                placeholder="编号到">
+                                        </div>
+                                        <button type="submit" class="btn btn-success">查询</button>
+                                    </form>
+
+                                </div>
+                            </section>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <section class="panel">
+                                    <table class="table table-striped border-top" id="sample_1">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:8px;"><input type="checkbox" class="group-checkable"
+                                                        data-set="#sample_1 .checkboxes" /></th>
+                                                <th class="hidden-phone">标签编号</th>
+                                                <th class="hidden-phone">Tid</th>
+                                                <th class="hidden-phone">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="21" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">
+                                                    <!--                                              <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                              <span class="label label-info">打印</span>-->
+                                                    <!--                                              <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="22" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">
+                                                    <!--                                              <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                              <span class="label label-info">打印</span>-->
+                                                    <!--                                              <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="23" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">
+                                                    <!--                                              <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                              <span class="label label-info">打印</span>-->
+                                                    <!--                                              <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="34" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">
+                                                    <!--                                              <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                              <span class="label label-info">打印</span>-->
+                                                    <!--                                              <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="56" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">
+                                                    <!--                                              <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                              <span class="label label-info">打印</span>-->
+                                                    <!--                                              <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                            <tr class="odd gradeX">
+                                                <td><input type="checkbox" class="checkboxes" value="28" /></td>
+                                                <td>GUCESHI99</td>
+                                                <td class="hidden-phone"><a href="mailto:jhone-doe@gmail.com">王德辉</a>
+                                                </td>
+                                                <td class="hidden-phone">
+                                                    <!--                                              <span class="label label-success">编辑</span>-->
+                                                    <span class="label label-danger">删除</span>
+                                                    <!--                                              <span class="label label-info">打印</span>-->
+                                                    <!--                                              <span class="label label-warning">解绑</span>-->
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- page end-->
+                <div class="row">
+                    <div class="col-lg-2 col-lg-offset-6">
+                        <button type="button" class="btn btn-info" style="width: 110px" id="band">绑定</button>
+                    </div>
+                </div>
+            </section>
+        </section>
+        <!--main content end-->
+    </section>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="../js/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.scrollTo.min.js"></script>
+    <script src="../js/jquery.nicescroll.js" type="text/javascript"></script>
+
+    <!--common script for all pages-->
+    <script src="../js/common-scripts.js"></script>
+    <script>
+        //左面点击
+        $("#sample_2").on("click", ".gradeX .checkboxes", function () {
+            var count = ""
+            count = $("#sample_2 .gradeX .checkboxes[type='checkbox']:checked").length
+            if ($(this).is(":checked")) {
+                $(this).after(" <span>" + count + "</span>")
+                $(this).val();
+                $(this).attr("data-value", count)
+            } else {
+                var val = $(this).attr("data-value");
+                $(this).next().remove()
+                $(this).attr("data-value", "")
+                //table2中的对应选中时重新排列
+                var checkLength = $("#sample_1 .gradeX .checkboxes[type='checkbox']:checked").length
+                var checkval = $("#sample_1 .gradeX .checkboxes[type='checkbox']:checked")
+                for (var i = 0; i < checkLength; i++) {
+                    if (checkval.eq(i).attr("data-value") == val) {
+                        checkval.eq(i).attr("data-value", "")
+                        checkval.eq(i).next().remove()
+                        checkval.eq(i).attr("checked", false)
+                    }
+                }
+                //table1中的取消选中时重新排列
+                var count = "";
+                count = $("#sample_2 .gradeX .checkboxes[type='checkbox']:checked").length
+                for (var i = 0; i <= count; i++) {
+                    $("#sample_2 .gradeX .checkboxes[type='checkbox']:checked").eq(i).attr("data-value",
+                        i + 1)
+                    $("#sample_2 .gradeX .checkboxes[type='checkbox']:checked").eq(i).next().html(i + 1);
+                    $("#sample_1 .gradeX .checkboxes[type='checkbox']:checked").eq(i).attr("data-value",
+                        i + 1)
+                    $("#sample_1 .gradeX .checkboxes[type='checkbox']:checked").eq(i).next().html(i + 1);
+                }
+            }
+        })
+        //左面点击
+        $("#sample_1").on("click", ".gradeX .checkboxes", function () {
+            var count = ""
+            count = $("#sample_1 .gradeX .checkboxes[type='checkbox']:checked").length
+            if ($(this).is(":checked")) {
+                $(this).after(" <span>" + count + "</span>")
+                $(this).val();
+                $(this).attr("data-value", count)
+            } else {
+                var count = ""
+                count = $("#sample_1 .gradeX .checkboxes[type='checkbox']:checked").length
+                $(this).next().remove()
+                for (var i = 0; i <= count; i++) {
+                    $("#sample_1 .gradeX .checkboxes[type='checkbox']:checked").eq(i).attr("data-value",
+                        i + 1)
+                }
+                $(this).attr("data-value", "")
+            }
+        })
+        //点击绑定时候，获取到对应的选中的顺序及value值
+        $("#band").on("click", function () {
+            var length = $("#sample_2 .gradeX .checkboxes").length
+            var length1 = $("#sample_1 .gradeX .checkboxes").length
+            var arr = []
+            var arr1 = []
+            for (var i = 0; i < length; i++) {
+                if (typeof ($("#sample_2 .gradeX .checkboxes[type='checkbox']:checked").eq(i).attr(
+                        "data-value")) != "undefined") {
+                    var obj = {}
+                    obj.value = $("#sample_2 .gradeX .checkboxes[type='checkbox']:checked").eq(i).val();
+                    obj.dateValue = $("#sample_2 .gradeX .checkboxes[type='checkbox']:checked").eq(i).attr(
+                        "data-value")
+                    arr.push(obj)
+                }
+            }
+            for (var i = 0; i < length1; i++) {
+                if (typeof ($("#sample_1 .gradeX .checkboxes[type='checkbox']:checked").eq(i).attr(
+                        "data-value")) != "undefined") {
+                    var obj = {}
+                    obj.value1 = $("#sample_1 .gradeX .checkboxes[type='checkbox']:checked").eq(i).val();
+                    obj.dateValue1 = $("#sample_1 .gradeX .checkboxes[type='checkbox']:checked").eq(i).attr(
+                        "data-value")
+                    arr1.push(obj)
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>

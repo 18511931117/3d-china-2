@@ -1,0 +1,26 @@
+package com.manage.idc.task.service;
+
+import com.github.pagehelper.PageInfo;
+import com.manage.idc.common.entiy.PageRequest;
+import com.manage.idc.task.domain.ScrapTask;
+import com.manage.idc.task.domain.ScrapTaskDesc;
+
+import java.util.List;
+
+public interface ScrapTaskService {
+    void updateState(ScrapTask scrapTask);
+
+    void add(ScrapTask scrapTask);
+
+    void delete(ScrapTask scrapTask);
+
+   PageInfo<ScrapTaskDesc> desc(ScrapTask scrapTask,PageRequest pageRequest);
+
+    List<ScrapTaskDesc> export(ScrapTask scrapTask);
+
+    PageInfo<ScrapTask> getPage(ScrapTask scrapTask, PageRequest pageRequest);
+
+    PageInfo<ScrapTask> getScrapTaskPage(ScrapTask scrapTask, PageRequest pageRequest);
+
+    List<ScrapTaskDesc> getScrapTaskDesc(ScrapTaskDesc scrapTaskDesc);
+}

@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="tc-trics-idc:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>tc-trics-idc</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="tc-trics-idc-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="tc-trics-idc:war exploded" />
+    </root>
+  </artifact>
+</component>

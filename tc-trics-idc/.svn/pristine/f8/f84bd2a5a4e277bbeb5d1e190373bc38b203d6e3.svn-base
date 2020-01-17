@@ -1,0 +1,137 @@
+package com.manage.idc.common.config.shiro;
+import com.manage.idc.common.exception.LoginException;
+import com.manage.idc.common.utils.SessionUtil;
+import com.manage.idc.system.domain.SysMenu;
+import com.manage.idc.system.domain.SysRole;
+import com.manage.idc.system.domain.SysUser;
+import com.manage.idc.system.mapper.SysMenuMapper;
+import com.manage.idc.system.mapper.SysRoleMapper;
+import com.manage.idc.system.mapper.SysUserMapper;
+import com.manage.idc.system.service.SysMenuService;
+import com.manage.idc.system.service.SysRoleService;
+import com.manage.idc.system.service.SysUserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.mgt.RealmSecurityManager;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
+import org.crazycake.shiro.RedisSessionDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.thymeleaf.util.StringUtils;
+
+import java.security.Security;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ * 自定义实现 ShiroRealm，包含认证和授权两大模块
+ */
+@Component
+public class ShiroRealm extends AuthorizingRealm {
+
+    @Autowired
+    private SysUserMapper userService;
+    @Autowired
+    private SysRoleMapper roleService;
+    @Autowired
+    private SysMenuMapper menuService;
+    @Autowired
+    private RedisSessionDAO redisSessionDAO;
+
+    /**
+     * 授权模块，获取用户角色和权限
+     *
+     * @param principal principal
+     * @return AuthorizationInfo 权限信息
+     */
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
+        SysUser user = SessionUtil.getUser();
+        String userName = user.getUsername();
+
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+
+        // 获取用户角色集
+        List<SysRole> roleList = roleService.findUserRole(userName);
+        Set<String> roleSet = roleList.stream().map(SysRole::getRoleName).collect(Collectors.toSet());
+        simpleAuthorizationInfo.setRoles(roleSet);
+
+        // 获取用户权限集
+        List<SysMenu> permissionList = menuService.findUserPermissions(userName);
+        Set<String> permissionSet = permissionList.stream().map(SysMenu::getPermission).collect(Collectors.toSet());
+        simpleAuthorizationInfo.setStringPermissions(permissionSet);
+        return simpleAuthorizationInfo;
+    }
+
+    /**
+     * 用户认证
+     *
+     * @param token AuthenticationToken 身份认证 token
+     * @return AuthenticationInfo 身份认证信息
+     * @throws AuthenticationException 认证相关异常
+     */
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        // 获取用户输入的用户名和密码
+        String userName = (String) token.getPrincipal();
+        String password = new String((char[]) token.getCredentials());
+
+        // 通过用户名到数据库查询用户信息
+        SysUser user = userService.findByName(userName);
+
+        if (user == null)
+            throw new LoginException("账号未注册！");
+        if (!StringUtils.equals(password, user.getPassword()))
+            throw new LoginException("用户名或密码错误！");
+        if (SysUser.STATUS_LOCK.equals(user.getState()))
+            throw new LoginException("账号已被锁定,请联系管理员！");
+        return new SimpleAuthenticationInfo(user, password, getName());
+    }
+
+    /**
+     * 清除当前session存在的用户的权限缓存
+     */
+    public void clearCache() {
+        Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = (SysUser) subject.getPrincipal();
+
+        if (null == sysUser) return;
+        //获取所有session
+        Collection<Session> sessions = redisSessionDAO.getActiveSessions();
+        //定义返回
+        List<SimplePrincipalCollection> list = new ArrayList<SimplePrincipalCollection>();
+        for (Session session : sessions) {
+            //获取session登录信息。
+            Object obj = session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
+            if (null != obj && obj instanceof SimplePrincipalCollection) {
+                //强转
+                SimplePrincipalCollection spc = (SimplePrincipalCollection) obj;
+                //判断用户，匹配用户ID。
+                obj = spc.getPrimaryPrincipal();
+                if (null != obj && obj instanceof SysUser) {
+                    SysUser user = (SysUser) obj;
+                    //比较用户ID，符合即加入集合
+                    if (null != user) {
+                        list.add(spc);
+                    }
+                }
+            }
+        }
+        RealmSecurityManager securityManager =
+                (RealmSecurityManager) SecurityUtils.getSecurityManager();
+        ShiroRealm realm = (ShiroRealm) securityManager.getRealms().iterator().next();
+        for (SimplePrincipalCollection simplePrincipalCollection : list) {
+            realm.clearCachedAuthorizationInfo(simplePrincipalCollection);
+        }
+    }
+}

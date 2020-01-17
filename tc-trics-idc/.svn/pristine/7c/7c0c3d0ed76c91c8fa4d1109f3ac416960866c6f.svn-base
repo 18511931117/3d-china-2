@@ -1,0 +1,152 @@
+layui.use('table', function(){
+    var table = layui.table;
+
+    table.render({
+        elem: '#test'
+        ,url:'/param/getPage'
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'sysName', title: '参数名称'}
+            , {field: 'sysKey', title: '参数编码',}
+            , {field: 'sysValue', title: '参数值'}
+            , {field: 'type', title: '参数类型'}
+            , {field: 'isDel', title: '参数状态',templet: function(d){
+                    var isQ=d.isDel;
+                    if(isQ==0){
+                        return "可用";
+                    }else if(isQ==1){
+                        return "不可用"
+                    }
+                }}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+        ]]
+        ,page: true
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        var data = obj.data;
+        //console.log(obj)
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                $.ajax({
+                    url:  "/param/delete",
+                    type: "POST",
+                    data:{
+                        id:data.id
+                    },
+                    cache:false,
+                    dataType: "json",
+                    success: function(data){
+                        layer.msg(data.message);
+                        if(data.code=="0"){
+                            setTimeout("javascript:location.href='/param'", 1500);
+                        }
+                    },
+                    error:function(err){
+                        layer.msg("服务器内部错误！")
+                    }
+                });
+            });
+        } else if(obj.event === 'edit'){
+            layer.open({
+                //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                type:2,
+                title:"系统参数信息添加",
+                area: ['70%','70%'],
+                content:'/param/toParamEdit?id='+data.id,
+            });
+            setFormValue(data);//动态向表单赋值
+        }
+    });
+    /**
+     * 表单回显
+     * @param data
+     */
+    function setFormValue(data){
+        $("input[name=id]").attr("value",data.id);
+        $("input[name=sysName]").val(data.sysName);
+        $("input[name=sysKey]").val(data.sysKey);
+        $("input[name=sysValue]").val(data.sysValue);
+        $("input[name=type]").val(data.type);
+    }
+
+    /**
+     * 修改表单数据
+     */
+    function editData(){
+        var id =$("input[name=id]").val();
+        //var sysName1 =$("input[name=sysName]").val();
+        layer.msg($(":input[name='sysName']").val())
+        return;
+        if(sysName==""){
+            layer.msg("请输入参数名称！！")
+            $("input[name=sysName]").focus()
+            return
+        }
+
+        var sysKey =$("input[name=sysKey]").val();
+
+        if(sysKey==""){
+            layer.msg("请输入参数编码！！")
+            $("input[name=sysKey]").focus()
+            return
+        }
+
+        var sysValue=$("input[name=sysValue]").val();
+        if(sysValue==""){
+            layer.msg("请输入参数值！！")
+            $("input[name=sysValue]").focus()
+            return
+        }
+        var type= $("input[name=type]").val();
+        if(type==""){
+            layer.msg("请输入参数类型！！")
+            $("input[name=type]").focus()
+            return
+        }
+
+        $.ajax({
+            url:  "/param/update",
+            type: "POST",
+            data:{
+                id:id,
+                sysName:sysName,
+                sysKey:sysKey,
+                sysValue:sysValue,
+                type:type
+            },
+            cache:false,
+            dataType: "json",
+            success: function(data){
+                layer.msg(data.message);
+                if(data.code=="0"){
+                    setTimeout("javascript:location.href='/param'", 1500);
+                }
+            },
+            error:function(err){
+                layer.msg("服务器内部错误！")
+            }
+        });
+    }
+
+    /**
+     * 添加系统参数
+     */
+
+   $("#addParam").on("click",function () {
+       layer.open({
+           //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+           type:2,
+           title:"系统参数信息添加",
+           area: ['70%','70%'],
+           content:'/param/toParamAdd',
+       });
+   })
+    
+
+
+});
+

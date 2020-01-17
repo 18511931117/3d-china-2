@@ -1,0 +1,71 @@
+layui.use('table', function(){
+    var table = layui.table;
+
+    table.render({
+        elem: '#test'
+        ,url:'/scrapLog/getPage'
+        ,title: '用户数据表'
+        ,cols: [[
+            {type: 'checkbox'},
+            {field: 'id', title: 'ID',}
+            , {field: 'taskName', title: '任务名称'}
+            , {field: 'taskType', title: '任务类型',templet: function(d){
+                    var state=d.taskType;  //1-设备贴标,2-设备盘点,3-设备调拨,4-设备借用,5-设备维修
+                    switch (state) {
+                        case 1:
+                            return"设备贴标"
+                        case 2:
+                            return "设备盘点"
+                        case 3:
+                            return "设备调拨"
+                        case 4:
+                            return "设备借用"
+                        case 5:
+                            return "设备维修"
+                    }
+
+                }}
+            , {field: 'state', title: '任务状态',templet: function(d){
+                    var state=d.state;  //0-待执行,2-执行中,8-执行完毕
+                    switch (state) {
+                        case 0:
+                            return"待执行"
+                        case 1:
+                            return "进行中"
+                        case 2:
+                            return "已完成"
+                    }
+
+                }}
+            , {field: 'orgName', title: '所属机构'}
+            ,{field: 'startTime', title: '开始时间' ,templet: function(d){
+                    var dateee = new Date(d.createTime).toJSON();
+                    var date = new Date(+new Date(dateee)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
+                    return date;
+                }
+
+            }
+            , {field: 'endTime', title: '结束时间',templet: function(d){
+                    var dateee = new Date(d.createTime).toJSON();
+                    var date = new Date(+new Date(dateee)+8*3600*1000).toISOString().replace(/T/g,' ').replace(/\.[\d]{3}Z/,'');
+                    return date;
+                }
+
+            }
+            , {field: 'personName', title: '执行人'}
+            , {field: '操作', title: '操作', width: 240, toolbar: '#barDemo'}
+        ]]
+        ,page: true
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function(obj){
+        //console.log(obj)
+        var data = obj.data
+        if(obj.event === 'export'){
+            window.location.href='/scrapLog/export?taskId='+data.taskId
+        } else if(obj.event === 'edit'){
+
+        }
+    });
+});

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" style="background: none;border: none">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+
+    <title>参数设置</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-reset.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link th:href="@{/css/style-responsive.css}" rel="stylesheet" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+    <script th:src="@{/js/html5shiv.js}"></script>
+    <script th:src="@{/js/respond.min.js}"></script>
+    <![endif]-->
+</head>
+
+<body style="background: none;border: none">
+            <!-- invoice start-->
+            <div class="row row-top">
+                <div class="col-lg-12">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            <span class="tab-o">系统管理</span><b style="color: #00C6FF"> > </b><span class="tab-er">系统参数</span>
+                        </header>
+                    </section>
+                </div>
+            </div>
+            <div class="row" style="margin: 15px 0">
+                <div class="col-sm-6">
+                    <button type="submit" class="btn bg-yellow" data-toggle="modal"  id="addParam">添加系统参数</button>
+                </div>
+                <div class="col-sm-6">
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <section class="panel">
+                        <table class="layui-hide" id="demo1" lay-filter="demo1"></table>
+                        <script type="text/html" id="barDemo">
+                            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                            <a class="layui-btn layui-btn-xs" lay-event="del">删除</a>
+                        </script>
+                    </section>
+                </div>
+            </div>
+
+
+        <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="padding: 15px;width: 100%">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <form class="form-horizontal tasi-form" method="get">
+                            <div class="form-group">
+                                <label class="control-label col-lg-2">菜单名</label>
+                                <div class="col-sm-10">
+                                    <input type="hidden" name="id" >
+                                    <input type="text" name="name" value="" class="form-control" placeholder="菜单名">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-lg-2">权限标识</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="permission" class="form-control" placeholder="权限标识">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-lg-2">系统参数值</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="sysValue" class="form-control" placeholder="系统参数值">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-lg-2">系统参数类型</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="type" class="form-control" placeholder="系统参数类型">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <script type="text/javascript" th:inline="javascript">
+                ctxPath = /*[[@{/}]]*/ '';
+            </script>
+<!-- js placed at the end of the document so the pages load faster -->
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery.scrollTo.min.js}"></script>
+<link rel="stylesheet" th:href="@{/3rd/bootstrap-table/bootstrap-table.css}" >
+<script th:src="@{/3rd/bootstrap-table/bootstrap-table.js}"></script>
+<script th:inline="javascript" th:src="@{/pagejs/system/param.js}"></script>
+
+</body>
+</html>

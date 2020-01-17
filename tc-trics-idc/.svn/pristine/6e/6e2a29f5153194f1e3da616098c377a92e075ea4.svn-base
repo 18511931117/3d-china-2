@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.manage.idc.system.mapper.ResExtCfgMapper" >
+  <resultMap id="BaseResultMap" type="com.manage.idc.system.domain.ResExtCfg" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+    <result column="res_type_code" property="resTypeCode" jdbcType="VARCHAR" />
+    <result column="is_query" property="isQuery" jdbcType="VARCHAR" />
+    <result column="ext_grp_code" property="extGrpCode" jdbcType="VARCHAR" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="seq" property="seq" jdbcType="INTEGER" />
+    <result column="val_type" property="valType" jdbcType="VARCHAR" />
+    <result column="valTypeName" property="valTypeName" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="is_query" property="isQuery" jdbcType="VARCHAR" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+
+  <sql id="allColumn">
+      r.id,
+      r.is_valid,
+      r.res_type_code,
+      r.ext_grp_code,
+      r.item_code,
+      r.item_name,
+      r.seq,
+      r.val_type,
+      r.remark,
+      r.created_time,
+      r.updated_time,
+      r.is_query
+  </sql>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from res_ext_cfg
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+
+  <insert id="insert" parameterType="com.manage.idc.system.domain.ResExtCfg" >
+    insert into res_ext_cfg (
+        id,
+        res_type_code,
+        ext_grp_code,
+        item_code,
+        item_name,
+        seq,
+        val_type,
+        remark,
+        created_time
+        )
+    values (
+        #{id,jdbcType=INTEGER},
+        #{resTypeCode,jdbcType=VARCHAR},
+        #{extGrpCode,jdbcType=VARCHAR},
+        #{itemCode,jdbcType=VARCHAR},
+        #{itemName,jdbcType=VARCHAR},
+        #{seq,jdbcType=INTEGER},
+        #{valType,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR},
+        now()
+    )
+  </insert>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.manage.idc.system.domain.ResExtCfg" >
+    update res_ext_cfg
+    set
+    <if test="isValid != null and isValid != ''">
+      is_valid = #{isValid,jdbcType=INTEGER},
+    </if>
+    <if test="resTypeCode != null and resTypeCode != ''">
+      res_type_code = #{resTypeCode,jdbcType=VARCHAR},
+    </if>
+    <if test="extGrpCode != null and extGrpCode != ''">
+      ext_grp_code = #{extGrpCode,jdbcType=VARCHAR},
+    </if>
+    <if test="itemCode != null and itemCode != ''">
+      item_code = #{itemCode,jdbcType=VARCHAR},
+    </if>
+    <if test="itemName != null and itemName != ''">
+      item_name = #{itemName,jdbcType=VARCHAR},
+    </if>
+    <if test="seq != null and seq != ''">
+      seq = #{seq,jdbcType=INTEGER},
+    </if>
+    <if test="valType != null and valType != ''">
+      val_type = #{valType,jdbcType=VARCHAR},
+    </if>
+    <if test="remark != null and remark != ''">
+      remark = #{remark,jdbcType=VARCHAR},
+    </if>
+    <if test="isDel != null and isDel != ''">
+      is_del = #{isDel,jdbcType=VARCHAR},
+    </if>
+    <if test="isQuery != null and isQuery != ''">
+      is_query = #{isQuery,jdbcType=VARCHAR},
+    </if>
+    updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+        <include refid="allColumn"/>
+    from res_ext_cfg r
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selectAll" resultMap="BaseResultMap" parameterType="com.manage.idc.system.domain.ResExtCfg">
+    select
+        <include refid="allColumn"/>
+    from res_ext_cfg r
+    <where>
+        <if test="id != null and id != ''">
+            AND r.id = #{id,jdbcType=INTEGER}
+        </if>
+        <if test="isValid != null and isValid != ''">
+            AND r.is_valid = #{isValid,jdbcType=INTEGER}
+        </if>
+        <if test="resTypeCode != null and resTypeCode != ''">
+            AND r.res_type_code = #{resTypeCode,jdbcType=VARCHAR}
+        </if>
+        <if test="extGrpCode != null and extGrpCode != ''">
+            AND r.ext_grp_code = #{extGrpCode,jdbcType=VARCHAR}
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+            AND r.item_code = #{itemCode,jdbcType=VARCHAR}
+        </if>
+        <if test="itemName != null and itemName != ''">
+            AND r.item_name = #{itemName,jdbcType=VARCHAR}
+        </if>
+        <if test="seq != null and seq != ''">
+            AND r.seq = #{seq,jdbcType=INTEGER}
+        </if>
+        <if test="valType != null and valType != ''">
+            AND r.val_type = #{valType,jdbcType=VARCHAR}
+        </if>
+        <if test="remark != null and remark != ''">
+            AND r.remark = #{remark,jdbcType=VARCHAR}
+        </if>
+        <if test="isQuery != null and isQuery != ''">
+            AND r.is_query = #{isQuery,jdbcType=VARCHAR}
+        </if>
+            AND r.is_del = '0'
+    </where>
+  </select>
+
+
+    <select id="selectByExtGrpCode" resultMap="BaseResultMap" parameterType="string" >
+        select
+            <include refid="allColumn"/>
+        from res_ext_cfg r
+        where r.ext_grp_code = #{value}
+        AND r.is_del='0'
+        ORDER BY r.created_time
+    </select>
+
+
+    <select id="selectByResTypeCode" resultMap="BaseResultMap" parameterType="string" >
+        select
+        <include refid="allColumn"/>
+        from res_ext_cfg r
+        where r.res_type_code = #{value}
+        AND r.is_del='0'
+        ORDER BY r.created_time
+    </select>
+    <select id="selectOne" resultMap="BaseResultMap" parameterType="com.manage.idc.system.domain.ResExtCfg">
+        select
+        <include refid="allColumn"/>
+        from res_ext_cfg r
+        <where>
+            <if test="id != null and id != ''">
+                AND r.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="isValid != null and isValid != ''">
+                AND r.is_valid = #{isValid,jdbcType=INTEGER}
+            </if>
+            <if test="resTypeCode != null and resTypeCode != ''">
+                AND r.res_type_code = #{resTypeCode,jdbcType=VARCHAR}
+            </if>
+            <if test="extGrpCode != null and extGrpCode != ''">
+                AND r.ext_grp_code = #{extGrpCode,jdbcType=VARCHAR}
+            </if>
+            <if test="itemCode != null and itemCode != ''">
+                AND r.item_code = #{itemCode,jdbcType=VARCHAR}
+            </if>
+            <if test="itemName != null and itemName != ''">
+                AND r.item_name = #{itemName,jdbcType=VARCHAR}
+            </if>
+            <if test="seq != null and seq != ''">
+                AND r.seq = #{seq,jdbcType=INTEGER}
+            </if>
+            <if test="valType != null and valType != ''">
+                AND r.val_type = #{valType,jdbcType=VARCHAR}
+            </if>
+            <if test="remark != null and remark != ''">
+                AND r.remark = #{remark,jdbcType=VARCHAR}
+            </if>
+            <if test="isQuery != null and isQuery != ''">
+                AND r.is_query = #{isQuery,jdbcType=VARCHAR}
+            </if>
+            AND r.is_del = '0'
+        </where>
+        limit 1
+    </select>
+</mapper>

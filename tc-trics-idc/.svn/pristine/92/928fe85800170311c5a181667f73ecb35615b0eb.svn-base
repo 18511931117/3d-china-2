@@ -1,0 +1,104 @@
+package com.manage.idc.system.domain;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * sys_user
+ *
+ * @author
+ */
+@Data
+@ApiModel(value = "用户实体")
+public class SysUser implements Serializable {
+
+    // 用户状态：有效
+    public static final Integer STATUS_VALID = 1;
+    // 用户状态：锁定
+    public static final String STATUS_LOCK = "2";
+    // 默认密码
+    public static final String DEFAULT_PASSWORD = "1234qwer";
+    // 删除
+    public static final Integer IS_DELETED = 1;
+    /**
+     * 用户id
+     */
+    @ApiModelProperty(notes = "用户名", required = false)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+
+    /**
+     * 用户名账号
+     */
+    @ApiModelProperty(name = "username", notes = "用户名账号", required = true)
+    private String username;
+
+    /**
+     * 用户名字（昵称或者真实姓名，不同系统不同定义）
+     */
+    @ApiModelProperty(name = "name", notes = "用户名", required = true)
+    private String name;
+
+    /**
+     * 用户密码
+     */
+    @ApiModelProperty(name = "password", notes = "用户密码", required = true)
+    private String password;
+
+
+    @ApiModelProperty(name = "isQuit", notes = "是否离职 0：在职 1：离职", required = true)
+    private String isQuit;
+
+    @ApiModelProperty(name = "email", notes = "邮箱", required = true)
+    private String email;
+
+    @ApiModelProperty(name = "isDeleted",notes = "是否删除 1:删除 0:未删除")
+    private  Integer IsDel;
+
+    /**
+     * 用户状态,0:创建未认证（比如没有激活，没有输入验证码等等）--等待验证的用户 , 1:正常状态,2：用户被锁定.
+     */
+    @ApiModelProperty(name = "state", notes = "用户状态", required = true)
+    private Integer state;
+
+    /**
+     * 部门id
+     */
+    @ApiModelProperty(name = "orgId", notes = "部门ID", required = true)
+    private Long orgId;
+
+    /**
+     * 部门id
+     */
+    @ApiModelProperty(name = "roleId", notes = "角色ID")
+    private Long roleId;
+
+    /**
+     * 创建时间
+     */
+    @ApiModelProperty(name = "createTime", notes = "创建时间", required = false)
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    @ApiModelProperty(name = "updateTime", notes = "更新时间", required = false)
+    private Date updateTime;
+    @ApiModelProperty(name = "workNum", notes = "工号")
+    private String workNum;
+
+    private String orgName;
+
+    private String roleName;
+
+
+    private static final long serialVersionUID = 1L;
+
+
+}

@@ -1,0 +1,44 @@
+package com.manage.idc.system.mapper;
+
+import com.manage.idc.system.domain.SysMenu;
+import io.swagger.models.auth.In;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+import java.util.Map;
+
+@Mapper
+public interface SysMenuMapper {
+    /**
+     * 查找用户权限集
+     *
+     * @param username 用户名
+     * @return 用户权限集合
+     */
+    List<SysMenu> findUserPermissions(String username);
+
+    /**
+     * 新增菜单（按钮）
+     *
+     * @param sysMenu 菜单（按钮）对象
+     */
+    Integer createMenu(SysMenu sysMenu);
+    /**
+     * 删除菜单（按钮）
+     *
+     * @param menuIds 菜单（按钮）id
+     */
+    void deleteMeuns(List<Long> menuIds);
+
+    /**
+     * 更新菜单（按钮）
+     * @param sysMenu
+     */
+    void updateMenu(SysMenu sysMenu);
+
+    List<SysMenu> selectList(SysMenu menu);
+
+    List<SysMenu> selectByCondition(SysMenu menu);
+
+    Long findUserByRoleId(Long userId);
+}
